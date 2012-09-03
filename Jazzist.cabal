@@ -1,0 +1,10 @@
+name: Jazzist
+version: 0.1
+synopsis: JavaScript parser
+author: Sergey Zaretsky
+build-type: Simple
+cabal-version: >= 1.2
+
+executable Jazzist
+    main-is: Jazzist.hs
+    build-depends: base
