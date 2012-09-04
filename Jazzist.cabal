@@ -7,4 +7,4 @@ cabal-version: >= 1.2
 
 executable Jazzist
     main-is: Jazzist.hs
-    build-depends: base
+    build-depends: base, parsec

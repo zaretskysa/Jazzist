@@ -1,4 +1,9 @@
+# dolphin file manager related stuff
+.directory
+
+# build directory
 dist
 
+# compiler/interpreter output
 *.hi
 *.o
