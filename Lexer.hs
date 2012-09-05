@@ -9,6 +9,7 @@ import Keyword
 import StringLiteral
 import NumericLiteral
 import Comment
+import Identifier
 
 readTokens :: String -> String
 readTokens input = case parse parseTokens "js" input of
@@ -20,7 +21,8 @@ parseTokens = spaces >> endBy parseToken spaces
 
 parseToken :: Parser Token
 parseToken = 
-    nullLiteral
+    identifier
+    <|> nullLiteral
     <|> booleanLiteral
     <|> keyword
     <|> stringLiteral
