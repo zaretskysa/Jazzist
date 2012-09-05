@@ -4,6 +4,7 @@ import Text.ParserCombinators.Parsec
 
 import Tokens
 import NullLiteral
+import BooleanLiteral
 
 readTokens :: String -> String
 readTokens input = case parse parseTokens "js" input of
@@ -14,4 +15,6 @@ parseTokens :: Parser [Token]
 parseTokens = spaces >> endBy parseToken spaces
 
 parseToken :: Parser Token
-parseToken = nullLiteral
+parseToken = 
+    nullLiteral
+    <|> booleanLiteral
