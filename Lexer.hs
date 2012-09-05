@@ -7,6 +7,7 @@ import NullLiteral
 import BooleanLiteral
 import Keyword
 import StringLiteral
+import NumericLiteral
 
 readTokens :: String -> String
 readTokens input = case parse parseTokens "js" input of
@@ -22,3 +23,4 @@ parseToken =
     <|> booleanLiteral
     <|> keyword
     <|> stringLiteral
+    <|> numericLiteral
