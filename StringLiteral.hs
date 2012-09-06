@@ -8,18 +8,20 @@ import Tokens
 import LineTerminator
 
 stringLiteral :: Parser Token
-stringLiteral = doubleQuotedString -- <|> singleQuotedString
+stringLiteral = do
+    value <- doubleQuotedString <|> singleQuotedString
+    return $ StringLiteralToken value
 
-doubleQuotedString :: Parser Token
+doubleQuotedString :: Parser String
 doubleQuotedString = do
     char '"'
     values <- many doubleStringCharacter
     char '"'
-    return $ StringLiteralToken values
+    return values
 
 doubleStringCharacter :: Parser Char
 doubleStringCharacter = do
-    doubleStringCharacterWithoutDoubleQuoteAndBackSlashAndLineTerminator
+    characterWithoutDoubleQuoteAndBackSlashAndLineTerminator
     <|> escapeSequenceElement
 --  <|> lineContinuation
 
@@ -28,8 +30,8 @@ lineContinuation = do
     char '\\' 
     lineTerminatorSequence
 
-doubleStringCharacterWithoutDoubleQuoteAndBackSlashAndLineTerminator :: Parser Char
-doubleStringCharacterWithoutDoubleQuoteAndBackSlashAndLineTerminator = do
+characterWithoutDoubleQuoteAndBackSlashAndLineTerminator :: Parser Char
+characterWithoutDoubleQuoteAndBackSlashAndLineTerminator = do
     try $ notFollowedBy $ (char '"' <|> char '\\' <|> lineTerminator)
     anyChar
 
@@ -80,5 +82,20 @@ unicodeEscapeSequence = do
     hs <- count 4 hexDigit
     return $ chr $ intFromHex hs
 
-singleQuotedString :: Parser Token
-singleQuotedString = undefined
+singleQuotedString :: Parser String
+singleQuotedString = do
+    char '\''
+    values <- many singleStringCharacter
+    char '\''
+    return values
+
+singleStringCharacter :: Parser Char
+singleStringCharacter = do
+    characterWithoutSingleQuoteAndBackSlashAndLineTerminator
+    <|> escapeSequenceElement
+--  <|> lineContinuation
+
+characterWithoutSingleQuoteAndBackSlashAndLineTerminator :: Parser Char
+characterWithoutSingleQuoteAndBackSlashAndLineTerminator = do
+    try $ notFollowedBy $ (char '\'' <|> char '\\' <|> lineTerminator)
+    anyChar
