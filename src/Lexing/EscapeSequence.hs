@@ -1,9 +1,9 @@
-module EscapeSequence where
+module Lexing.EscapeSequence where
 
 import Data.Char
 import Text.ParserCombinators.Parsec
 
-import Utils
+import Lexing.Utils
 
 unicodeEscapeSequenceElement :: Parser Char
 unicodeEscapeSequenceElement = char '\\' >> unicodeEscapeSequence

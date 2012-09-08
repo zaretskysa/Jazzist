@@ -1,8 +1,8 @@
-module Keyword where
+module Lexing.Keyword where
 
 import Text.ParserCombinators.Parsec
 
-import Tokens
+import Lexing.Tokens
 
 keyword :: Parser Token
 keyword = do 

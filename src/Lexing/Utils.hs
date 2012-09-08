@@ -1,4 +1,4 @@
-module Utils where
+module Lexing.Utils where
 
 import Numeric
 

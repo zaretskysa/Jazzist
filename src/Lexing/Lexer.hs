@@ -1,16 +1,16 @@
-module Lexer where
+module Lexing.Lexer where
 
 import Text.ParserCombinators.Parsec
 
-import Tokens
-import NullLiteral
-import BooleanLiteral
-import Keyword
-import StringLiteral
-import NumericLiteral
-import Comment
-import Identifier
-import Punctuator
+import Lexing.Tokens
+import Lexing.NullLiteral
+import Lexing.BooleanLiteral
+import Lexing.Keyword
+import Lexing.StringLiteral
+import Lexing.NumericLiteral
+import Lexing.Comment
+import Lexing.Identifier
+import Lexing.Punctuator
 
 readTokens :: String -> String
 readTokens input = case parse parseTokens "js" input of

@@ -1,13 +1,13 @@
-module Identifier where
+module Lexing.Identifier where
 
 import Data.Char
 import Text.ParserCombinators.Parsec
 
-import Tokens
-import Keyword
-import NullLiteral
-import BooleanLiteral
-import EscapeSequence
+import Lexing.Tokens
+import Lexing.Keyword
+import Lexing.NullLiteral
+import Lexing.BooleanLiteral
+import Lexing.EscapeSequence
 
 identifier :: Parser Token
 identifier = try $ do

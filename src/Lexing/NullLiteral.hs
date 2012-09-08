@@ -1,8 +1,8 @@
-module NullLiteral where
+module Lexing.NullLiteral where
 
 import Text.ParserCombinators.Parsec
 
-import Tokens
+import Lexing.Tokens
 
 nullLiteral :: Parser Token
 nullLiteral = do

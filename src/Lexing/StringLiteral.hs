@@ -1,11 +1,11 @@
-module StringLiteral where
+module Lexing.StringLiteral where
 
 import Data.Char
 import Text.ParserCombinators.Parsec
 
-import Utils
-import Tokens
-import LineTerminator
+import Lexing.Utils
+import Lexing.Tokens
+import Lexing.LineTerminator
 
 stringLiteral :: Parser Token
 stringLiteral = do

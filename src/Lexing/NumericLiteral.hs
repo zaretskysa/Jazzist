@@ -1,9 +1,9 @@
-module NumericLiteral where
+module Lexing.NumericLiteral where
 
 import Text.ParserCombinators.Parsec
 
-import Tokens
-import Utils
+import Lexing.Tokens
+import Lexing.Utils
 
 numericLiteral :: Parser Token
 numericLiteral = do

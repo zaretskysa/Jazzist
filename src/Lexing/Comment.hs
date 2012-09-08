@@ -1,9 +1,9 @@
-module Comment where
+module Lexing.Comment where
 
 import Text.ParserCombinators.Parsec
 
-import Tokens
-import LineTerminator
+import Lexing.Tokens
+import Lexing.LineTerminator
 
 comment :: Parser Token
 comment = do

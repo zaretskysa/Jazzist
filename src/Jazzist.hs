@@ -2,7 +2,7 @@
 
 import System.Environment
 
-import Lexer
+import Lexing.Lexer
 
 main :: IO ()
 main = do

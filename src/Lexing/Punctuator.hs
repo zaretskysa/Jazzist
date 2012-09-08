@@ -1,8 +1,8 @@
-module Punctuator where
+module Lexing.Punctuator where
 
 import Text.ParserCombinators.Parsec
 
-import Tokens
+import Lexing.Tokens
 
 punctuator :: Parser Token
 punctuator = do

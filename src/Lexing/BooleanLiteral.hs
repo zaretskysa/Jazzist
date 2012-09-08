@@ -1,8 +1,8 @@
-module BooleanLiteral where
+module Lexing.BooleanLiteral where
 
 import Text.ParserCombinators.Parsec
 
-import Tokens
+import Lexing.Tokens
 
 booleanLiteral :: Parser Token
 booleanLiteral = do

@@ -1,7 +1,8 @@
-module LineTerminator where
+module Lexing.LineTerminator where
 
-import Tokens
 import Text.ParserCombinators.Parsec
+
+import Lexing.Tokens
 
 lineTerminatorSequence :: Parser Char
 lineTerminatorSequence = do
