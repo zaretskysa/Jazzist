@@ -10,6 +10,7 @@ import StringLiteral
 import NumericLiteral
 import Comment
 import Identifier
+import Punctuator
 
 readTokens :: String -> String
 readTokens input = case parse parseTokens "js" input of
@@ -27,4 +28,5 @@ parseToken =
     <|> keyword
     <|> stringLiteral
     <|> numericLiteral
-    <|> comment
+    <|> try comment
+    <|> punctuator
