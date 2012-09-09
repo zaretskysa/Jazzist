@@ -1,6 +1,6 @@
 module Lexing.Lexer where
 
-import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec hiding (tokens, token)
 
 import Lexing.Tokens
 import Lexing.NullLiteral
@@ -12,16 +12,19 @@ import Lexing.Comment
 import Lexing.Identifier
 import Lexing.Punctuator
 
-readTokens :: String -> String
-readTokens input = case parse parseTokens "js" input of
+tryToMakeTokens :: String -> String
+tryToMakeTokens input = case tokenize input of
     Left err -> "No match: " ++ show err
     Right value -> "Found value: " ++ show value
 
-parseTokens :: Parser [Token]
-parseTokens = spaces >> endBy parseToken spaces
+tokenize :: String -> Either ParseError [Token]
+tokenize input = parse tokens "JsTokenizer" input
 
-parseToken :: Parser Token
-parseToken = 
+tokens :: Parser [Token]
+tokens = spaces >> endBy token spaces
+
+token :: Parser Token
+token = 
     identifier
     <|> nullLiteral
     <|> booleanLiteral

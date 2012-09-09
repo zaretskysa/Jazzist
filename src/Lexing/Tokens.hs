@@ -9,7 +9,7 @@ data Token =
     | BooleanLiteralToken Bool
     | CommentToken String
     | PunctuatorToken Punctuator
-    deriving (Show)
+    deriving (Show, Eq)
 
 data Keyword = 
     BreakKeyword
@@ -38,7 +38,7 @@ data Keyword =
     | VoidKeyword
     | WhileKeyword
     | WithKeyword
-    deriving (Show)
+    deriving (Show, Eq)
 
 data Punctuator = 
     LeftCurlyBracketPunctuator
@@ -89,4 +89,4 @@ data Punctuator =
     | BitwiseXorAssignPunctuator
     | DivPunctuator
     | DivAssignPunctuator
-    deriving (Show)
+    deriving (Show, Eq)
