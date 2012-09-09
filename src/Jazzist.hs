@@ -3,6 +3,7 @@
 import System.Environment
 
 import Lexing.Lexer
+import Parsing.Ast
 
 main :: IO ()
 main = do
