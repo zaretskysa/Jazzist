@@ -4,7 +4,9 @@ import Parsing.Data.Statement
 import Parsing.TokenParser
 
 statement :: TokenParser Statement
-statement = blockStatement
+statement = 
+    blockStatement
+    <|> emptyStatement
 
 blockStatement :: TokenParser Statement
 blockStatement = do
@@ -13,3 +15,7 @@ blockStatement = do
     acceptToken $ PunctuatorToken RightCurlyBracketPunctuator
     return $ BlockStatement stmts
 
+emptyStatement :: TokenParser Statement
+emptyStatement = do
+    acceptToken $ PunctuatorToken SemicolonPunctuator
+    return EmptyStatement
