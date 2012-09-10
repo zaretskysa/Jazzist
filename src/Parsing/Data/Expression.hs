@@ -1,9 +1,5 @@
 module Parsing.Data.Expression where
 
-
-
-
-
 -- Assignment expression
 
 data AssignmentExpression = 
@@ -33,10 +29,17 @@ data ConditionalExpression =
     | TeranaryOperatorConditionalExpression LogicalOrExpression AssignmentExpression AssignmentExpression
     deriving (Show)
 
-
-
-
-
+--data AssignmentExpressionNoIn = 
+--    ConditionalAssignmentExpressionNoIn ConditionalExpressionNoIn
+--    | AssignmentOperatorExpression LeftHandSideExpression AssignmentOperator AssignmentExpressionNoIn
+--    deriving (Show)
+--
+--type MaybeAssignmentExpressionNoIn = Maybe AssignmentExpressionNoIn
+--
+--data ConditionalExpressionNoIn = 
+--    LogicalOrConditionalExpressionNoIn LogicalOrExpressionNoIn
+--    | TeranaryOperatorConditionalExpressionNoIn LogicalOrExpressionNoIn AssignmentExpression AssignmentExpressionNoIn
+--    deriving (Show)
 
 -- Left hand side expressions
 
@@ -66,10 +69,6 @@ data LeftHandSideExpression =
     NewLHSExpression NewExpression
     | CallLHSExpression CallExpression
     deriving (Show)
-
-
-
-
 
  -- Primary expression
 
@@ -105,10 +104,6 @@ data PropertyName =
 
 data FunctionBody = FunctionBody deriving (Show)
 
-
-
-
-
 -- Logical Expressions
 
 data LogicalAndExpression = 
@@ -121,16 +116,19 @@ data LogicalOrExpression =
     | DisjunctionLogicalOrExpression LogicalOrExpression LogicalAndExpression
     deriving (Show)
 
--- 
-
-------------------------------------
+-- Comma operator
 
 data Expression = 
     Expression [AssignmentExpression] -- TODO: non empty
     deriving (Show)
 
+type MaybeExpression = Maybe Expression
 
-
+--data ExpressionNoIn =
+--    ExpressionNoIn [AssignmentExpressionNoIn]
+--    deriving (Show)
+--
+--type MaybeExpressionNoIn = Maybe ExpressionNoIn
 
 -- Binary bitwise operators
 
@@ -149,10 +147,6 @@ data BitwiseOrExpression =
     | BinaryBitwiseOrExpression BitwiseOrExpression BitwiseXorExpression
     deriving (Show)
 
-
-
-
-
 -- Equality operators
 
 data EqualityExpression =
@@ -162,9 +156,6 @@ data EqualityExpression =
     | StrictEqualsEqualityExpression EqualityExpression RelationalExpression
     | StrictNotEqualsEqualityExpression EqualityExpression RelationalExpression
     deriving (Show)
-
-
-
 
 -- Relational operators
 
@@ -178,8 +169,6 @@ data RelationalExpression =
     | InRelationalExpression RelationalExpression ShiftExpression
     deriving (Show)
 
-
-
 -- Bitwise shift operators
 
 data ShiftExpression = 
@@ -189,11 +178,6 @@ data ShiftExpression =
     | UnsignedRightShiftExpression ShiftExpression AdditiveExpression
     deriving (Show)
 
-
-
-
-
-
 -- Additive operators
 
 data AdditiveExpression = 
@@ -201,9 +185,6 @@ data AdditiveExpression =
     | PlusAdditiveExpression AdditiveExpression MultiplicativeExpression
     | MinusAdditiveExpression AdditiveExpression MultiplicativeExpression
     deriving (Show)
-
-
-
 
 -- Multiplicative operators
 
@@ -213,9 +194,6 @@ data MultiplicativeExpression =
     | DivMultiplicativeExpression MultiplicativeExpression UnaryExpression
     | ModulusMultiplicativeExpression MultiplicativeExpression UnaryExpression
     deriving (Show)
-
-
-
 
 -- Unary operators
 
@@ -231,10 +209,6 @@ data UnaryExpression =
     | BitwiseNotUnaryExpression UnaryExpression
     | LogicalNotUnaryExpression UnaryExpression
     deriving (Show)
-
-
-
-
 
 -- Postfix expressions
 

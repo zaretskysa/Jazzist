@@ -13,9 +13,9 @@ blockStatement = do
     acceptToken $ PunctuatorToken LeftCurlyBracketPunctuator
     stmts <- many statement
     acceptToken $ PunctuatorToken RightCurlyBracketPunctuator
-    return $ BlockStatement stmts
+    return $ BlockStmt $ Block stmts
 
 emptyStatement :: TokenParser Statement
 emptyStatement = do
     acceptToken $ PunctuatorToken SemicolonPunctuator
-    return EmptyStatement
+    return EmptyStmt
