@@ -22,5 +22,5 @@ data Statement =
 
 -- variable name and initializer
 data VariableDeclaration = 
-    VariableDeclaration String (Maybe AssignmentExpression)
+    VariableDeclaration String MaybeAssignmentExpression
     deriving (Show)
