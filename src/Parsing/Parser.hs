@@ -2,12 +2,11 @@ module Parsing.Parser where
 
 import Text.ParserCombinators.Parsec
 
-import Parsing.Data.Program
+import Parsing.Ast
 import Lexing.Tokens
 import Lexing.Lexer (tokenize)
 import Parsing.TokenParser
-import Parsing.Data.Program
-import Parsing.Parsers.Program
+import Parsing.ProgramParser
 
 tryToParseString :: String -> String
 tryToParseString input = case parseString input of
