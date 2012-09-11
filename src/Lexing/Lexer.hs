@@ -27,7 +27,7 @@ token :: Parser Token
 token = 
     identifier
     <|> nullLiteral
-    <|> booleanLiteral
+    <|> try booleanLiteral
     <|> keyword
     <|> stringLiteral
     <|> numericLiteral

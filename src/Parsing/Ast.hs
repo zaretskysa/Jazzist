@@ -158,10 +158,14 @@ data PrimaryExpression =
     ThisPrimaryExpression
     | IdentifierPrimaryExpression String
     | LiteralPrimaryExpression Literal
-    | ArrayLiteralPrimaryExpression [MaybeAssignmentExpression]
-    | ObjectLiteralPrimaryExpression [PropertyAssignment]
+    | ArrayLiteralPrimaryExpression ArrayLiteral
+    | ObjectLiteralPrimaryExpression ObjectLiteral
     | ExpressionPrimaryExpression Expression
     deriving (Show)
+
+data ObjectLiteral = ObjectLiteral [PropertyAssignment] deriving (Show)
+
+data ArrayLiteral = ArrayLiteral [MaybeAssignmentExpression] deriving (Show)
 
 data Literal = 
     NullLiteral
@@ -171,9 +175,9 @@ data Literal =
 --  | RegularExpressionLiteral TODO
     deriving (Show)
 
-data PropertyAssignment = 
+data PropertyAssignment =
     FieldPropertyAssignment PropertyName AssignmentExpression
-    | GetterPropertyAssignment FunctionBody
+    | GetterPropertyAssignment PropertyName FunctionBody
     | SetterPropertyAssignment PropertyName PropertySetParameterList FunctionBody
     deriving (Show)
 
@@ -184,7 +188,7 @@ data PropertyName =
     | NumericPropertyName Double
     deriving (Show)
 
-data FunctionBody = FunctionBody deriving (Show)
+data FunctionBody = FunctionBody [SourceElement] deriving (Show)
 
 -- Logical Expressions
 

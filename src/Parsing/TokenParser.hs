@@ -8,7 +8,11 @@ module Parsing.TokenParser
     identifierToken,
     punctuatorToken,
     keywordToken,
-    nullLiteralToken
+    nullLiteralToken,
+    booleanLiteralToken,
+    numericLiteralToken,
+    stringLiteralToken,
+    identifierName
 ) where
 
 import Text.ParserCombinators.Parsec.Combinator
@@ -18,6 +22,12 @@ import Text.ParserCombinators.Parsec.Pos
 import Lexing.Tokens
 
 type TokenParser a = GenParser Token () a
+
+maybeParse p = justParse p <|> return Nothing
+
+justParse p = try $ do
+    value <- p
+    return $ Just value
 
 acceptToken :: Token -> TokenParser Token
 acceptToken x = token showTok posFromTok testTok
@@ -38,7 +48,30 @@ identifierToken = try $ do
     t <- acceptAnyToken 
     case t of
         IdentifierToken id -> return id
-        otherwise -> fail "expecting identifier token"
+        otherwise -> fail "IdentifierToken"
+
+identifierName :: TokenParser String
+identifierName = 
+    identifierToken 
+    <|> identifierNameFromKeyword
+    <|> identifierNameFromNullLiteral
+    <|> identifierNameFromBoleanLiteral
+    <?> "IdentifierName"
+
+-- TODO: convert keyword to string
+identifierNameFromKeyword :: TokenParser String
+identifierNameFromKeyword = do
+    key <- anyKeywordToken
+    return "keywordIdentifierName"
+
+identifierNameFromNullLiteral :: TokenParser String
+identifierNameFromNullLiteral = nullLiteralToken >> return "null"
+
+-- TODO: convert bool to string
+identifierNameFromBoleanLiteral :: TokenParser String
+identifierNameFromBoleanLiteral = do
+    bool <- booleanLiteralToken
+    return "boolIdentifierName"
 
 punctuatorToken :: Punctuator -> TokenParser Punctuator
 punctuatorToken p = try $ do
@@ -46,8 +79,15 @@ punctuatorToken p = try $ do
     case tok of
         PunctuatorToken x -> if x == p 
             then return p 
-            else fail $ "expecting punctuator: " ++ show p
-        otherwise -> fail "expecting punctuator token"
+            else fail $ "Punctuator " ++ show p
+        otherwise -> fail "PunctuatoToken"
+
+anyKeywordToken :: TokenParser Keyword
+anyKeywordToken = try $ do
+    tok <- acceptAnyToken 
+    case tok of
+        KeywordToken key -> return key
+        otherwise -> fail "KeywordToken"
 
 keywordToken :: Keyword -> TokenParser Keyword
 keywordToken k = try $ do
@@ -55,21 +95,37 @@ keywordToken k = try $ do
     case tok of
         KeywordToken x -> if x == k 
             then return k
-            else fail $ "expecting keyword: " ++ show k
-        otherwise -> fail "expecting keyword token"
+            else fail $ "Keyword " ++ show k
+        otherwise -> fail "KeywordToken"
 
 nullLiteralToken :: TokenParser ()
 nullLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
         NullLiteralToken -> return ()
-        otherwise -> fail "expecting null literal token"
+        otherwise -> fail "NullLiteralToken"
+
+booleanLiteralToken :: TokenParser Bool
+booleanLiteralToken = try $ do
+    tok <- acceptAnyToken 
+    case tok of
+        BooleanLiteralToken bool -> return bool
+        otherwise -> fail "BooleanLiteralToken"
+
+numericLiteralToken :: TokenParser Double
+numericLiteralToken = try $ do
+    tok <- acceptAnyToken 
+    case tok of
+        NumericLiteralToken num -> return num
+        otherwise -> fail "NumericLiteralToken"
+
+stringLiteralToken :: TokenParser String
+stringLiteralToken = try $ do
+    tok <- acceptAnyToken 
+    case tok of
+        StringLiteralToken str -> return str
+        otherwise -> fail "StringLiteralToken"
 
 
-maybeParse p = justParse p <|> return Nothing
-
-justParse p = do
-    value <- p
-    return $ Just value
 
 

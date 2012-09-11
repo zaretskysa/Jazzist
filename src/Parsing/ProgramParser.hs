@@ -1,7 +1,11 @@
 module Parsing.ProgramParser where
 
+import Debug.Trace
+
 import Parsing.Ast
 import Parsing.TokenParser
+import Parsing.Parsers.Literal
+import Parsing.Parsers.TokenHelper
 
 program :: TokenParser Program
 program = do
@@ -32,21 +36,19 @@ blockStatement = do
 
 block :: TokenParser Block
 block = do
-    punctuatorToken LeftCurlyBracketPunctuator
+    leftCurlyBracket
     stmts <- many statement
-    punctuatorToken RightCurlyBracketPunctuator
+    rightCurlyBracket
     return $ Block stmts
 
 emptyStatement :: TokenParser Statement
-emptyStatement = do
-    punctuatorToken SemicolonPunctuator
-    return EmptyStmt
+emptyStatement = semicolon >> return EmptyStmt
 
 variableStatement :: TokenParser Statement
 variableStatement = do
-    keywordToken VarKeyword
+    var
     varDeclList <- many1 variableDeclaration  
-    punctuatorToken SemicolonPunctuator
+    semicolon
     return $ VariableStmt varDeclList
 
 variableDeclaration :: TokenParser VariableDeclaration
@@ -60,12 +62,12 @@ maybeInitializer = maybeParse initializer
 
 initializer :: TokenParser Initializer
 initializer = do
-    punctuatorToken AssignPunctuator
+    assign
     assignExpr <- assignmentExpression
     return $ Initializer assignExpr
 
 assignmentExpression :: TokenParser AssignmentExpression
-assignmentExpression = conditionalAssignmentExpression <|> assignmentOperatorExpression
+assignmentExpression = conditionalAssignmentExpression -- <|> assignmentOperatorExpression
 
 conditionalAssignmentExpression :: TokenParser AssignmentExpression
 conditionalAssignmentExpression = do
@@ -76,7 +78,7 @@ assignmentOperatorExpression :: TokenParser AssignmentExpression
 assignmentOperatorExpression = undefined
 
 conditionalExpression :: TokenParser ConditionalExpression
-conditionalExpression = logicalOrContionalExpression <|> teranaryOperatorConditionalExpression
+conditionalExpression = logicalOrContionalExpression -- <|> teranaryOperatorConditionalExpression
 
 logicalOrContionalExpression :: TokenParser ConditionalExpression
 logicalOrContionalExpression = do
@@ -87,7 +89,7 @@ teranaryOperatorConditionalExpression :: TokenParser ConditionalExpression
 teranaryOperatorConditionalExpression = undefined
 
 logicalOrExpression :: TokenParser LogicalOrExpression
-logicalOrExpression = unaryLogicalOrExpression <|> binaryLogicalOrExpression
+logicalOrExpression = unaryLogicalOrExpression -- <|> binaryLogicalOrExpression
 
 unaryLogicalOrExpression :: TokenParser LogicalOrExpression
 unaryLogicalOrExpression = do
@@ -101,7 +103,7 @@ binaryLogicalOrExpression = do
     return $ BinaryLogicalOrExpression logicalOr logicalAnd
 
 logicalAndExpression :: TokenParser LogicalAndExpression
-logicalAndExpression = unaryLogicalAndExpression <|> binaryLogicalAndExpression
+logicalAndExpression = unaryLogicalAndExpression -- <|> binaryLogicalAndExpression
 
 unaryLogicalAndExpression :: TokenParser LogicalAndExpression
 unaryLogicalAndExpression = do
@@ -115,7 +117,7 @@ binaryLogicalAndExpression = do
     return $ BinaryLogicalAndExpression logicalAnd bitwiseOr
 
 bitwiseOrExpression :: TokenParser BitwiseOrExpression
-bitwiseOrExpression = unaryBitwiseOrExpression <|> binaryBitwiseOrExpression
+bitwiseOrExpression = unaryBitwiseOrExpression -- <|> binaryBitwiseOrExpression
 
 unaryBitwiseOrExpression :: TokenParser BitwiseOrExpression
 unaryBitwiseOrExpression = do
@@ -129,7 +131,7 @@ binaryBitwiseOrExpression = do
     return $ BinaryBitwiseOrExpression bitwiseOr bitwiseXor
 
 bitwiseXorExpression :: TokenParser BitwiseXorExpression
-bitwiseXorExpression = unaryBitwiseXorExpression <|> binaryBitwiseXorExpression
+bitwiseXorExpression = unaryBitwiseXorExpression -- <|> binaryBitwiseXorExpression
 
 unaryBitwiseXorExpression :: TokenParser BitwiseXorExpression
 unaryBitwiseXorExpression = do
@@ -143,10 +145,12 @@ binaryBitwiseXorExpression = do
     return $ BinaryBitwiseXorExpression bitwiseXor bitwiseAnd
 
 bitwiseAndExpression :: TokenParser BitwiseAndExpression
-bitwiseAndExpression = unaryBitwiseAndExpression <|> binaryBitwiseAndExpression
+bitwiseAndExpression = unaryBitwiseAndExpression -- <|> binaryBitwiseAndExpression
 
 unaryBitwiseAndExpression :: TokenParser BitwiseAndExpression
-unaryBitwiseAndExpression = undefined
+unaryBitwiseAndExpression = do
+    equality <- equalityExpression
+    return $ UnaryBitwiseAndExpression equality
 
 binaryBitwiseAndExpression :: TokenParser BitwiseAndExpression
 binaryBitwiseAndExpression = do
@@ -157,10 +161,10 @@ binaryBitwiseAndExpression = do
 equalityExpression :: TokenParser EqualityExpression
 equalityExpression = 
     relationalEqualityExpression
-    <|> equalsEqualityExpression
-    <|> notEqualsEqualityExpression
-    <|> strictEqualsEqualityExpression
-    <|> strictNotEqualsEqualityExpression
+ --   <|> equalsEqualityExpression
+ --   <|> notEqualsEqualityExpression
+ --   <|> strictEqualsEqualityExpression
+ --   <|> strictNotEqualsEqualityExpression
 
 relationalEqualityExpression :: TokenParser EqualityExpression
 relationalEqualityExpression = do
@@ -194,12 +198,12 @@ strictNotEqualsEqualityExpression = do
 relationalExpression :: TokenParser RelationalExpression
 relationalExpression = 
     shiftRelationalExpression
-    <|> lessThanRelationalExpression
-    <|> greaterThanRelationalExpression
-    <|> lessThanEqualsRelationalExpression
-    <|> greaterThanEqualsRelationalExpression
-    <|> instanceOfRelationalExpression
-    <|> inRelationalExpression
+--    <|> lessThanRelationalExpression
+--    <|> greaterThanRelationalExpression
+--    <|> lessThanEqualsRelationalExpression
+ --   <|> greaterThanEqualsRelationalExpression
+ --   <|> instanceOfRelationalExpression
+ --   <|> inRelationalExpression
 
 shiftRelationalExpression :: TokenParser RelationalExpression
 shiftRelationalExpression = do
@@ -245,9 +249,9 @@ inRelationalExpression = do
 shiftExpression :: TokenParser ShiftExpression
 shiftExpression = 
     additiveShiftExpression
-    <|> leftShiftExpression
-    <|> rightShiftExpression
-    <|> unsignedRightShiftExpression
+--    <|> leftShiftExpression
+--    <|> rightShiftExpression
+--    <|> unsignedRightShiftExpression
 
 additiveShiftExpression :: TokenParser ShiftExpression
 additiveShiftExpression = do
@@ -275,8 +279,8 @@ unsignedRightShiftExpression = do
 additiveExpression :: TokenParser AdditiveExpression
 additiveExpression = 
     multAdditiveExpression
-    <|> plusAdditiveExpression
-    <|> minusAdditiveExpression
+--    <|> plusAdditiveExpression
+--    <|> minusAdditiveExpression
 
 multAdditiveExpression :: TokenParser AdditiveExpression
 multAdditiveExpression = do
@@ -298,9 +302,9 @@ minusAdditiveExpression = do
 multiplicativeExpression :: TokenParser MultiplicativeExpression
 multiplicativeExpression = 
     unaryMultiplicativeExpression
-    <|> mulMultiplicativeExpression
-    <|> divMultiplicativeExpression
-    <|> modulusMultiplicativeExpression
+--    <|> mulMultiplicativeExpression
+--    <|> divMultiplicativeExpression
+--    <|> modulusMultiplicativeExpression
 
 unaryMultiplicativeExpression :: TokenParser MultiplicativeExpression
 unaryMultiplicativeExpression = do
@@ -328,15 +332,15 @@ modulusMultiplicativeExpression = do
 unaryExpression :: TokenParser UnaryExpression
 unaryExpression = 
     postfixUnaryExpression
-    <|> deleteUnaryExpression
-    <|> voidUnaryExpression
-    <|> typeOfUnaryExpression
-    <|> incrementPlusUnaryExpression
-    <|> incrementMinusUnaryExpression
-    <|> plusUnaryExpression
-    <|> minusUnaryExpression
-    <|> bitwiseNotUnaryExpression
-    <|> logicalNotUnaryExpression
+--    <|> deleteUnaryExpression
+ --   <|> voidUnaryExpression
+ --   <|> typeOfUnaryExpression
+ --   <|> incrementPlusUnaryExpression
+--    <|> incrementMinusUnaryExpression
+--    <|> plusUnaryExpression
+--    <|> minusUnaryExpression
+--    <|> bitwiseNotUnaryExpression
+--    <|> logicalNotUnaryExpression
 
 postfixUnaryExpression :: TokenParser UnaryExpression
 postfixUnaryExpression = do
@@ -391,8 +395,8 @@ logicalNotUnaryExpression = do
 postfixExpression :: TokenParser PostfixExpression
 postfixExpression = 
     lhsPostfixExpression
-    <|> incrementPlusPostfixExpression
-    <|> incrementMinusPostfixExpression
+--    <|> incrementPlusPostfixExpression
+--    <|> incrementMinusPostfixExpression
 
 lhsPostfixExpression :: TokenParser PostfixExpression
 lhsPostfixExpression = do 
@@ -413,7 +417,7 @@ incrementMinusPostfixExpression = do
 leftHandSideExpression :: TokenParser LeftHandSideExpression
 leftHandSideExpression = 
     newLHSExpression
-    <|> callLHSExpression
+--    <|> callLHSExpression
 
 newLHSExpression :: TokenParser LeftHandSideExpression
 newLHSExpression = do
@@ -428,7 +432,7 @@ callLHSExpression = do
 newExpression :: TokenParser NewExpression
 newExpression = 
     memberNewExpression
-    <|> newNewExpression
+--    <|> newNewExpression
 
 memberNewExpression :: TokenParser NewExpression
 memberNewExpression = do
@@ -451,23 +455,111 @@ callExpression = undefined
 
 primaryExpression :: TokenParser PrimaryExpression
 primaryExpression = 
-    -- <|>
-    literalPrimaryExpression
+    thisPrimaryExpression
+    <|> identifierPrimaryExpression
+    <|> literalPrimaryExpression
+    <|> arrayLiteralPrimaryExpression
+    <|> objectLiteralPrimaryExpression
+    -- <|> expressionPrimaryExpression
+    <?> "PrimaryExpression"
+
+identifierPrimaryExpression :: TokenParser PrimaryExpression
+identifierPrimaryExpression = do
+    str <- identifierToken
+    return $ IdentifierPrimaryExpression str
+
+thisPrimaryExpression :: TokenParser PrimaryExpression
+thisPrimaryExpression = keywordToken ThisKeyword >> return ThisPrimaryExpression
 
 literalPrimaryExpression :: TokenParser PrimaryExpression
 literalPrimaryExpression = do
     lit <- literal
     return $ LiteralPrimaryExpression lit
 
+arrayLiteralPrimaryExpression :: TokenParser PrimaryExpression
+arrayLiteralPrimaryExpression = do
+    arr <- arrayLiteral
+    return $ ArrayLiteralPrimaryExpression arr
 
-literal :: TokenParser Literal
-literal = nullLiteral -- <|>
+arrayLiteral :: TokenParser ArrayLiteral
+arrayLiteral = do
+    leftSquareBracket
+    elements <- arrayLiteralElements
+    rightSquareBracket
+    return $ ArrayLiteral elements
 
-nullLiteral :: TokenParser Literal
-nullLiteral = nullLiteralToken >> return NullLiteral
+arrayLiteralElements :: TokenParser [MaybeAssignmentExpression]
+arrayLiteralElements = do
+    assignments <- sepBy (maybeParse assignmentExpression) comma
+    if null assignments
+        then return []
+        else case last assignments of
+            Nothing -> return $ reverse $ drop 1 (reverse assignments)
+            otherwise -> return assignments
 
+objectLiteralPrimaryExpression :: TokenParser PrimaryExpression
+objectLiteralPrimaryExpression = do
+    leftCurlyBracket
+    properties <- sepEndBy propertyAssignment comma
+    rightCurlyBracket
+    return $ ObjectLiteralPrimaryExpression $ ObjectLiteral properties
 
+propertyAssignment :: TokenParser PropertyAssignment
+propertyAssignment = 
+    try fieldPropertyAssignment
+    <|> getterPropertyAssignment
+    <|> setterPropertyAssignment
+   <?> "PropertyAssignment"
 
+fieldPropertyAssignment :: TokenParser PropertyAssignment
+fieldPropertyAssignment = do
+    name <- propertyName
+    colon
+    assignment <- assignmentExpression
+    return $ FieldPropertyAssignment name assignment
+
+propertyName :: TokenParser PropertyName
+propertyName = 
+    stringPropertyName 
+    <|> numericPropertyName
+    <?> "PropertyName"
+
+stringPropertyName :: TokenParser PropertyName
+stringPropertyName = do
+    id <- identifierName <|> stringLiteralToken
+    return $ StringPropertyName id
+
+numericPropertyName :: TokenParser PropertyName
+numericPropertyName = do
+    num <- numericLiteralToken
+    return $ NumericPropertyName num
+
+getterPropertyAssignment :: TokenParser PropertyAssignment
+getterPropertyAssignment = do
+    get
+    name <- propertyName
+    roundBrackets
+    leftCurlyBracket
+    body <- functionBody
+    rightCurlyBracket
+    return $ GetterPropertyAssignment name body
+
+setterPropertyAssignment :: TokenParser PropertyAssignment
+setterPropertyAssignment = do
+    set
+    name <- propertyName
+    leftRoundBracket
+    param <- identifierToken
+    rightRoundBracket
+    leftCurlyBracket
+    body <- functionBody
+    rightCurlyBracket
+    return $ SetterPropertyAssignment name param body
+
+functionBody :: TokenParser FunctionBody
+functionBody = do
+    srcElements <- many sourceElement
+    return $ FunctionBody srcElements
 
 
 
