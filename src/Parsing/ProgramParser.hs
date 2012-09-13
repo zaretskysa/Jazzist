@@ -28,6 +28,15 @@ statement =
     blockStatement
     <|> emptyStatement
     <|> variableStatement
+    <|> expressionStatement
+
+expressionStatement :: TokenParser Statement
+expressionStatement = do
+    try $ notFollowedBy leftCurlyBracket
+    try $ notFollowedBy function
+    expr <- expression
+    semicolon
+    return $ ExpressionStmt expr
 
 blockStatement :: TokenParser Statement
 blockStatement = do
@@ -332,15 +341,15 @@ modulusMultiplicativeExpression = do
 unaryExpression :: TokenParser UnaryExpression
 unaryExpression = 
     postfixUnaryExpression
---    <|> deleteUnaryExpression
- --   <|> voidUnaryExpression
- --   <|> typeOfUnaryExpression
- --   <|> incrementPlusUnaryExpression
---    <|> incrementMinusUnaryExpression
---    <|> plusUnaryExpression
---    <|> minusUnaryExpression
---    <|> bitwiseNotUnaryExpression
---    <|> logicalNotUnaryExpression
+    <|> deleteUnaryExpression
+    <|> voidUnaryExpression
+    <|> typeOfUnaryExpression
+    <|> incrementPlusUnaryExpression
+    <|> incrementMinusUnaryExpression
+    <|> plusUnaryExpression
+    <|> minusUnaryExpression
+    <|> bitwiseNotUnaryExpression
+    <|> logicalNotUnaryExpression
 
 postfixUnaryExpression :: TokenParser UnaryExpression
 postfixUnaryExpression = do
@@ -349,46 +358,55 @@ postfixUnaryExpression = do
 
 deleteUnaryExpression :: TokenParser UnaryExpression
 deleteUnaryExpression = do
+    delete
     unary <- unaryExpression
-    return $ DeleteUnaryExpression unary
+    return $ VoidUnaryExpression unary
 
 voidUnaryExpression :: TokenParser UnaryExpression
 voidUnaryExpression = do
+    void
     unary <- unaryExpression
     return $ VoidUnaryExpression unary
 
 typeOfUnaryExpression :: TokenParser UnaryExpression
 typeOfUnaryExpression = do
+    typeOf
     unary <- unaryExpression
     return $ TypeOfUnaryExpression unary
 
 incrementPlusUnaryExpression :: TokenParser UnaryExpression
 incrementPlusUnaryExpression = do
+    incrementPlus
     unary <- unaryExpression
     return $ IncrementPlusUnaryExpression unary
 
 incrementMinusUnaryExpression :: TokenParser UnaryExpression
 incrementMinusUnaryExpression = do
+    incrementMinus
     unary <- unaryExpression
     return $ IncrementMinusUnaryExpression unary
 
 plusUnaryExpression :: TokenParser UnaryExpression
 plusUnaryExpression = do
+    plus
     unary <- unaryExpression
     return $ PlusUnaryExpression unary
 
 minusUnaryExpression :: TokenParser UnaryExpression
 minusUnaryExpression = do
+    minus
     unary <- unaryExpression
     return $ MinusUnaryExpression unary
 
 bitwiseNotUnaryExpression :: TokenParser UnaryExpression
 bitwiseNotUnaryExpression = do
+    bitwiseNot
     unary <- unaryExpression
     return $ BitwiseNotUnaryExpression unary
 
 logicalNotUnaryExpression :: TokenParser UnaryExpression
 logicalNotUnaryExpression = do
+    logicalNot
     unary <- unaryExpression
     return $ LogicalNotUnaryExpression unary
 

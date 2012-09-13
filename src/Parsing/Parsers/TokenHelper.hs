@@ -38,7 +38,25 @@ roundBrackets = leftRoundBracket >> rightRoundBracket >> return ()
 assign :: TokenParser Punctuator
 assign = punctuatorToken AssignPunctuator
 
+incrementPlus :: TokenParser Punctuator
+incrementPlus = punctuatorToken IncrementPlusPunctuator
 
+incrementMinus :: TokenParser Punctuator
+incrementMinus = punctuatorToken IncrementMinusPunctuator
+
+plus :: TokenParser Punctuator
+plus = punctuatorToken PlusPunctuator
+
+minus :: TokenParser Punctuator
+minus = punctuatorToken MinusPunctuator
+
+bitwiseNot :: TokenParser Punctuator
+bitwiseNot = punctuatorToken BitwiseNotPunctuator
+
+logicalNot :: TokenParser Punctuator
+logicalNot = punctuatorToken LogicalNotPunctuator
+
+-------------------------------------------------------
 
 var :: TokenParser Keyword
 var = keywordToken VarKeyword
@@ -51,6 +69,15 @@ function = keywordToken FunctionKeyword
 
 new :: TokenParser Keyword
 new = keywordToken NewKeyword
+
+delete :: TokenParser Keyword
+delete = keywordToken DeleteKeyword
+
+void :: TokenParser Keyword
+void = keywordToken VoidKeyword
+
+typeOf :: TokenParser Keyword
+typeOf = keywordToken TypeOfKeyword
 
 -- get and set are not reserved keywords (wtf??)
 get :: TokenParser ()

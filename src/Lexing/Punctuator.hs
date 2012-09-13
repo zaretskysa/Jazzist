@@ -27,12 +27,12 @@ punctuator' = do
     <|> try equals
     <|> try notEquals
     <|> try strictEquals
-    <|> strictNotEquals
+    <|> try strictNotEquals
+    <|> try incrementPlus
     <|> try plus
     <|> try minus
     <|> try mul
     <|> try modulus
-    <|> incrementPlus
     <|> incrementMinus
     <|> try leftShift
     <|> try rightShift
@@ -126,7 +126,7 @@ modulus = do
     notFollowedBy $ char '='
     return ModulusPunctuator
 
-incrementPlus = string "++" >> return PlusPunctuator
+incrementPlus = string "++" >> return IncrementPlusPunctuator
 
 incrementMinus = string "--" >> return IncrementMinusPunctuator
 
