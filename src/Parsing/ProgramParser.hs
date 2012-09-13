@@ -447,6 +447,7 @@ memberExpression = memberExpression'
 --    <|> newMemberExpression
 --      <?> "MemberExpression"
 
+-- left recursion... BURN IN HELL!!
 memberExpression' :: TokenParser MemberExpression
 memberExpression' = do
     primary <- primaryMemberExpression <|> functionMemberExpression
@@ -457,12 +458,24 @@ restOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
 restOfMemberExpression = try nonEmptyRestOfMemberExpression <|> emptyRestOfMemberExpression
 
 nonEmptyRestOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
-nonEmptyRestOfMemberExpression = do
+nonEmptyRestOfMemberExpression = 
+    restOfAccessByBracketMemberExpression
+    <|> restOfAccessByDotMemberExpression
+
+restOfAccessByBracketMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+restOfAccessByBracketMemberExpression = do
     leftSquareBracket
     expr <- expression
     rightSquareBracket
     buildFunc <- restOfMemberExpression
-    return $ \ primary -> buildFunc $ PropertyAccessByBracketsMemberExpression primary expr
+    return $ \ memberExpr -> buildFunc $ PropertyAccessByBracketsMemberExpression memberExpr expr
+
+restOfAccessByDotMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+restOfAccessByDotMemberExpression = do
+    dot
+    id <- identifierToken
+    buildFunc <- restOfMemberExpression
+    return $ \ memberExpr -> buildFunc $ PropertyAccessByDotMemberExpression memberExpr id
 
 emptyRestOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
 emptyRestOfMemberExpression = return (\ primary -> primary)

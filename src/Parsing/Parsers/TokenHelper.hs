@@ -8,6 +8,9 @@ comma = punctuatorToken CommaPunctuator
 colon :: TokenParser Punctuator
 colon = punctuatorToken ColonPunctuator 
 
+dot :: TokenParser Punctuator
+dot = punctuatorToken DotPunctuator 
+
 semicolon :: TokenParser Punctuator
 semicolon = punctuatorToken SemicolonPunctuator 
 
