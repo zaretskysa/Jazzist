@@ -26,7 +26,7 @@ tokens = spaces >> endBy token spaces
 token :: Parser Token
 token = 
     identifier
-    <|> nullLiteral
+    <|> try nullLiteral
     <|> try booleanLiteral
     <|> keyword
     <|> stringLiteral

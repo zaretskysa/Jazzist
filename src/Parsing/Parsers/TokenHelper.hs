@@ -49,6 +49,8 @@ this = keywordToken ThisKeyword
 function :: TokenParser Keyword
 function = keywordToken FunctionKeyword
 
+new :: TokenParser Keyword
+new = keywordToken NewKeyword
 
 -- get and set are not reserved keywords (wtf??)
 get :: TokenParser ()

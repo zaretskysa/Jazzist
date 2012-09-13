@@ -126,7 +126,8 @@ data ConditionalExpression =
 -- Left hand side expressions
 
 data MemberExpression = 
-    PrimaryMemberExpression PrimaryExpression
+    DummyMemberExpression
+    | PrimaryMemberExpression PrimaryExpression
     | FunctionMemberExpression FunctionExpression
     | PropertyAccessByBracketsMemberExpression MemberExpression Expression
     | PropertyAccessByDotMemberExpression MemberExpression String

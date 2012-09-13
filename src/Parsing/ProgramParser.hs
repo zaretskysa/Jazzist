@@ -430,8 +430,8 @@ callLHSExpression = do
 
 newExpression :: TokenParser NewExpression
 newExpression = 
-    memberNewExpression
---    <|> newNewExpression
+    try memberNewExpression
+    <|> newNewExpression
 
 memberNewExpression :: TokenParser NewExpression
 memberNewExpression = do
@@ -440,17 +440,11 @@ memberNewExpression = do
 
 memberExpression :: TokenParser MemberExpression
 memberExpression = memberExpression'
---      try primaryMemberExpression
---    <|> functionMemberExpression
---      <|> try propertyAccessByBracketsMemberExpression
---    <|> propertyAccessByDotMemberExpression
---    <|> newMemberExpression
---      <?> "MemberExpression"
 
 -- left recursion... BURN IN HELL!!
 memberExpression' :: TokenParser MemberExpression
 memberExpression' = do
-    primary <- primaryMemberExpression <|> functionMemberExpression
+    primary <- primaryMemberExpression <|> functionMemberExpression <|> newMemberExpression
     buildFunc <- restOfMemberExpression
     return $ buildFunc primary
 
@@ -499,7 +493,18 @@ propertyAccessByDotMemberExpression :: TokenParser MemberExpression
 propertyAccessByDotMemberExpression = undefined
 
 newMemberExpression :: TokenParser MemberExpression
-newMemberExpression = undefined
+newMemberExpression = do
+    new 
+    memberExpr <- memberExpression
+    args <- arguments
+    return $ NewMemberExpression memberExpr args
+
+arguments :: TokenParser [AssignmentExpression]
+arguments = do
+    leftRoundBracket
+    args <- sepBy assignmentExpression comma
+    rightRoundBracket
+    return args
 
 primaryMemberExpression :: TokenParser MemberExpression
 primaryMemberExpression = do
@@ -507,7 +512,10 @@ primaryMemberExpression = do
     return $ PrimaryMemberExpression primary
 
 newNewExpression :: TokenParser NewExpression
-newNewExpression = undefined
+newNewExpression = do
+    new
+    newExpr <- newExpression
+    return $ NewNewExpression newExpr
 
 callExpression :: TokenParser CallExpression
 callExpression = undefined
