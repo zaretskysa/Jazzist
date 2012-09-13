@@ -47,7 +47,7 @@ emptyStatement = semicolon >> return EmptyStmt
 variableStatement :: TokenParser Statement
 variableStatement = do
     var
-    varDeclList <- many1 variableDeclaration  
+    varDeclList <- sepBy1 variableDeclaration comma
     semicolon
     return $ VariableStmt varDeclList
 
@@ -408,7 +408,6 @@ incrementPlusPostfixExpression = do
     lhs <- leftHandSideExpression
     return $ IncrementPlusPostfixExpression lhs
 
-
 incrementMinusPostfixExpression :: TokenParser PostfixExpression
 incrementMinusPostfixExpression = do 
     lhs <- leftHandSideExpression
@@ -440,7 +439,54 @@ memberNewExpression = do
     return $ MemberNewExpression member
 
 memberExpression :: TokenParser MemberExpression
-memberExpression = primaryMemberExpression -- <|>
+memberExpression = memberExpression'
+--      try primaryMemberExpression
+--    <|> functionMemberExpression
+--      <|> try propertyAccessByBracketsMemberExpression
+--    <|> propertyAccessByDotMemberExpression
+--    <|> newMemberExpression
+--      <?> "MemberExpression"
+
+memberExpression' :: TokenParser MemberExpression
+memberExpression' = do
+    primary <- primaryMemberExpression <|> functionMemberExpression
+    buildFunc <- restOfMemberExpression
+    return $ buildFunc primary
+
+restOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+restOfMemberExpression = try nonEmptyRestOfMemberExpression <|> emptyRestOfMemberExpression
+
+nonEmptyRestOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+nonEmptyRestOfMemberExpression = do
+    leftSquareBracket
+    expr <- expression
+    rightSquareBracket
+    buildFunc <- restOfMemberExpression
+    return $ \ primary -> buildFunc $ PropertyAccessByBracketsMemberExpression primary expr
+
+emptyRestOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+emptyRestOfMemberExpression = return (\ primary -> primary)
+
+functionMemberExpression :: TokenParser MemberExpression
+functionMemberExpression = do
+    func <- functionExpression
+    return $ FunctionMemberExpression func
+
+functionExpression :: TokenParser FunctionExpression
+functionExpression = do
+    function
+    name <- maybeParse identifierToken
+    leftRoundBracket
+    params <- sepBy identifierToken comma
+    rightRoundBracket
+    body <- between leftCurlyBracket rightCurlyBracket functionBody
+    return $ FunctionExpression name params body
+
+propertyAccessByDotMemberExpression :: TokenParser MemberExpression
+propertyAccessByDotMemberExpression = undefined
+
+newMemberExpression :: TokenParser MemberExpression
+newMemberExpression = undefined
 
 primaryMemberExpression :: TokenParser MemberExpression
 primaryMemberExpression = do
@@ -460,8 +506,18 @@ primaryExpression =
     <|> literalPrimaryExpression
     <|> arrayLiteralPrimaryExpression
     <|> objectLiteralPrimaryExpression
-    -- <|> expressionPrimaryExpression
+    <|> expressionPrimaryExpression
     <?> "PrimaryExpression"
+
+expressionPrimaryExpression :: TokenParser PrimaryExpression
+expressionPrimaryExpression = do
+    expr <- between leftRoundBracket rightRoundBracket expression
+    return $ ExpressionPrimaryExpression expr
+
+expression :: TokenParser Expression
+expression = do
+    assigns <- sepBy1 assignmentExpression comma
+    return $ Expression assigns
 
 identifierPrimaryExpression :: TokenParser PrimaryExpression
 identifierPrimaryExpression = do
@@ -469,7 +525,7 @@ identifierPrimaryExpression = do
     return $ IdentifierPrimaryExpression str
 
 thisPrimaryExpression :: TokenParser PrimaryExpression
-thisPrimaryExpression = keywordToken ThisKeyword >> return ThisPrimaryExpression
+thisPrimaryExpression = this >> return ThisPrimaryExpression
 
 literalPrimaryExpression :: TokenParser PrimaryExpression
 literalPrimaryExpression = do
@@ -509,7 +565,7 @@ propertyAssignment =
     try fieldPropertyAssignment
     <|> getterPropertyAssignment
     <|> setterPropertyAssignment
-   <?> "PropertyAssignment"
+    <?> "PropertyAssignment"
 
 fieldPropertyAssignment :: TokenParser PropertyAssignment
 fieldPropertyAssignment = do

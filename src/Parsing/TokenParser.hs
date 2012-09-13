@@ -25,8 +25,8 @@ type TokenParser a = GenParser Token () a
 
 maybeParse p = justParse p <|> return Nothing
 
-justParse p = try $ do
-    value <- p
+justParse p = do
+    value <- try $ p
     return $ Just value
 
 acceptToken :: Token -> TokenParser Token

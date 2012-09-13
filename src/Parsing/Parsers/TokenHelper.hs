@@ -40,6 +40,13 @@ assign = punctuatorToken AssignPunctuator
 var :: TokenParser Keyword
 var = keywordToken VarKeyword
 
+this :: TokenParser Keyword
+this = keywordToken ThisKeyword
+
+function :: TokenParser Keyword
+function = keywordToken FunctionKeyword
+
+
 -- get and set are not reserved keywords (wtf??)
 get :: TokenParser ()
 get = concreteIdentifier "get"
@@ -48,7 +55,7 @@ set :: TokenParser ()
 set = concreteIdentifier "set"
 
 concreteIdentifier :: String -> TokenParser ()
-concreteIdentifier str = try $ do
+concreteIdentifier str = do
     actual <- identifierToken
     if str == actual 
         then return ()

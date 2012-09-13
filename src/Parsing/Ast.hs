@@ -127,13 +127,15 @@ data ConditionalExpression =
 
 data MemberExpression = 
     PrimaryMemberExpression PrimaryExpression
-    | FunctionMenberExpression FunctionExpression
-    | AccessByIndexMemberExpression MemberExpression Expression
-    | PropertyAccessMemberExpression MemberExpression String
+    | FunctionMemberExpression FunctionExpression
+    | PropertyAccessByBracketsMemberExpression MemberExpression Expression
+    | PropertyAccessByDotMemberExpression MemberExpression String
     | NewMemberExpression MemberExpression [AssignmentExpression]
     deriving (Show)
 
-data FunctionExpression = FunctionExpression deriving (Show) -- stub
+data FunctionExpression = 
+    FunctionExpression MaybeString [String] FunctionBody
+    deriving (Show)
 
 data NewExpression =
     MemberNewExpression MemberExpression
