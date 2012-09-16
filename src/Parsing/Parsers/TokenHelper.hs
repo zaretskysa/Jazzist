@@ -56,6 +56,15 @@ bitwiseNot = punctuatorToken BitwiseNotPunctuator
 logicalNot :: TokenParser Punctuator
 logicalNot = punctuatorToken LogicalNotPunctuator
 
+mul :: TokenParser Punctuator
+mul = punctuatorToken MulPunctuator
+
+divOp :: TokenParser Punctuator
+divOp = punctuatorToken DivPunctuator
+
+modulus :: TokenParser Punctuator
+modulus = punctuatorToken ModulusPunctuator
+
 -------------------------------------------------------
 
 var :: TokenParser Keyword

@@ -146,8 +146,8 @@ data NewExpression =
 data CallExpression =
     MemberWithArgumentsCallExpression MemberExpression [AssignmentExpression]
     | CallWithArgumentsCallExpression CallExpression [AssignmentExpression]
-    | CallWithIndexAccessCallExpression CallExpression Expression
-    | CallWithPropertyAccessCallExpression CallExpression String
+    | PropertyAccessByBracketsCallExpression CallExpression Expression
+    | PropertyAccessByDotCallExpression CallExpression String
     deriving (Show)
 
 data LeftHandSideExpression =

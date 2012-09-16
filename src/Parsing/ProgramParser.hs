@@ -309,11 +309,41 @@ minusAdditiveExpression = do
     return $ MinusAdditiveExpression additive mult
 
 multiplicativeExpression :: TokenParser MultiplicativeExpression
-multiplicativeExpression = 
-    unaryMultiplicativeExpression
---    <|> mulMultiplicativeExpression
---    <|> divMultiplicativeExpression
---    <|> modulusMultiplicativeExpression
+multiplicativeExpression = do
+    left <- unaryMultiplicativeExpression
+    buildRestOfMultiplicativeExpression left
+
+buildRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+buildRestOfMultiplicativeExpression left = 
+    try $ nonEmptyRestOfMultiplicativeExpression left
+    <|> emptyRestOfMultiplicativeExpression left
+
+emptyRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+emptyRestOfMultiplicativeExpression left = return left
+
+nonEmptyRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+nonEmptyRestOfMultiplicativeExpression left = 
+    mulRestOfMultiplicativeExpression left
+    <|> divRestOfMultiplicativeExpression left
+    <|> modulusRestOfMultiplicativeExpression left
+
+mulRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+mulRestOfMultiplicativeExpression left = do
+    mul
+    unary <- unaryExpression
+    buildRestOfMultiplicativeExpression $ MulMultiplicativeExpression left unary
+
+divRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+divRestOfMultiplicativeExpression left = do
+    divOp
+    unary <- unaryExpression
+    buildRestOfMultiplicativeExpression $ DivMultiplicativeExpression left unary
+
+modulusRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+modulusRestOfMultiplicativeExpression left = do
+    modulus
+    unary <- unaryExpression
+    buildRestOfMultiplicativeExpression $ ModulusMultiplicativeExpression left unary
 
 unaryMultiplicativeExpression :: TokenParser MultiplicativeExpression
 unaryMultiplicativeExpression = do
@@ -412,9 +442,9 @@ logicalNotUnaryExpression = do
 
 postfixExpression :: TokenParser PostfixExpression
 postfixExpression = 
-    lhsPostfixExpression
---    <|> incrementPlusPostfixExpression
---    <|> incrementMinusPostfixExpression
+    try incrementPlusPostfixExpression
+    <|> try incrementMinusPostfixExpression
+    <|> lhsPostfixExpression
 
 lhsPostfixExpression :: TokenParser PostfixExpression
 lhsPostfixExpression = do 
@@ -424,17 +454,21 @@ lhsPostfixExpression = do
 incrementPlusPostfixExpression :: TokenParser PostfixExpression
 incrementPlusPostfixExpression = do 
     lhs <- leftHandSideExpression
+    --TODO: no line terminator here
+    incrementPlus
     return $ IncrementPlusPostfixExpression lhs
 
 incrementMinusPostfixExpression :: TokenParser PostfixExpression
 incrementMinusPostfixExpression = do 
     lhs <- leftHandSideExpression
+    --TODO: no line terminator here
+    incrementMinus
     return $ IncrementMinusPostfixExpression lhs
 
 leftHandSideExpression :: TokenParser LeftHandSideExpression
 leftHandSideExpression = 
-    newLHSExpression
---    <|> callLHSExpression
+    try callLHSExpression
+    <|> newLHSExpression
 
 newLHSExpression :: TokenParser LeftHandSideExpression
 newLHSExpression = do
@@ -459,7 +493,7 @@ memberNewExpression = do
 memberExpression :: TokenParser MemberExpression
 memberExpression = memberExpression'
 
--- left recursion... BURN IN HELL!!
+-- left recursion in grammar... BURN IN HELL!!
 memberExpression' :: TokenParser MemberExpression
 memberExpression' = do
     primary <- primaryMemberExpression <|> functionMemberExpression <|> newMemberExpression
@@ -536,7 +570,47 @@ newNewExpression = do
     return $ NewNewExpression newExpr
 
 callExpression :: TokenParser CallExpression
-callExpression = undefined
+callExpression = do
+    base <- memberWithArgumentsCallExpression
+    buildRestOfCallExpression base
+
+buildRestOfCallExpression :: CallExpression -> TokenParser CallExpression
+buildRestOfCallExpression base = 
+    (try $ nonEmptyRestOfCallExpression base)
+    <|> emptyRestOfCallExpression base
+
+nonEmptyRestOfCallExpression :: CallExpression -> TokenParser CallExpression
+nonEmptyRestOfCallExpression base =
+    try (nonEmptyRestOfCallWithArgumentsCallExpression base)
+    <|> try (nonEmptyRestOfPropertyAccessByBracketsCallExpression base)
+    <|> nonEmptyRestOfPropertyAccessByDotCallExpression base
+
+nonEmptyRestOfPropertyAccessByBracketsCallExpression :: CallExpression -> TokenParser CallExpression
+nonEmptyRestOfPropertyAccessByBracketsCallExpression base = do
+    leftSquareBracket
+    expr <- expression
+    rightSquareBracket
+    buildRestOfCallExpression $ PropertyAccessByBracketsCallExpression base expr
+
+nonEmptyRestOfPropertyAccessByDotCallExpression :: CallExpression -> TokenParser CallExpression
+nonEmptyRestOfPropertyAccessByDotCallExpression base = do
+    dot
+    id <- identifierName
+    buildRestOfCallExpression $ PropertyAccessByDotCallExpression base id
+
+nonEmptyRestOfCallWithArgumentsCallExpression :: CallExpression -> TokenParser CallExpression
+nonEmptyRestOfCallWithArgumentsCallExpression base = do
+    args <- arguments
+    buildRestOfCallExpression $ CallWithArgumentsCallExpression base args
+
+emptyRestOfCallExpression :: CallExpression -> TokenParser CallExpression
+emptyRestOfCallExpression base = return base
+
+memberWithArgumentsCallExpression :: TokenParser CallExpression
+memberWithArgumentsCallExpression = do
+    memberExpr <- memberExpression
+    args <- arguments
+    return $ MemberWithArgumentsCallExpression memberExpr args
 
 primaryExpression :: TokenParser PrimaryExpression
 primaryExpression = 
