@@ -350,24 +350,6 @@ unaryMultiplicativeExpression = do
     unary <- unaryExpression
     return $ UnaryMultiplicativeExpression unary
 
-mulMultiplicativeExpression :: TokenParser MultiplicativeExpression
-mulMultiplicativeExpression = do
-    mult <- multiplicativeExpression
-    unary <- unaryExpression
-    return $ MulMultiplicativeExpression mult unary
-
-divMultiplicativeExpression :: TokenParser MultiplicativeExpression
-divMultiplicativeExpression = do
-    mult <- multiplicativeExpression
-    unary <- unaryExpression
-    return $ DivMultiplicativeExpression mult unary
-
-modulusMultiplicativeExpression :: TokenParser MultiplicativeExpression
-modulusMultiplicativeExpression = do
-    mult <- multiplicativeExpression
-    unary <- unaryExpression
-    return $ ModulusMultiplicativeExpression mult unary
-
 unaryExpression :: TokenParser UnaryExpression
 unaryExpression = 
     postfixUnaryExpression
