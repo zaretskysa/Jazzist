@@ -256,34 +256,46 @@ inRelationalExpression = do
     return $ InRelationalExpression relation shift
 
 shiftExpression :: TokenParser ShiftExpression
-shiftExpression = 
-    additiveShiftExpression
---    <|> leftShiftExpression
---    <|> rightShiftExpression
---    <|> unsignedRightShiftExpression
+shiftExpression = do
+    left <- additiveShiftExpression
+    buildRestOfShiftExpression left
+
+buildRestOfShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+buildRestOfShiftExpression left = 
+    try $ nonEmptyRestOfShiftExpression left
+    <|> emptyRestOfShiftExpression left
+
+nonEmptyRestOfShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+nonEmptyRestOfShiftExpression left = 
+    restOfLeftShiftExpression left
+    <|> restOfRightShiftExpression left
+    <|> restOfUnsignedRightShiftExpression left
+
+restOfLeftShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+restOfLeftShiftExpression left = do
+    leftShift
+    additive <- additiveExpression
+    buildRestOfShiftExpression $ LeftShiftExpression left additive
+
+restOfRightShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+restOfRightShiftExpression left = do
+    rightShift
+    additive <- additiveExpression
+    buildRestOfShiftExpression $ RightShiftExpression left additive
+
+restOfUnsignedRightShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+restOfUnsignedRightShiftExpression left = do
+    unsignedRightShift
+    additive <- additiveExpression
+    buildRestOfShiftExpression $ UnsignedRightShiftExpression left additive
+
+emptyRestOfShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+emptyRestOfShiftExpression left = return left
 
 additiveShiftExpression :: TokenParser ShiftExpression
 additiveShiftExpression = do
     additive <- additiveExpression
     return $ AdditiveShiftExpression additive
-
-leftShiftExpression :: TokenParser ShiftExpression
-leftShiftExpression = do
-    shift <- shiftExpression
-    additive <- additiveExpression
-    return $ LeftShiftExpression shift additive
-
-rightShiftExpression :: TokenParser ShiftExpression
-rightShiftExpression = do
-    shift <- shiftExpression
-    additive <- additiveExpression
-    return $ RightShiftExpression shift additive    
-
-unsignedRightShiftExpression :: TokenParser ShiftExpression
-unsignedRightShiftExpression = do
-    shift <- shiftExpression
-    additive <- additiveExpression
-    return $ UnsignedRightShiftExpression shift additive
 
 additiveExpression :: TokenParser AdditiveExpression
 additiveExpression = do

@@ -65,6 +65,15 @@ divOp = punctuatorToken DivPunctuator
 modulus :: TokenParser Punctuator
 modulus = punctuatorToken ModulusPunctuator
 
+leftShift :: TokenParser Punctuator
+leftShift = punctuatorToken LeftShiftPunctuator
+
+rightShift :: TokenParser Punctuator
+rightShift = punctuatorToken RightShiftPunctuator
+
+unsignedRightShift :: TokenParser Punctuator
+unsignedRightShift = punctuatorToken UnsignedRightShiftPunctuator
+
 -------------------------------------------------------
 
 var :: TokenParser Keyword
