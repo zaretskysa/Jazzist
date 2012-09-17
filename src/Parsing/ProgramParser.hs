@@ -87,7 +87,9 @@ assignmentOperatorExpression :: TokenParser AssignmentExpression
 assignmentOperatorExpression = undefined
 
 conditionalExpression :: TokenParser ConditionalExpression
-conditionalExpression = logicalOrContionalExpression -- <|> teranaryOperatorConditionalExpression
+conditionalExpression = 
+    try teranaryOperatorConditionalExpression
+    <|> logicalOrContionalExpression
 
 logicalOrContionalExpression :: TokenParser ConditionalExpression
 logicalOrContionalExpression = do
@@ -95,7 +97,13 @@ logicalOrContionalExpression = do
     return $ LogicalOrConditionalExpression logicalOr
 
 teranaryOperatorConditionalExpression :: TokenParser ConditionalExpression
-teranaryOperatorConditionalExpression = undefined
+teranaryOperatorConditionalExpression = do
+    logicalOr <- logicalOrExpression
+    questionMark
+    assign1 <- assignmentExpression
+    colon
+    assign2 <- assignmentExpression
+    return $ TeranaryOperatorConditionalExpression logicalOr assign1 assign2
 
 logicalOrExpression :: TokenParser LogicalOrExpression
 logicalOrExpression = do
@@ -813,6 +821,3 @@ functionBody :: TokenParser FunctionBody
 functionBody = do
     srcElements <- many sourceElement
     return $ FunctionBody srcElements
-
-
-

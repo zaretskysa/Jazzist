@@ -113,6 +113,9 @@ logicalAnd = punctuatorToken LogicalAndPunctuator
 logicalOr :: TokenParser Punctuator
 logicalOr = punctuatorToken LogicalOrPunctuator
 
+questionMark :: TokenParser Punctuator
+questionMark = punctuatorToken QuestionMarkPunctuator
+
 
 -------------------------------------------------------
 
