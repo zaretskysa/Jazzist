@@ -86,6 +86,17 @@ lessThanEquals = punctuatorToken LessThanEqualsPunctuator
 greaterThanEquals :: TokenParser Punctuator
 greaterThanEquals = punctuatorToken GreaterThanEqualsPunctuator
 
+equals :: TokenParser Punctuator
+equals = punctuatorToken EqualsPunctuator
+
+notEquals :: TokenParser Punctuator
+notEquals = punctuatorToken NotEqualsPunctuator
+
+strictEquals :: TokenParser Punctuator
+strictEquals = punctuatorToken StrictEqualsPunctuator
+
+strictNotEquals :: TokenParser Punctuator
+strictNotEquals = punctuatorToken StrictNotEqualsPunctuator
 
 -------------------------------------------------------
 

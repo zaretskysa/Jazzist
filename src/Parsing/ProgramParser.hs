@@ -168,41 +168,57 @@ binaryBitwiseAndExpression = do
     return $ BinaryBitwiseAndExpression bitwiseAnd equality
 
 equalityExpression :: TokenParser EqualityExpression
-equalityExpression = 
-    relationalEqualityExpression
+equalityExpression = do
+    relational <- relationalEqualityExpression
+    buildRestOfEqualityExpression relational
  --   <|> equalsEqualityExpression
  --   <|> notEqualsEqualityExpression
  --   <|> strictEqualsEqualityExpression
  --   <|> strictNotEqualsEqualityExpression
 
+buildRestOfEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+buildRestOfEqualityExpression left = 
+    try $ nonEmptyRestOfEqualityExpression left
+    <|> emptyRestOfEqualityExpression left
+
+nonEmptyRestOfEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+nonEmptyRestOfEqualityExpression left = 
+    restOfEqualsEqualityExpression left
+    <|> restOfNotEqualsEqualityExpression left
+    <|> restOfStrictEqualsEqualityExpression left
+    <|> restOfStrictNotEqualsEqualityExpression left
+
+restOfEqualsEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+restOfEqualsEqualityExpression left = do
+    equals
+    relational <- relationalExpression
+    buildRestOfEqualityExpression $ EqualsEqualityExpression left relational
+
+restOfNotEqualsEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+restOfNotEqualsEqualityExpression left = do
+    notEquals
+    relational <- relationalExpression
+    buildRestOfEqualityExpression $ NotEqualsEqualityExpression left relational
+
+restOfStrictEqualsEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+restOfStrictEqualsEqualityExpression left = do
+    strictEquals
+    relational <- relationalExpression
+    buildRestOfEqualityExpression $ StrictEqualsEqualityExpression left relational
+
+restOfStrictNotEqualsEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+restOfStrictNotEqualsEqualityExpression left = do
+    strictNotEquals
+    relational <- relationalExpression
+    buildRestOfEqualityExpression $ StrictNotEqualsEqualityExpression left relational
+
+emptyRestOfEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+emptyRestOfEqualityExpression left = return left
+
 relationalEqualityExpression :: TokenParser EqualityExpression
 relationalEqualityExpression = do
     relation <- relationalExpression
     return $ RelationalEqualityExpression relation
-
-equalsEqualityExpression :: TokenParser EqualityExpression
-equalsEqualityExpression = do
-    equality <- equalityExpression
-    relation <- relationalExpression
-    return $ EqualsEqualityExpression equality relation
-
-notEqualsEqualityExpression :: TokenParser EqualityExpression
-notEqualsEqualityExpression = do
-    equality <- equalityExpression
-    relation <- relationalExpression
-    return $ NotEqualsEqualityExpression equality relation
-
-strictEqualsEqualityExpression :: TokenParser EqualityExpression
-strictEqualsEqualityExpression = do
-    equality <- equalityExpression
-    relation <- relationalExpression
-    return $ StrictEqualsEqualityExpression equality relation
-
-strictNotEqualsEqualityExpression :: TokenParser EqualityExpression
-strictNotEqualsEqualityExpression = do
-    equality <- equalityExpression
-    relation <- relationalExpression
-    return $ StrictNotEqualsEqualityExpression equality relation
 
 relationalExpression :: TokenParser RelationalExpression
 relationalExpression = do
