@@ -107,6 +107,9 @@ bitwiseXor = punctuatorToken BitwiseXorPunctuator
 bitwiseOr :: TokenParser Punctuator
 bitwiseOr = punctuatorToken BitwiseOrPunctuator
 
+logicalAnd :: TokenParser Punctuator
+logicalAnd = punctuatorToken LogicalAndPunctuator
+
 -------------------------------------------------------
 
 var :: TokenParser Keyword

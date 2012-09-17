@@ -112,18 +112,28 @@ binaryLogicalOrExpression = do
     return $ BinaryLogicalOrExpression logicalOr logicalAnd
 
 logicalAndExpression :: TokenParser LogicalAndExpression
-logicalAndExpression = unaryLogicalAndExpression -- <|> binaryLogicalAndExpression
+logicalAndExpression = do
+    unary <- unaryLogicalAndExpression
+    buildRestOfLogicalAndExpression unary
+
+buildRestOfLogicalAndExpression :: LogicalAndExpression -> TokenParser LogicalAndExpression
+buildRestOfLogicalAndExpression left =
+    try $ nonEmptyRestOfLogicalAndExpression left
+    <|> emptyRestOfLogicalAndExpression left
+
+nonEmptyRestOfLogicalAndExpression :: LogicalAndExpression -> TokenParser LogicalAndExpression
+nonEmptyRestOfLogicalAndExpression left = do
+    logicalAnd
+    bitwiseOr <- bitwiseOrExpression
+    buildRestOfLogicalAndExpression $ BinaryLogicalAndExpression left bitwiseOr
+
+emptyRestOfLogicalAndExpression :: LogicalAndExpression -> TokenParser LogicalAndExpression
+emptyRestOfLogicalAndExpression left = return left
 
 unaryLogicalAndExpression :: TokenParser LogicalAndExpression
 unaryLogicalAndExpression = do
     bitwiseOr <- bitwiseOrExpression
     return $ UnaryLogicalAndExpression bitwiseOr
-
-binaryLogicalAndExpression :: TokenParser LogicalAndExpression
-binaryLogicalAndExpression = do
-    logicalAnd <- logicalAndExpression
-    bitwiseOr <- bitwiseOrExpression
-    return $ BinaryLogicalAndExpression logicalAnd bitwiseOr
 
 bitwiseOrExpression :: TokenParser BitwiseOrExpression
 bitwiseOrExpression = do 
