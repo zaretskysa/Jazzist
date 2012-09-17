@@ -98,18 +98,28 @@ teranaryOperatorConditionalExpression :: TokenParser ConditionalExpression
 teranaryOperatorConditionalExpression = undefined
 
 logicalOrExpression :: TokenParser LogicalOrExpression
-logicalOrExpression = unaryLogicalOrExpression -- <|> binaryLogicalOrExpression
+logicalOrExpression = do
+    unary <- unaryLogicalOrExpression
+    buildRestOfLogicalOrExpression unary
+
+buildRestOfLogicalOrExpression :: LogicalOrExpression -> TokenParser LogicalOrExpression
+buildRestOfLogicalOrExpression left = 
+    try $ nonEmptyRestOfLogicalOrExpression left
+    <|> emptyRestOfLogicalOrExpression left
+
+nonEmptyRestOfLogicalOrExpression :: LogicalOrExpression -> TokenParser LogicalOrExpression
+nonEmptyRestOfLogicalOrExpression left = do
+    logicalOr
+    logicalAnd <- logicalAndExpression
+    buildRestOfLogicalOrExpression $ BinaryLogicalOrExpression left logicalAnd
+
+emptyRestOfLogicalOrExpression :: LogicalOrExpression -> TokenParser LogicalOrExpression
+emptyRestOfLogicalOrExpression left = return left
 
 unaryLogicalOrExpression :: TokenParser LogicalOrExpression
 unaryLogicalOrExpression = do
     logicalAnd <- logicalAndExpression
     return $ UnaryLogicalOrExpression logicalAnd
-
-binaryLogicalOrExpression :: TokenParser LogicalOrExpression
-binaryLogicalOrExpression = do
-    logicalOr <- logicalOrExpression
-    logicalAnd <- logicalAndExpression
-    return $ BinaryLogicalOrExpression logicalOr logicalAnd
 
 logicalAndExpression :: TokenParser LogicalAndExpression
 logicalAndExpression = do
