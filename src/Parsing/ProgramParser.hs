@@ -286,27 +286,39 @@ unsignedRightShiftExpression = do
     return $ UnsignedRightShiftExpression shift additive
 
 additiveExpression :: TokenParser AdditiveExpression
-additiveExpression = 
-    multAdditiveExpression
---    <|> plusAdditiveExpression
---    <|> minusAdditiveExpression
+additiveExpression = do
+    left <- multAdditiveExpression
+    buildRestOfAdditiveExpression left
+
+buildRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+buildRestOfAdditiveExpression left = 
+    try $ nonEmptyRestOfAdditiveExpression left
+    <|> emptyRestOfAdditiveExpression left
+
+nonEmptyRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+nonEmptyRestOfAdditiveExpression left = 
+    plusRestOfAdditiveExpression left
+    <|> minusRestOfAdditiveExpression left
+
+plusRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+plusRestOfAdditiveExpression left = do
+    plus
+    multExpr <- multiplicativeExpression
+    buildRestOfAdditiveExpression $ PlusAdditiveExpression left multExpr
+
+minusRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+minusRestOfAdditiveExpression left = do
+    minus
+    multExpr <- multiplicativeExpression
+    buildRestOfAdditiveExpression $ MinusAdditiveExpression left multExpr
+
+emptyRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+emptyRestOfAdditiveExpression left = return left
 
 multAdditiveExpression :: TokenParser AdditiveExpression
 multAdditiveExpression = do
     mult <- multiplicativeExpression
     return $ MultAdditiveExpression mult
-
-plusAdditiveExpression :: TokenParser AdditiveExpression
-plusAdditiveExpression = do
-    additive <- additiveExpression
-    mult <- multiplicativeExpression
-    return $ PlusAdditiveExpression additive mult
-
-minusAdditiveExpression :: TokenParser AdditiveExpression
-minusAdditiveExpression = do
-    additive <- additiveExpression
-    mult <- multiplicativeExpression
-    return $ MinusAdditiveExpression additive mult
 
 multiplicativeExpression :: TokenParser MultiplicativeExpression
 multiplicativeExpression = do
