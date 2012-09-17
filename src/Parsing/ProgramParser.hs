@@ -140,18 +140,28 @@ binaryBitwiseOrExpression = do
     return $ BinaryBitwiseOrExpression bitwiseOr bitwiseXor
 
 bitwiseXorExpression :: TokenParser BitwiseXorExpression
-bitwiseXorExpression = unaryBitwiseXorExpression -- <|> binaryBitwiseXorExpression
+bitwiseXorExpression = do
+    bitwiseAnd <- unaryBitwiseXorExpression
+    buildRestOfBitwiseXorExpression bitwiseAnd
+
+buildRestOfBitwiseXorExpression :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
+buildRestOfBitwiseXorExpression left = 
+    try $ nonEmptyRestOfBitwiseXorExpression left
+    <|> emptyRestOfBitwiseXorExpresssion left
+
+nonEmptyRestOfBitwiseXorExpression :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
+nonEmptyRestOfBitwiseXorExpression left = do
+    bitwiseXor
+    bitwiseAnd <- bitwiseAndExpression
+    buildRestOfBitwiseXorExpression $ BinaryBitwiseXorExpression left bitwiseAnd
+
+emptyRestOfBitwiseXorExpresssion :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
+emptyRestOfBitwiseXorExpresssion left = return left
 
 unaryBitwiseXorExpression :: TokenParser BitwiseXorExpression
 unaryBitwiseXorExpression = do
     bitwiseAnd <- bitwiseAndExpression
     return $ UnaryBitwiseXorExpression bitwiseAnd
-
-binaryBitwiseXorExpression :: TokenParser BitwiseXorExpression
-binaryBitwiseXorExpression = do
-    bitwiseXor <- bitwiseXorExpression
-    bitwiseAnd <- bitwiseAndExpression
-    return $ BinaryBitwiseXorExpression bitwiseXor bitwiseAnd
 
 bitwiseAndExpression :: TokenParser BitwiseAndExpression
 bitwiseAndExpression = do
@@ -234,13 +244,6 @@ relationalExpression :: TokenParser RelationalExpression
 relationalExpression = do
     shift <- shiftRelationalExpression
     buildRestOfRelationalExpression shift
-
---    <|> lessThanRelationalExpression
---    <|> greaterThanRelationalExpression
---    <|> lessThanEqualsRelationalExpression
- --   <|> greaterThanEqualsRelationalExpression
- --   <|> instanceOfRelationalExpression
- --   <|> inRelationalExpression
 
 buildRestOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
 buildRestOfRelationalExpression left =

@@ -101,6 +101,9 @@ strictNotEquals = punctuatorToken StrictNotEqualsPunctuator
 bitwiseAnd :: TokenParser Punctuator
 bitwiseAnd = punctuatorToken BitwiseAndPunctuator
 
+bitwiseXor :: TokenParser Punctuator
+bitwiseXor = punctuatorToken BitwiseXorPunctuator
+
 
 -------------------------------------------------------
 
