@@ -154,18 +154,28 @@ binaryBitwiseXorExpression = do
     return $ BinaryBitwiseXorExpression bitwiseXor bitwiseAnd
 
 bitwiseAndExpression :: TokenParser BitwiseAndExpression
-bitwiseAndExpression = unaryBitwiseAndExpression -- <|> binaryBitwiseAndExpression
+bitwiseAndExpression = do
+    equality <- unaryBitwiseAndExpression
+    buildRestOfBitwiseAndExpresssion equality
+
+buildRestOfBitwiseAndExpresssion :: BitwiseAndExpression -> TokenParser BitwiseAndExpression
+buildRestOfBitwiseAndExpresssion left = 
+    try $ nonEmptyRestOfBitwiseAndExpression left
+    <|> emptyRestOfBitwiseAndExpression left
+
+nonEmptyRestOfBitwiseAndExpression :: BitwiseAndExpression -> TokenParser BitwiseAndExpression
+nonEmptyRestOfBitwiseAndExpression left = do
+    bitwiseAnd
+    equality <- equalityExpression
+    buildRestOfBitwiseAndExpresssion $ BinaryBitwiseAndExpression left equality
+
+emptyRestOfBitwiseAndExpression :: BitwiseAndExpression -> TokenParser BitwiseAndExpression
+emptyRestOfBitwiseAndExpression left = return left
 
 unaryBitwiseAndExpression :: TokenParser BitwiseAndExpression
 unaryBitwiseAndExpression = do
     equality <- equalityExpression
     return $ UnaryBitwiseAndExpression equality
-
-binaryBitwiseAndExpression :: TokenParser BitwiseAndExpression
-binaryBitwiseAndExpression = do
-    bitwiseAnd <- bitwiseAndExpression
-    equality <- equalityExpression
-    return $ BinaryBitwiseAndExpression bitwiseAnd equality
 
 equalityExpression :: TokenParser EqualityExpression
 equalityExpression = do

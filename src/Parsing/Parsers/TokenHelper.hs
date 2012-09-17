@@ -98,6 +98,10 @@ strictEquals = punctuatorToken StrictEqualsPunctuator
 strictNotEquals :: TokenParser Punctuator
 strictNotEquals = punctuatorToken StrictNotEqualsPunctuator
 
+bitwiseAnd :: TokenParser Punctuator
+bitwiseAnd = punctuatorToken BitwiseAndPunctuator
+
+
 -------------------------------------------------------
 
 var :: TokenParser Keyword
