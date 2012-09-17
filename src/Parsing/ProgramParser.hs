@@ -76,7 +76,10 @@ initializer = do
     return $ Initializer assignExpr
 
 assignmentExpression :: TokenParser AssignmentExpression
-assignmentExpression = conditionalAssignmentExpression -- <|> assignmentOperatorExpression
+assignmentExpression = 
+    try assignmentOperatorExpression
+    <|> conditionalAssignmentExpression 
+    <?> "AssignmentExpression"
 
 conditionalAssignmentExpression :: TokenParser AssignmentExpression
 conditionalAssignmentExpression = do
@@ -84,7 +87,29 @@ conditionalAssignmentExpression = do
     return $ ConditionalAssignmentExpression cond
 
 assignmentOperatorExpression :: TokenParser AssignmentExpression
-assignmentOperatorExpression = undefined
+assignmentOperatorExpression = do
+    lhs <- leftHandSideExpression
+    op <- assignmentOperator
+    assignExpr <- assignmentExpression
+    return $ AssignmentOperatorExpression lhs op assignExpr
+
+assignmentOperator :: TokenParser AssignmentOperator
+assignmentOperator = do
+    op <- oneOfAssignmentOperators
+    case op of 
+        AssignPunctuator -> return SingleAssignOperator
+        MulAssignPunctuator -> return MulAssignOperator
+        DivAssignPunctuator -> return DivAssignOperator
+        ModulusAssignPunctuator -> return ModulusAssignOperator
+        PlusAssignPunctuator -> return PlusAssignOperator
+        MinusAssignPunctuator -> return MinusAssignOperator
+        LeftShiftAssignPunctuator -> return LeftShiftAssignOperator
+        RightShiftAssignPunctuator -> return RightShiftAssignOperator
+        UnsignedRightShiftAssignPunctuator -> return UnsignedRightShiftAssignOperator
+        BitwiseAndAssignPunctuator -> return BitwiseAndAssignOperator
+        BitwiseXorAssignPunctuator -> return BitwiseXorAssignOperator
+        BitwiseOrAssignPunctuator -> return BitwiseOrAssignOperator
+        _ -> fail "incorrect assign operator"
 
 conditionalExpression :: TokenParser ConditionalExpression
 conditionalExpression = 

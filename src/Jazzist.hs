@@ -12,5 +12,5 @@ main = do
     if null args
         then putStrLn "No input provided"
         else do
-                putStrLn $ ppShow $ tryToMakeTokens $ head args
+                putStrLn $ ppShow $ tokenize $ head args
                 --putStrLn $ ppShow $ parseString $ head args

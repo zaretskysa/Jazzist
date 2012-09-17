@@ -162,4 +162,19 @@ concreteIdentifier str = do
         then return ()
         else fail $ show str
 
+--------------------------------------------
 
+oneOfAssignmentOperators :: TokenParser Punctuator
+oneOfAssignmentOperators = 
+    assign 
+    <|> punctuatorToken MulAssignPunctuator 
+    <|> punctuatorToken DivAssignPunctuator 
+    <|> punctuatorToken ModulusAssignPunctuator 
+    <|> punctuatorToken PlusAssignPunctuator
+    <|> punctuatorToken MinusAssignPunctuator 
+    <|> punctuatorToken LeftShiftAssignPunctuator 
+    <|> punctuatorToken RightShiftAssignPunctuator 
+    <|> punctuatorToken UnsignedRightShiftAssignPunctuator 
+    <|> punctuatorToken BitwiseAndAssignPunctuator 
+    <|> punctuatorToken BitwiseXorAssignPunctuator 
+    <|> punctuatorToken BitwiseOrAssignPunctuator 

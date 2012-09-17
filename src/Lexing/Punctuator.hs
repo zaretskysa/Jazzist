@@ -33,9 +33,11 @@ punctuator' = do
     <|> try minus
     <|> try mul
     <|> try modulus
-    <|> incrementMinus
+    <|> try incrementMinus
+    <|> minusAssign
     <|> try leftShift
     <|> try rightShift
+    <|> try unsignedRightShiftAssign
     <|> try unsignedRightShift
     <|> try bitwiseAnd
     <|> try bitwiseOr
@@ -48,12 +50,10 @@ punctuator' = do
     <|> colon
     <|> try assign
     <|> plusAssign
-    <|> minusAssign
     <|> mulAssign
     <|> modulusAssign
     <|> try leftShiftAssign
     <|> try rightShiftAssign
-    <|> unsignedRightShiftAssign
     <|> bitwiseAndAssign
     <|> bitwiseOrAssign
     <|> bitwiseXorAssign
