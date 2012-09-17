@@ -205,8 +205,10 @@ strictNotEqualsEqualityExpression = do
     return $ StrictNotEqualsEqualityExpression equality relation
 
 relationalExpression :: TokenParser RelationalExpression
-relationalExpression = 
-    shiftRelationalExpression
+relationalExpression = do
+    shift <- shiftRelationalExpression
+    buildRestOfRelationalExpression shift
+
 --    <|> lessThanRelationalExpression
 --    <|> greaterThanRelationalExpression
 --    <|> lessThanEqualsRelationalExpression
@@ -214,46 +216,63 @@ relationalExpression =
  --   <|> instanceOfRelationalExpression
  --   <|> inRelationalExpression
 
+buildRestOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+buildRestOfRelationalExpression left =
+    try $ nonEmptyRestOfRelationalExpression left
+    <|> emptyRestOfRelationalExpression left
+
+nonEmptyRestOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+nonEmptyRestOfRelationalExpression left =
+    restOfLessThanRelationalExpression left
+    <|> restOfGreaterThanRelationalExpression left
+    <|> restOfLessThanEqualsRelationalExpression left
+    <|> restOfGreaterThanEqualsRelationalExpression left
+    <|> restOfInstanceOfRelationalExpression left
+    <|> restOfInRelationalExpression left
+
+restOfLessThanRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfLessThanRelationalExpression left = do
+    lessThan
+    shift <- shiftExpression
+    buildRestOfRelationalExpression $ LessThanRelationalExpression left shift
+
+restOfGreaterThanRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfGreaterThanRelationalExpression left = do
+    greaterThan
+    shift <- shiftExpression
+    buildRestOfRelationalExpression $ GreaterThanRelationalExpression left shift
+
+restOfLessThanEqualsRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfLessThanEqualsRelationalExpression left = do
+    lessThanEquals
+    shift <- shiftExpression
+    buildRestOfRelationalExpression $ LessThanEqualsRelationalExpression left shift
+
+restOfGreaterThanEqualsRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfGreaterThanEqualsRelationalExpression left = do
+    greaterThanEquals
+    shift <- shiftExpression
+    buildRestOfRelationalExpression $ GreaterThanEqualsRelationalExpression left shift
+
+restOfInstanceOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfInstanceOfRelationalExpression left = do
+    instanceOf
+    shift <- shiftExpression
+    buildRestOfRelationalExpression $ InstanceOfRelationalExpression left shift
+
+restOfInRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfInRelationalExpression left = do
+    inKeyword
+    shift <- shiftExpression
+    buildRestOfRelationalExpression $ InRelationalExpression left shift
+
+emptyRestOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+emptyRestOfRelationalExpression left = return left
+
 shiftRelationalExpression :: TokenParser RelationalExpression
 shiftRelationalExpression = do
     shift <- shiftExpression
     return $ ShiftRelationalExpression shift
-
-lessThanRelationalExpression :: TokenParser RelationalExpression
-lessThanRelationalExpression = do
-    relation <- relationalExpression
-    shift <- shiftExpression
-    return $ LessThanRelationalExpression relation shift
-
-greaterThanRelationalExpression :: TokenParser RelationalExpression
-greaterThanRelationalExpression = do
-    relation <- relationalExpression
-    shift <- shiftExpression
-    return $ GreaterThanRelationalExpression relation shift
-
-lessThanEqualsRelationalExpression :: TokenParser RelationalExpression
-lessThanEqualsRelationalExpression = do
-    relation <- relationalExpression
-    shift <- shiftExpression
-    return $ LessThanEqualsRelationalExpression relation shift
-
-greaterThanEqualsRelationalExpression :: TokenParser RelationalExpression
-greaterThanEqualsRelationalExpression = do
-    relation <- relationalExpression
-    shift <- shiftExpression
-    return $ GreaterThanEqualsRelationalExpression relation shift
-
-instanceOfRelationalExpression :: TokenParser RelationalExpression
-instanceOfRelationalExpression = do
-    relation <- relationalExpression
-    shift <- shiftExpression
-    return $ InstanceOfRelationalExpression relation shift
-
-inRelationalExpression :: TokenParser RelationalExpression
-inRelationalExpression = do
-    relation <- relationalExpression
-    shift <- shiftExpression
-    return $ InRelationalExpression relation shift
 
 shiftExpression :: TokenParser ShiftExpression
 shiftExpression = do

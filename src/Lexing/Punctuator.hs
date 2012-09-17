@@ -90,7 +90,7 @@ greaterThan = do
 
 lessThanEquals = string "<=" >> return LessThanEqualsPunctuator
 
-greaterThanEquals = string ">=" >> return GreaterThanPunctuator
+greaterThanEquals = string ">=" >> return GreaterThanEqualsPunctuator
 
 equals = do
     string "=="

@@ -74,6 +74,19 @@ rightShift = punctuatorToken RightShiftPunctuator
 unsignedRightShift :: TokenParser Punctuator
 unsignedRightShift = punctuatorToken UnsignedRightShiftPunctuator
 
+lessThan :: TokenParser Punctuator
+lessThan = punctuatorToken LessThanPunctuator
+
+greaterThan :: TokenParser Punctuator
+greaterThan = punctuatorToken GreaterThanPunctuator
+
+lessThanEquals :: TokenParser Punctuator
+lessThanEquals = punctuatorToken LessThanEqualsPunctuator
+
+greaterThanEquals :: TokenParser Punctuator
+greaterThanEquals = punctuatorToken GreaterThanEqualsPunctuator
+
+
 -------------------------------------------------------
 
 var :: TokenParser Keyword
@@ -96,6 +109,14 @@ void = keywordToken VoidKeyword
 
 typeOf :: TokenParser Keyword
 typeOf = keywordToken TypeOfKeyword
+
+instanceOf :: TokenParser Keyword
+instanceOf = keywordToken InstanceOfKeyword
+
+inKeyword :: TokenParser Keyword
+inKeyword = keywordToken InKeyword
+
+----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)
 get :: TokenParser ()
