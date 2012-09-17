@@ -104,6 +104,8 @@ bitwiseAnd = punctuatorToken BitwiseAndPunctuator
 bitwiseXor :: TokenParser Punctuator
 bitwiseXor = punctuatorToken BitwiseXorPunctuator
 
+bitwiseOr :: TokenParser Punctuator
+bitwiseOr = punctuatorToken BitwiseOrPunctuator
 
 -------------------------------------------------------
 
