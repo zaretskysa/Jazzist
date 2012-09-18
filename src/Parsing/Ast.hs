@@ -5,9 +5,8 @@ data Program =
 
 data SourceElement = 
     StatementSourceElement Statement
---  | FunctionDeclarationSourceElement
+    | FunctionDeclarationSourceElement String [String] FunctionBody
     deriving (Show)
-
 
 data Statement =
     BlockStmt Block

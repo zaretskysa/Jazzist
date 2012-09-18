@@ -13,7 +13,7 @@ program = do
     return $ Program srcElements
 
 sourceElement :: TokenParser SourceElement
-sourceElement = statementSourceElement -- <|> functionDeclarationSourceElement
+sourceElement = statementSourceElement <|> functionDeclarationSourceElement
 
 statementSourceElement :: TokenParser SourceElement
 statementSourceElement = do
@@ -21,7 +21,14 @@ statementSourceElement = do
     return $ StatementSourceElement stmt
 
 functionDeclarationSourceElement :: TokenParser SourceElement
-functionDeclarationSourceElement = undefined
+functionDeclarationSourceElement = do
+    function
+    id <- identifierToken
+    leftRoundBracket
+    params <- sepBy identifierToken comma
+    rightRoundBracket
+    body <- between leftCurlyBracket rightCurlyBracket functionBody
+    return $ FunctionDeclarationSourceElement id params body
 
 statement :: TokenParser Statement
 statement = 
