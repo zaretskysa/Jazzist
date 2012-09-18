@@ -146,6 +146,12 @@ instanceOf = keywordToken InstanceOfKeyword
 inKeyword :: TokenParser Keyword
 inKeyword = keywordToken InKeyword
 
+elseKeyword :: TokenParser Keyword
+elseKeyword = keywordToken ElseKeyword
+
+ifKeyword :: TokenParser Keyword
+ifKeyword = keywordToken IfKeyword
+
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)

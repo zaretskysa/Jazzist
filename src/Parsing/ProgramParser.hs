@@ -36,6 +36,15 @@ statement =
     <|> emptyStatement
     <|> variableStatement
     <|> expressionStatement
+    <|> ifStatement
+
+ifStatement :: TokenParser Statement
+ifStatement = do
+    ifKeyword
+    expr <- between leftRoundBracket rightRoundBracket expression
+    stmt1 <- statement
+    stmt2 <- maybeParse (elseKeyword >> statement)
+    return $ IfStmt expr stmt1 stmt2
 
 expressionStatement :: TokenParser Statement
 expressionStatement = do
