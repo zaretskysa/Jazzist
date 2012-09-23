@@ -167,6 +167,9 @@ continueKeyword = keywordToken ContinueKeyword
 breakKeyword :: TokenParser Keyword
 breakKeyword = keywordToken BreakKeyword
 
+returnKeyword :: TokenParser Keyword
+returnKeyword = keywordToken ReturnKeyword
+
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)

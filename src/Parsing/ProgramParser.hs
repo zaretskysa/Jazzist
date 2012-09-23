@@ -40,7 +40,14 @@ statement =
     <|> iterationStatement
     <|> continueStatement
     <|> breakStatement
+    <|> returnStatement
 
+returnStatement :: TokenParser Statement
+returnStatement = do
+    returnKeyword
+    expr <- maybeParse expression --TODO: no line termimator here
+    semicolon
+    return $ ReturnStmt expr
 
 breakStatement :: TokenParser Statement
 breakStatement = do
