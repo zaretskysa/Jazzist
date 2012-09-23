@@ -37,6 +37,89 @@ statement =
     <|> variableStatement
     <|> expressionStatement
     <|> ifStatement
+    <|> iterationStatement
+
+iterationStatement :: TokenParser Statement
+iterationStatement = 
+    doWhileIterationStatement
+    <|> whileIterationStatement
+    <|> try exprTripletForIterationStatement
+    <|> try varAndDoubleExprForIterationStatement
+    <|> try lhsExprInExprForIterationStatement
+    <|> varInExprIteratioinStatement
+
+doWhileIterationStatement :: TokenParser Statement
+doWhileIterationStatement = do
+    doKeyword
+    stmt <- statement
+    while
+    expr <- between leftRoundBracket rightRoundBracket expression
+    semicolon
+    return $ IterationStmt $ DoWhileIterationStatement stmt expr
+
+whileIterationStatement :: TokenParser Statement
+whileIterationStatement = do
+    while
+    expr <- between leftRoundBracket rightRoundBracket expression
+    stmt <- statement
+    return $ IterationStmt $ WhileIterationStatement expr stmt
+
+exprTripletForIterationStatement :: TokenParser Statement
+exprTripletForIterationStatement = do
+    forKeyword
+    leftRoundBracket
+    expr1 <- maybeExpression -- TODO: no in
+    semicolon
+    expr2 <- maybeExpression
+    semicolon
+    expr3 <- maybeExpression
+    rightRoundBracket
+    stmt <- statement
+    return $ IterationStmt $ ExprTripletForIterationStatement expr1 expr2 expr3 stmt
+
+maybeExpression :: TokenParser MaybeExpression
+maybeExpression = maybeParse expression
+
+varAndDoubleExprForIterationStatement :: TokenParser Statement
+varAndDoubleExprForIterationStatement = do
+    forKeyword
+    leftRoundBracket
+    var
+    varDecls <- variableDeclarationList --TODO: VariableDeclarationListNoIn
+    semicolon
+    expr1 <- maybeExpression
+    semicolon
+    expr2 <- maybeExpression
+    rightRoundBracket
+    stmt <- statement
+    return $ IterationStmt $ VarAndDoubleExprForIterationStatement varDecls expr1 expr2 stmt
+
+
+variableDeclarationList :: TokenParser [VariableDeclaration]
+variableDeclarationList = sepBy1 variableDeclaration comma
+
+lhsExprInExprForIterationStatement :: TokenParser Statement
+lhsExprInExprForIterationStatement = do
+    forKeyword
+    leftRoundBracket
+    lhs <- leftHandSideExpression
+    inKeyword
+    expr <- expression
+    rightRoundBracket
+    stmt <- statement
+    return $ IterationStmt $ LHSExprInExprForIterationStatement lhs expr stmt
+
+varInExprIteratioinStatement :: TokenParser Statement
+varInExprIteratioinStatement = do
+    forKeyword
+    leftRoundBracket
+    var
+    varDecl <- variableDeclaration --TODO: VariableDeclarationNoIn
+    inKeyword
+    expr <- expression
+    rightRoundBracket
+    stmt <- statement
+    return $ IterationStmt $ VarInExprIteratioinStatement varDecl expr stmt
 
 ifStatement :: TokenParser Statement
 ifStatement = do

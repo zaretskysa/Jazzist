@@ -152,6 +152,14 @@ elseKeyword = keywordToken ElseKeyword
 ifKeyword :: TokenParser Keyword
 ifKeyword = keywordToken IfKeyword
 
+doKeyword :: TokenParser Keyword
+doKeyword = keywordToken DoKeyword
+
+while :: TokenParser Keyword
+while = keywordToken WhileKeyword
+
+forKeyword :: TokenParser Keyword
+forKeyword = keywordToken ForKeyword
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)
