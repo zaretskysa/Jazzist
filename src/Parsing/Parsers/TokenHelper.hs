@@ -160,6 +160,10 @@ while = keywordToken WhileKeyword
 
 forKeyword :: TokenParser Keyword
 forKeyword = keywordToken ForKeyword
+
+continueKeyword :: TokenParser Keyword
+continueKeyword = keywordToken ContinueKeyword
+
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)

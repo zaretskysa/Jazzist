@@ -38,6 +38,7 @@ statement =
     <|> expressionStatement
     <|> ifStatement
     <|> iterationStatement
+    <|> continueStatement
 
 iterationStatement :: TokenParser Statement
 iterationStatement = 
@@ -47,6 +48,13 @@ iterationStatement =
     <|> try varAndDoubleExprForIterationStatement
     <|> try lhsExprInExprForIterationStatement
     <|> varInExprIteratioinStatement
+
+continueStatement :: TokenParser Statement
+continueStatement = do
+    continueKeyword
+    id <- maybeParse identifierToken --TODO: no line termimator here
+    semicolon
+    return $ ContinueStmt id
 
 doWhileIterationStatement :: TokenParser Statement
 doWhileIterationStatement = do
