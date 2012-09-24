@@ -170,6 +170,9 @@ breakKeyword = keywordToken BreakKeyword
 returnKeyword :: TokenParser Keyword
 returnKeyword = keywordToken ReturnKeyword
 
+withKeyword :: TokenParser Keyword
+withKeyword = keywordToken WithKeyword
+
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)

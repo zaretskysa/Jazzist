@@ -41,6 +41,14 @@ statement =
     <|> continueStatement
     <|> breakStatement
     <|> returnStatement
+    <|> withStatement
+
+withStatement :: TokenParser Statement
+withStatement = do
+    withKeyword
+    expr <- between leftRoundBracket rightRoundBracket expression
+    stmt <- statement
+    return $ WithStmt expr stmt
 
 returnStatement :: TokenParser Statement
 returnStatement = do
