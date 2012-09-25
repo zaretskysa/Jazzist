@@ -35,7 +35,7 @@ statement =
     blockStatement
     <|> emptyStatement
     <|> variableStatement
-    <|> expressionStatement
+    <|> try expressionStatement
     <|> ifStatement
     <|> iterationStatement
     <|> continueStatement
@@ -43,6 +43,14 @@ statement =
     <|> returnStatement
     <|> withStatement
     <|> switchStatement
+    <|> labelledStatement
+
+labelledStatement :: TokenParser Statement
+labelledStatement = do
+    id <- identifierToken
+    colon
+    stmt <- statement
+    return $ LabelledStmt id stmt
 
 switchStatement :: TokenParser Statement
 switchStatement = do
