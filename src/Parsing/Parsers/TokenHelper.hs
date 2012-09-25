@@ -173,6 +173,15 @@ returnKeyword = keywordToken ReturnKeyword
 withKeyword :: TokenParser Keyword
 withKeyword = keywordToken WithKeyword
 
+defaultKeyword :: TokenParser Keyword
+defaultKeyword = keywordToken DefaultKeyword
+
+caseKeyword :: TokenParser Keyword
+caseKeyword = keywordToken CaseKeyword
+
+switchKeyword :: TokenParser Keyword
+switchKeyword = keywordToken SwitchKeyword
+
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)

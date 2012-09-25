@@ -66,7 +66,7 @@ data CaseBlock =
 data CaseClause = 
     CaseClause Expression [Statement] deriving (Show)
 
-data DefaultClause = DefaultCluase [Statement] deriving (Show)
+data DefaultClause = DefaultClause [Statement] deriving (Show)
 
 type MaybeDefaultClause = Maybe DefaultClause
 

@@ -42,6 +42,37 @@ statement =
     <|> breakStatement
     <|> returnStatement
     <|> withStatement
+    <|> switchStatement
+
+switchStatement :: TokenParser Statement
+switchStatement = do
+    switchKeyword
+    expr <- between leftRoundBracket rightRoundBracket expression
+    block <- caseBlock
+    return $ SwitchStmt expr block
+
+caseBlock :: TokenParser CaseBlock
+caseBlock = do
+    leftCurlyBracket
+    beginClauses <- many caseClause
+    defaultClause <- maybeParse defaultClause
+    endClauses <- many caseClause
+    rightCurlyBracket
+    return $ CaseBlock beginClauses defaultClause endClauses
+
+caseClause :: TokenParser CaseClause
+caseClause = do
+    caseKeyword
+    expr <- expression
+    colon
+    stmts <- many statement
+    return $ CaseClause expr stmts
+
+defaultClause :: TokenParser DefaultClause
+defaultClause = do
+    defaultKeyword >> colon
+    stmts <- many statement
+    return $ DefaultClause stmts
 
 withStatement :: TokenParser Statement
 withStatement = do
