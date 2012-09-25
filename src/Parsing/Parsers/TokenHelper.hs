@@ -182,6 +182,9 @@ caseKeyword = keywordToken CaseKeyword
 switchKeyword :: TokenParser Keyword
 switchKeyword = keywordToken SwitchKeyword
 
+throwKeyword :: TokenParser Keyword
+throwKeyword = keywordToken ThrowKeyword
+
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)

@@ -44,6 +44,15 @@ statement =
     <|> withStatement
     <|> switchStatement
     <|> labelledStatement
+    <|> throwStatement
+
+throwStatement :: TokenParser Statement
+throwStatement = do
+    throwKeyword
+    --TODO: no line terminator here
+    expr <- expression
+    semicolon
+    return $ ThrowStmt expr
 
 labelledStatement :: TokenParser Statement
 labelledStatement = do
