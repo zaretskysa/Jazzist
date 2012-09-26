@@ -185,6 +185,15 @@ switchKeyword = keywordToken SwitchKeyword
 throwKeyword :: TokenParser Keyword
 throwKeyword = keywordToken ThrowKeyword
 
+tryKeyword :: TokenParser Keyword
+tryKeyword = keywordToken TryKeyword
+
+catchKeyword :: TokenParser Keyword
+catchKeyword = keywordToken CatchKeyword
+
+finallyKeyword :: TokenParser Keyword
+finallyKeyword = keywordToken FinallyKeyword
+
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)

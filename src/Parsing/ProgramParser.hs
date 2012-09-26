@@ -45,6 +45,53 @@ statement =
     <|> switchStatement
     <|> labelledStatement
     <|> throwStatement
+    <|> tryStatement
+
+tryStatement :: TokenParser Statement
+tryStatement = do
+    tryStmt <- parseTryStatement
+    return $ TryStmt tryStmt
+
+parseTryStatement :: TokenParser TryStatement
+parseTryStatement = do
+    try blockCatchFinallyTryStatement
+    <|> try blockCatchTryStatement
+    <|> try blockFinnalyTryStatement
+
+blockCatchTryStatement :: TokenParser TryStatement
+blockCatchTryStatement = do
+    tryKeyword
+    b <- block
+    c <- parseCatch
+    return $ BlockCatchTryStatement b c
+
+blockFinnalyTryStatement :: TokenParser TryStatement
+blockFinnalyTryStatement = do
+    tryKeyword
+    b <- block
+    f <- finally
+    return $ BlockFinallyTryStatement b f
+
+blockCatchFinallyTryStatement :: TokenParser TryStatement
+blockCatchFinallyTryStatement = do
+    tryKeyword
+    b <- block
+    c <- parseCatch
+    f <- finally
+    return $ BlockCatchFinallyTryStatement b c f
+
+parseCatch :: TokenParser Catch
+parseCatch = do
+    catchKeyword
+    id <- between leftRoundBracket rightRoundBracket identifierToken
+    b <- block
+    return $ Catch id b
+
+finally :: TokenParser Finally
+finally = do
+    finallyKeyword
+    b <- block
+    return $ Finally b
 
 throwStatement :: TokenParser Statement
 throwStatement = do

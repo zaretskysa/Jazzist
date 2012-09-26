@@ -72,13 +72,13 @@ type MaybeDefaultClause = Maybe DefaultClause
 
 data TryStatement = 
     BlockCatchTryStatement Block Catch
-    | BlockFinnalyTryStatement Block Finnaly
-    | BlockCatchFinnalyTryStatement Block Catch Finnaly
+    | BlockFinallyTryStatement Block Finally
+    | BlockCatchFinallyTryStatement Block Catch Finally
     deriving (Show)
 
 data Catch = Catch String Block deriving (Show)
 
-data Finnaly = Finnaly Block deriving (Show)
+data Finally = Finally Block deriving (Show)
 
 
 -- Assignment expression
