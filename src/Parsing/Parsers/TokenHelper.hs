@@ -194,6 +194,9 @@ catchKeyword = keywordToken CatchKeyword
 finallyKeyword :: TokenParser Keyword
 finallyKeyword = keywordToken FinallyKeyword
 
+debuggerKeyword :: TokenParser Keyword
+debuggerKeyword = keywordToken DebuggerKeyword
+
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)

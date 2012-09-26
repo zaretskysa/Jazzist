@@ -46,6 +46,10 @@ statement =
     <|> labelledStatement
     <|> throwStatement
     <|> tryStatement
+    <|> debuggerStatement
+
+debuggerStatement :: TokenParser Statement
+debuggerStatement = debuggerKeyword >> semicolon >> return DebuggerStmt
 
 tryStatement :: TokenParser Statement
 tryStatement = do
