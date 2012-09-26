@@ -116,32 +116,31 @@ logicalOr = punctuatorToken LogicalOrPunctuator
 questionMark :: TokenParser Punctuator
 questionMark = punctuatorToken QuestionMarkPunctuator
 
-
 -------------------------------------------------------
 
-var :: TokenParser Keyword
-var = keywordToken VarKeyword
+varKeyword :: TokenParser Keyword
+varKeyword = keywordToken VarKeyword
 
-this :: TokenParser Keyword
-this = keywordToken ThisKeyword
+thisKeyword :: TokenParser Keyword
+thisKeyword = keywordToken ThisKeyword
 
-function :: TokenParser Keyword
-function = keywordToken FunctionKeyword
+functionKeyword :: TokenParser Keyword
+functionKeyword = keywordToken FunctionKeyword
 
-new :: TokenParser Keyword
-new = keywordToken NewKeyword
+newKeyword :: TokenParser Keyword
+newKeyword = keywordToken NewKeyword
 
-delete :: TokenParser Keyword
-delete = keywordToken DeleteKeyword
+deleteKeyword :: TokenParser Keyword
+deleteKeyword = keywordToken DeleteKeyword
 
-void :: TokenParser Keyword
-void = keywordToken VoidKeyword
+voidKeyword :: TokenParser Keyword
+voidKeyword = keywordToken VoidKeyword
 
-typeOf :: TokenParser Keyword
-typeOf = keywordToken TypeOfKeyword
+typeOfKeyword :: TokenParser Keyword
+typeOfKeyword = keywordToken TypeOfKeyword
 
-instanceOf :: TokenParser Keyword
-instanceOf = keywordToken InstanceOfKeyword
+instanceOfKeyword :: TokenParser Keyword
+instanceOfKeyword = keywordToken InstanceOfKeyword
 
 inKeyword :: TokenParser Keyword
 inKeyword = keywordToken InKeyword
@@ -155,8 +154,8 @@ ifKeyword = keywordToken IfKeyword
 doKeyword :: TokenParser Keyword
 doKeyword = keywordToken DoKeyword
 
-while :: TokenParser Keyword
-while = keywordToken WhileKeyword
+whileKeyword :: TokenParser Keyword
+whileKeyword = keywordToken WhileKeyword
 
 forKeyword :: TokenParser Keyword
 forKeyword = keywordToken ForKeyword
@@ -200,11 +199,11 @@ debuggerKeyword = keywordToken DebuggerKeyword
 ----------------------------------------------------
 
 -- get and set are not reserved keywords (wtf??)
-get :: TokenParser ()
-get = concreteIdentifier "get"
+getKeyword :: TokenParser ()
+getKeyword = concreteIdentifier "get"
 
-set :: TokenParser ()
-set = concreteIdentifier "set"
+setKeyword :: TokenParser ()
+setKeyword = concreteIdentifier "set"
 
 concreteIdentifier :: String -> TokenParser ()
 concreteIdentifier str = do

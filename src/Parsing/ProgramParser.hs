@@ -22,7 +22,7 @@ statementSourceElement = do
 
 functionDeclarationSourceElement :: TokenParser SourceElement
 functionDeclarationSourceElement = do
-    function
+    functionKeyword
     id <- identifierToken
     leftRoundBracket
     params <- sepBy identifierToken comma
@@ -183,14 +183,14 @@ doWhileIterationStatement :: TokenParser Statement
 doWhileIterationStatement = do
     doKeyword
     stmt <- statement
-    while
+    whileKeyword
     expr <- between leftRoundBracket rightRoundBracket expression
     semicolon
     return $ IterationStmt $ DoWhileIterationStatement stmt expr
 
 whileIterationStatement :: TokenParser Statement
 whileIterationStatement = do
-    while
+    whileKeyword
     expr <- between leftRoundBracket rightRoundBracket expression
     stmt <- statement
     return $ IterationStmt $ WhileIterationStatement expr stmt
@@ -215,7 +215,7 @@ varAndDoubleExprForIterationStatement :: TokenParser Statement
 varAndDoubleExprForIterationStatement = do
     forKeyword
     leftRoundBracket
-    var
+    varKeyword
     varDecls <- variableDeclarationList --TODO: VariableDeclarationListNoIn
     semicolon
     expr1 <- maybeExpression
@@ -224,7 +224,6 @@ varAndDoubleExprForIterationStatement = do
     rightRoundBracket
     stmt <- statement
     return $ IterationStmt $ VarAndDoubleExprForIterationStatement varDecls expr1 expr2 stmt
-
 
 variableDeclarationList :: TokenParser [VariableDeclaration]
 variableDeclarationList = sepBy1 variableDeclaration comma
@@ -244,7 +243,7 @@ varInExprIteratioinStatement :: TokenParser Statement
 varInExprIteratioinStatement = do
     forKeyword
     leftRoundBracket
-    var
+    varKeyword
     varDecl <- variableDeclaration --TODO: VariableDeclarationNoIn
     inKeyword
     expr <- expression
@@ -263,7 +262,7 @@ ifStatement = do
 expressionStatement :: TokenParser Statement
 expressionStatement = do
     try $ notFollowedBy leftCurlyBracket
-    try $ notFollowedBy function
+    try $ notFollowedBy functionKeyword
     expr <- expression
     semicolon
     return $ ExpressionStmt expr
@@ -285,7 +284,7 @@ emptyStatement = semicolon >> return EmptyStmt
 
 variableStatement :: TokenParser Statement
 variableStatement = do
-    var
+    varKeyword
     varDeclList <- sepBy1 variableDeclaration comma
     semicolon
     return $ VariableStmt varDeclList
@@ -484,10 +483,6 @@ equalityExpression :: TokenParser EqualityExpression
 equalityExpression = do
     relational <- relationalEqualityExpression
     buildRestOfEqualityExpression relational
- --   <|> equalsEqualityExpression
- --   <|> notEqualsEqualityExpression
- --   <|> strictEqualsEqualityExpression
- --   <|> strictNotEqualsEqualityExpression
 
 buildRestOfEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
 buildRestOfEqualityExpression left = 
@@ -578,7 +573,7 @@ restOfGreaterThanEqualsRelationalExpression left = do
 
 restOfInstanceOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
 restOfInstanceOfRelationalExpression left = do
-    instanceOf
+    instanceOfKeyword
     shift <- shiftExpression
     buildRestOfRelationalExpression $ InstanceOfRelationalExpression left shift
 
@@ -735,19 +730,19 @@ postfixUnaryExpression = do
 
 deleteUnaryExpression :: TokenParser UnaryExpression
 deleteUnaryExpression = do
-    delete
+    deleteKeyword
     unary <- unaryExpression
     return $ VoidUnaryExpression unary
 
 voidUnaryExpression :: TokenParser UnaryExpression
 voidUnaryExpression = do
-    void
+    voidKeyword
     unary <- unaryExpression
     return $ VoidUnaryExpression unary
 
 typeOfUnaryExpression :: TokenParser UnaryExpression
 typeOfUnaryExpression = do
-    typeOf
+    typeOfKeyword
     unary <- unaryExpression
     return $ TypeOfUnaryExpression unary
 
@@ -880,7 +875,7 @@ functionMemberExpression = do
 
 functionExpression :: TokenParser FunctionExpression
 functionExpression = do
-    function
+    functionKeyword
     name <- maybeParse identifierToken
     leftRoundBracket
     params <- sepBy identifierToken comma
@@ -893,7 +888,7 @@ propertyAccessByDotMemberExpression = undefined
 
 newMemberExpression :: TokenParser MemberExpression
 newMemberExpression = do
-    new 
+    newKeyword
     memberExpr <- memberExpression
     args <- arguments
     return $ NewMemberExpression memberExpr args
@@ -912,7 +907,7 @@ primaryMemberExpression = do
 
 newNewExpression :: TokenParser NewExpression
 newNewExpression = do
-    new
+    newKeyword
     newExpr <- newExpression
     return $ NewNewExpression newExpr
 
@@ -985,7 +980,7 @@ identifierPrimaryExpression = do
     return $ IdentifierPrimaryExpression str
 
 thisPrimaryExpression :: TokenParser PrimaryExpression
-thisPrimaryExpression = this >> return ThisPrimaryExpression
+thisPrimaryExpression = thisKeyword >> return ThisPrimaryExpression
 
 literalPrimaryExpression :: TokenParser PrimaryExpression
 literalPrimaryExpression = do
@@ -1052,7 +1047,7 @@ numericPropertyName = do
 
 getterPropertyAssignment :: TokenParser PropertyAssignment
 getterPropertyAssignment = do
-    get
+    getKeyword
     name <- propertyName
     roundBrackets
     leftCurlyBracket
@@ -1062,7 +1057,7 @@ getterPropertyAssignment = do
 
 setterPropertyAssignment :: TokenParser PropertyAssignment
 setterPropertyAssignment = do
-    set
+    setKeyword
     name <- propertyName
     leftRoundBracket
     param <- identifierToken
