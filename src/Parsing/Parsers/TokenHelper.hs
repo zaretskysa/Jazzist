@@ -206,7 +206,7 @@ setKeyword :: TokenParser ()
 setKeyword = concreteIdentifier "set"
 
 concreteIdentifier :: String -> TokenParser ()
-concreteIdentifier str = do
+concreteIdentifier str = try $ do
     actual <- identifierToken
     if str == actual 
         then return ()
@@ -228,3 +228,13 @@ oneOfAssignmentOperators =
     <|> punctuatorToken BitwiseAndAssignPunctuator 
     <|> punctuatorToken BitwiseXorAssignPunctuator 
     <|> punctuatorToken BitwiseOrAssignPunctuator 
+
+-------------------------------------------------
+
+betweenCurlyBrackets :: TokenParser a -> TokenParser a
+betweenCurlyBrackets p = between leftCurlyBracket rightCurlyBracket p
+
+betweenRoundBrackets :: TokenParser a -> TokenParser a
+betweenRoundBrackets p = between leftRoundBracket rightRoundBracket p
+
+

@@ -24,10 +24,8 @@ functionDeclarationSourceElement :: TokenParser SourceElement
 functionDeclarationSourceElement = do
     functionKeyword
     id <- identifierToken
-    leftRoundBracket
-    params <- sepBy identifierToken comma
-    rightRoundBracket
-    body <- between leftCurlyBracket rightCurlyBracket functionBody
+    params <- betweenRoundBrackets $ sepBy identifierToken comma
+    body <- betweenCurlyBrackets functionBody
     return $ FunctionDeclarationSourceElement id params body
 
 statement :: TokenParser Statement
@@ -87,7 +85,7 @@ blockCatchFinallyTryStatement = do
 parseCatch :: TokenParser Catch
 parseCatch = do
     catchKeyword
-    id <- between leftRoundBracket rightRoundBracket identifierToken
+    id <- betweenRoundBrackets identifierToken
     b <- block
     return $ Catch id b
 
@@ -115,7 +113,7 @@ labelledStatement = do
 switchStatement :: TokenParser Statement
 switchStatement = do
     switchKeyword
-    expr <- between leftRoundBracket rightRoundBracket expression
+    expr <- betweenRoundBrackets expression
     block <- caseBlock
     return $ SwitchStmt expr block
 
@@ -145,7 +143,7 @@ defaultClause = do
 withStatement :: TokenParser Statement
 withStatement = do
     withKeyword
-    expr <- between leftRoundBracket rightRoundBracket expression
+    expr <- betweenRoundBrackets expression
     stmt <- statement
     return $ WithStmt expr stmt
 
@@ -184,14 +182,14 @@ doWhileIterationStatement = do
     doKeyword
     stmt <- statement
     whileKeyword
-    expr <- between leftRoundBracket rightRoundBracket expression
+    expr <- betweenRoundBrackets expression
     semicolon
     return $ IterationStmt $ DoWhileIterationStatement stmt expr
 
 whileIterationStatement :: TokenParser Statement
 whileIterationStatement = do
     whileKeyword
-    expr <- between leftRoundBracket rightRoundBracket expression
+    expr <- betweenRoundBrackets expression
     stmt <- statement
     return $ IterationStmt $ WhileIterationStatement expr stmt
 
@@ -254,7 +252,7 @@ varInExprIteratioinStatement = do
 ifStatement :: TokenParser Statement
 ifStatement = do
     ifKeyword
-    expr <- between leftRoundBracket rightRoundBracket expression
+    expr <- betweenRoundBrackets expression
     stmt1 <- statement
     stmt2 <- maybeParse (elseKeyword >> statement)
     return $ IfStmt expr stmt1 stmt2
@@ -274,9 +272,7 @@ blockStatement = do
 
 block :: TokenParser Block
 block = do
-    leftCurlyBracket
-    stmts <- many statement
-    rightCurlyBracket
+    stmts <- betweenCurlyBrackets $ many statement
     return $ Block stmts
 
 emptyStatement :: TokenParser Statement
@@ -877,10 +873,8 @@ functionExpression :: TokenParser FunctionExpression
 functionExpression = do
     functionKeyword
     name <- maybeParse identifierToken
-    leftRoundBracket
-    params <- sepBy identifierToken comma
-    rightRoundBracket
-    body <- between leftCurlyBracket rightCurlyBracket functionBody
+    params <- betweenRoundBrackets $ sepBy identifierToken comma
+    body <- betweenCurlyBrackets functionBody
     return $ FunctionExpression name params body
 
 propertyAccessByDotMemberExpression :: TokenParser MemberExpression
@@ -894,11 +888,7 @@ newMemberExpression = do
     return $ NewMemberExpression memberExpr args
 
 arguments :: TokenParser [AssignmentExpression]
-arguments = do
-    leftRoundBracket
-    args <- sepBy assignmentExpression comma
-    rightRoundBracket
-    return args
+arguments = betweenRoundBrackets $ sepBy assignmentExpression comma
 
 primaryMemberExpression :: TokenParser MemberExpression
 primaryMemberExpression = do
@@ -966,7 +956,7 @@ primaryExpression =
 
 expressionPrimaryExpression :: TokenParser PrimaryExpression
 expressionPrimaryExpression = do
-    expr <- between leftRoundBracket rightRoundBracket expression
+    expr <- betweenRoundBrackets expression
     return $ ExpressionPrimaryExpression expr
 
 expression :: TokenParser Expression
@@ -1010,9 +1000,7 @@ arrayLiteralElements = do
 
 objectLiteralPrimaryExpression :: TokenParser PrimaryExpression
 objectLiteralPrimaryExpression = do
-    leftCurlyBracket
-    properties <- sepEndBy propertyAssignment comma
-    rightCurlyBracket
+    properties <- betweenCurlyBrackets $ sepEndBy propertyAssignment comma
     return $ ObjectLiteralPrimaryExpression $ ObjectLiteral properties
 
 propertyAssignment :: TokenParser PropertyAssignment
@@ -1050,24 +1038,19 @@ getterPropertyAssignment = do
     getKeyword
     name <- propertyName
     roundBrackets
-    leftCurlyBracket
-    body <- functionBody
-    rightCurlyBracket
+    body <- betweenCurlyBrackets functionBody
     return $ GetterPropertyAssignment name body
 
 setterPropertyAssignment :: TokenParser PropertyAssignment
 setterPropertyAssignment = do
     setKeyword
     name <- propertyName
-    leftRoundBracket
-    param <- identifierToken
-    rightRoundBracket
-    leftCurlyBracket
-    body <- functionBody
-    rightCurlyBracket
+    param <- betweenRoundBrackets identifierToken
+    body <- betweenCurlyBrackets functionBody
     return $ SetterPropertyAssignment name param body
 
 functionBody :: TokenParser FunctionBody
 functionBody = do
     srcElements <- many sourceElement
     return $ FunctionBody srcElements
+
