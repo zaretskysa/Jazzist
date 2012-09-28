@@ -10,6 +10,5 @@ unicodeEscapeSequenceElement = char '\\' >> unicodeEscapeSequence
 
 unicodeEscapeSequence :: Parser Char
 unicodeEscapeSequence = do
-	char 'u'
-	hs <- count 4 hexDigit
+	hs <- char 'u' >> count 4 hexDigit
 	return $ chr $ intFromHex hs

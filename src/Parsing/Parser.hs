@@ -1,11 +1,10 @@
 module Parsing.Parser where
 
-import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec (parse, ParseError)
 
 import Parsing.Ast
 import Lexing.Tokens
 import Lexing.Lexer (tokenize)
-import Parsing.TokenParser
 import Parsing.ProgramParser
 
 tryToParseString :: String -> String

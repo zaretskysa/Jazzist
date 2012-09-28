@@ -18,16 +18,13 @@ decimalLiteral = do
 
 fractionalWithLeadingIneger :: Parser Double
 fractionalWithLeadingIneger = do
-	intPart <- decimalIntegerLiteral
-	char '.'
+	intPart <- char '.' >> decimalIntegerLiteral
 	fracPart <- many digit
 	expPart <- option "" exponentPart
 	return $ makeNumber intPart fracPart expPart
 
 exponentPart :: Parser String
-exponentPart = do
-	oneOf "eE"
-	signedInteger
+exponentPart = oneOf "eE" >> signedInteger
 
 signedInteger :: Parser String
 signedInteger = do
@@ -37,8 +34,7 @@ signedInteger = do
 
 fractionalWithoutLeadingInteger :: Parser Double
 fractionalWithoutLeadingInteger = do
-	char '.'
-	fracPart <- many1 digit
+	fracPart <- char '.' >> many1 digit
 	expPart <- option "0" exponentPart
 	return $ makeNumber "0" fracPart expPart
 
@@ -64,9 +60,8 @@ nonZeroDigit :: Parser Char
 nonZeroDigit = oneOf "123456789"
 
 hexIntegerLiteral :: Parser Double
-hexIntegerLiteral = do
-	char '0' >> oneOf "xX"
-	hs <- many1 hexDigit
+hexIntegerLiteral = do	
+	hs <- char '0' >> oneOf "xX" >> many1 hexDigit
 	return $ fromIntegral $ intFromHex hs 
 
 -- intPart -> fracPart -> expPart -> result

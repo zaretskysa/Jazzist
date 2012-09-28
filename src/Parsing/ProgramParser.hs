@@ -1,7 +1,5 @@
 module Parsing.ProgramParser where
 
-import Debug.Trace
-
 import Parsing.Ast
 import Parsing.TokenParser
 import Parsing.Parsers.Literal
@@ -23,10 +21,10 @@ statementSourceElement = do
 functionDeclarationSourceElement :: TokenParser SourceElement
 functionDeclarationSourceElement = do
     functionKeyword
-    id <- identifierToken
+    ident <- identifierToken
     params <- betweenRoundBrackets $ sepBy identifierToken comma
     body <- betweenCurlyBrackets functionBody
-    return $ FunctionDeclarationSourceElement id params body
+    return $ FunctionDeclarationSourceElement ident params body
 
 statement :: TokenParser Statement
 statement = 
@@ -85,9 +83,9 @@ blockCatchFinallyTryStatement = do
 parseCatch :: TokenParser Catch
 parseCatch = do
     catchKeyword
-    id <- betweenRoundBrackets identifierToken
+    ident <- betweenRoundBrackets identifierToken
     b <- block
-    return $ Catch id b
+    return $ Catch ident b
 
 finally :: TokenParser Finally
 finally = do
@@ -105,26 +103,26 @@ throwStatement = do
 
 labelledStatement :: TokenParser Statement
 labelledStatement = do
-    id <- identifierToken
+    ident <- identifierToken
     colon
     stmt <- statement
-    return $ LabelledStmt id stmt
+    return $ LabelledStmt ident stmt
 
 switchStatement :: TokenParser Statement
 switchStatement = do
     switchKeyword
     expr <- betweenRoundBrackets expression
-    block <- caseBlock
-    return $ SwitchStmt expr block
+    blk <- caseBlock
+    return $ SwitchStmt expr blk
 
 caseBlock :: TokenParser CaseBlock
 caseBlock = do
     leftCurlyBracket
     beginClauses <- many caseClause
-    defaultClause <- maybeParse defaultClause
+    defaultPart <- maybeParse defaultClause
     endClauses <- many caseClause
     rightCurlyBracket
-    return $ CaseBlock beginClauses defaultClause endClauses
+    return $ CaseBlock beginClauses defaultPart endClauses
 
 caseClause :: TokenParser CaseClause
 caseClause = do
@@ -157,16 +155,16 @@ returnStatement = do
 breakStatement :: TokenParser Statement
 breakStatement = do
     breakKeyword
-    id <- maybeParse identifierToken --TODO: no line termimator here
+    ident <- maybeParse identifierToken --TODO: no line termimator here
     semicolon
-    return $ BreakStmt id
+    return $ BreakStmt ident
 
 continueStatement :: TokenParser Statement
 continueStatement = do
     continueKeyword
-    id <- maybeParse identifierToken --TODO: no line termimator here
+    ident <- maybeParse identifierToken --TODO: no line termimator here
     semicolon
-    return $ ContinueStmt id
+    return $ ContinueStmt ident
 
 iterationStatement :: TokenParser Statement
 iterationStatement = 
@@ -287,9 +285,9 @@ variableStatement = do
 
 variableDeclaration :: TokenParser VariableDeclaration
 variableDeclaration = do
-    id <- identifierToken
-    init <- maybeInitializer
-    return $ VariableDeclaration id init
+    ident <- identifierToken
+    initial <- maybeInitializer
+    return $ VariableDeclaration ident initial
 
 maybeInitializer :: TokenParser MaybeInitializer
 maybeInitializer = maybeParse initializer
@@ -343,17 +341,17 @@ conditionalExpression =
 
 logicalOrContionalExpression :: TokenParser ConditionalExpression
 logicalOrContionalExpression = do
-    logicalOr <- logicalOrExpression
-    return $ LogicalOrConditionalExpression logicalOr
+    logOr <- logicalOrExpression
+    return $ LogicalOrConditionalExpression logOr
 
 teranaryOperatorConditionalExpression :: TokenParser ConditionalExpression
 teranaryOperatorConditionalExpression = do
-    logicalOr <- logicalOrExpression
+    logOr <- logicalOrExpression
     questionMark
     assign1 <- assignmentExpression
     colon
     assign2 <- assignmentExpression
-    return $ TeranaryOperatorConditionalExpression logicalOr assign1 assign2
+    return $ TeranaryOperatorConditionalExpression logOr assign1 assign2
 
 logicalOrExpression :: TokenParser LogicalOrExpression
 logicalOrExpression = do
@@ -368,16 +366,16 @@ buildRestOfLogicalOrExpression left =
 nonEmptyRestOfLogicalOrExpression :: LogicalOrExpression -> TokenParser LogicalOrExpression
 nonEmptyRestOfLogicalOrExpression left = do
     logicalOr
-    logicalAnd <- logicalAndExpression
-    buildRestOfLogicalOrExpression $ BinaryLogicalOrExpression left logicalAnd
+    logAnd <- logicalAndExpression
+    buildRestOfLogicalOrExpression $ BinaryLogicalOrExpression left logAnd
 
 emptyRestOfLogicalOrExpression :: LogicalOrExpression -> TokenParser LogicalOrExpression
 emptyRestOfLogicalOrExpression left = return left
 
 unaryLogicalOrExpression :: TokenParser LogicalOrExpression
 unaryLogicalOrExpression = do
-    logicalAnd <- logicalAndExpression
-    return $ UnaryLogicalOrExpression logicalAnd
+    logAnd <- logicalAndExpression
+    return $ UnaryLogicalOrExpression logAnd
 
 logicalAndExpression :: TokenParser LogicalAndExpression
 logicalAndExpression = do
@@ -392,21 +390,21 @@ buildRestOfLogicalAndExpression left =
 nonEmptyRestOfLogicalAndExpression :: LogicalAndExpression -> TokenParser LogicalAndExpression
 nonEmptyRestOfLogicalAndExpression left = do
     logicalAnd
-    bitwiseOr <- bitwiseOrExpression
-    buildRestOfLogicalAndExpression $ BinaryLogicalAndExpression left bitwiseOr
+    bitOr <- bitwiseOrExpression
+    buildRestOfLogicalAndExpression $ BinaryLogicalAndExpression left bitOr
 
 emptyRestOfLogicalAndExpression :: LogicalAndExpression -> TokenParser LogicalAndExpression
 emptyRestOfLogicalAndExpression left = return left
 
 unaryLogicalAndExpression :: TokenParser LogicalAndExpression
 unaryLogicalAndExpression = do
-    bitwiseOr <- bitwiseOrExpression
-    return $ UnaryLogicalAndExpression bitwiseOr
+    bitOr <- bitwiseOrExpression
+    return $ UnaryLogicalAndExpression bitOr
 
 bitwiseOrExpression :: TokenParser BitwiseOrExpression
 bitwiseOrExpression = do 
-    bitwiseXor <- unaryBitwiseOrExpression
-    buildRestOfBitwiseOrExpression bitwiseXor
+    bitXor <- unaryBitwiseOrExpression
+    buildRestOfBitwiseOrExpression bitXor
 
 buildRestOfBitwiseOrExpression :: BitwiseOrExpression -> TokenParser BitwiseOrExpression
 buildRestOfBitwiseOrExpression left =
@@ -416,21 +414,21 @@ buildRestOfBitwiseOrExpression left =
 nonEmptyRestOfBitwiseOrExpression :: BitwiseOrExpression -> TokenParser BitwiseOrExpression
 nonEmptyRestOfBitwiseOrExpression left = do
     bitwiseOr
-    bitwiseXor <- bitwiseXorExpression
-    buildRestOfBitwiseOrExpression $ BinaryBitwiseOrExpression left bitwiseXor
+    bitXor <- bitwiseXorExpression
+    buildRestOfBitwiseOrExpression $ BinaryBitwiseOrExpression left bitXor
 
 emptyRestOfBitwiseOrExpression :: BitwiseOrExpression -> TokenParser BitwiseOrExpression
 emptyRestOfBitwiseOrExpression left = return left
 
 unaryBitwiseOrExpression :: TokenParser BitwiseOrExpression
 unaryBitwiseOrExpression = do
-    bitwiseXor <- bitwiseXorExpression
-    return $ UnaryBitwiseOrExpression bitwiseXor
+    bitXor <- bitwiseXorExpression
+    return $ UnaryBitwiseOrExpression bitXor
 
 bitwiseXorExpression :: TokenParser BitwiseXorExpression
 bitwiseXorExpression = do
-    bitwiseAnd <- unaryBitwiseXorExpression
-    buildRestOfBitwiseXorExpression bitwiseAnd
+    bitAnd <- unaryBitwiseXorExpression
+    buildRestOfBitwiseXorExpression bitAnd
 
 buildRestOfBitwiseXorExpression :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
 buildRestOfBitwiseXorExpression left = 
@@ -440,16 +438,16 @@ buildRestOfBitwiseXorExpression left =
 nonEmptyRestOfBitwiseXorExpression :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
 nonEmptyRestOfBitwiseXorExpression left = do
     bitwiseXor
-    bitwiseAnd <- bitwiseAndExpression
-    buildRestOfBitwiseXorExpression $ BinaryBitwiseXorExpression left bitwiseAnd
+    bitAnd <- bitwiseAndExpression
+    buildRestOfBitwiseXorExpression $ BinaryBitwiseXorExpression left bitAnd
 
 emptyRestOfBitwiseXorExpresssion :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
 emptyRestOfBitwiseXorExpresssion left = return left
 
 unaryBitwiseXorExpression :: TokenParser BitwiseXorExpression
 unaryBitwiseXorExpression = do
-    bitwiseAnd <- bitwiseAndExpression
-    return $ UnaryBitwiseXorExpression bitwiseAnd
+    bitAnd <- bitwiseAndExpression
+    return $ UnaryBitwiseXorExpression bitAnd
 
 bitwiseAndExpression :: TokenParser BitwiseAndExpression
 bitwiseAndExpression = do
@@ -857,9 +855,9 @@ restOfAccessByBracketMemberExpression = do
 restOfAccessByDotMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
 restOfAccessByDotMemberExpression = do
     dot
-    id <- identifierToken
+    ident <- identifierToken
     buildFunc <- restOfMemberExpression
-    return $ \ memberExpr -> buildFunc $ PropertyAccessByDotMemberExpression memberExpr id
+    return $ \ memberExpr -> buildFunc $ PropertyAccessByDotMemberExpression memberExpr ident
 
 emptyRestOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
 emptyRestOfMemberExpression = return (\ primary -> primary)
@@ -927,8 +925,8 @@ nonEmptyRestOfPropertyAccessByBracketsCallExpression base = do
 nonEmptyRestOfPropertyAccessByDotCallExpression :: CallExpression -> TokenParser CallExpression
 nonEmptyRestOfPropertyAccessByDotCallExpression base = do
     dot
-    id <- identifierName
-    buildRestOfCallExpression $ PropertyAccessByDotCallExpression base id
+    ident <- identifierName
+    buildRestOfCallExpression $ PropertyAccessByDotCallExpression base ident
 
 nonEmptyRestOfCallWithArgumentsCallExpression :: CallExpression -> TokenParser CallExpression
 nonEmptyRestOfCallWithArgumentsCallExpression base = do
@@ -996,7 +994,7 @@ arrayLiteralElements = do
         then return []
         else case last assignments of
             Nothing -> return $ reverse $ drop 1 (reverse assignments)
-            otherwise -> return assignments
+            _ -> return assignments
 
 objectLiteralPrimaryExpression :: TokenParser PrimaryExpression
 objectLiteralPrimaryExpression = do
@@ -1025,8 +1023,8 @@ propertyName =
 
 stringPropertyName :: TokenParser PropertyName
 stringPropertyName = do
-    id <- identifierName <|> stringLiteralToken
-    return $ StringPropertyName id
+    ident <- identifierName <|> stringLiteralToken
+    return $ StringPropertyName ident
 
 numericPropertyName :: TokenParser PropertyName
 numericPropertyName = do

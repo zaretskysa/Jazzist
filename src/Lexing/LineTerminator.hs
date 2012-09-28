@@ -2,8 +2,6 @@ module Lexing.LineTerminator where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Tokens
-
 lineTerminatorSequence :: Parser Char
 lineTerminatorSequence = do
 	lineFeed
