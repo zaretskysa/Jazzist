@@ -10,3 +10,11 @@ executable Jazzist
     hs-source-dirs: src
     build-depends: base, parsec, pretty-show
     ghc-options: -Wall -fno-warn-unused-do-bind -O0
+
+test-suite jazzist-unit-tests
+  type:              exitcode-stdio-1.0
+  hs-source-dirs:    tests/units, src
+  main-is:           JazzistUnitTests.hs
+  build-depends:     base,
+                     HUnit
+
