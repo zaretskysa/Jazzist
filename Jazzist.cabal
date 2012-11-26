@@ -15,6 +15,6 @@ test-suite jazzist-unit-tests
   type:              exitcode-stdio-1.0
   hs-source-dirs:    tests/units, src
   main-is:           JazzistUnitTests.hs
-  build-depends:     base,
+  build-depends:     base, 
                      HUnit
 

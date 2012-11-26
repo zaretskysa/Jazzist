@@ -1,5 +1,15 @@
 import Test.HUnit
+import System.Exit (exitFailure, exitSuccess)
 
-testEmpty = TestCase $ assertEqual "1+2 equals to 3" (1+2) 3
+import LexingTests.BooleanLiteralTests
 
-main = runTestTT testEmpty
+allTests :: Test
+allTests = TestList 
+	[ booleanLiteralTests ]
+
+main :: IO ()
+main = do 
+	counts <- runTestTT allTests
+	case counts of 
+		Counts _ _ 0 0 -> exitSuccess
+		_ -> exitFailure
