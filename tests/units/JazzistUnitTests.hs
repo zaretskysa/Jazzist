@@ -3,11 +3,13 @@ import System.Exit (exitFailure, exitSuccess)
 
 import LexingTests.BooleanLiteralTests
 import LexingTests.PunctuatorTests
+import LexingTests.KeywordTests
 
 allTests :: Test
 allTests = TestList 
 	[ booleanLiteralTests
-	, punctuatorTests ]
+	, punctuatorTests
+	, keywordTests ]
 
 main :: IO ()
 main = do 
