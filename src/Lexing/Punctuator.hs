@@ -47,8 +47,8 @@ punctuator' = do
     <|> try bitwiseXor
     <|> logicalNot
     <|> try bitwiseNot
-    <|> logicalAnd
-    <|> logicalOr
+    <|> try logicalAnd
+    <|> try logicalOr
     <|> questionMark
     <|> colon
     <|> try assign
@@ -100,7 +100,7 @@ greaterThan :: Parser Punctuator
 greaterThan = do 
     char '>'
     notFollowedBy $ oneOf ">="
-    return LessThanPunctuator
+    return GreaterThanPunctuator
 
 lessThanEquals :: Parser Punctuator
 lessThanEquals = string "<=" >> return LessThanEqualsPunctuator
@@ -141,7 +141,7 @@ minus = do
 mul :: Parser Punctuator
 mul = do
     char '*'
-    notFollowedBy $ char '*'
+    notFollowedBy $ char '='
     return MulPunctuator
 
 modulus :: Parser Punctuator
