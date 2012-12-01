@@ -5,13 +5,17 @@ import LexingTests.BooleanLiteralTests
 import LexingTests.PunctuatorTests
 import LexingTests.KeywordTests
 import LexingTests.NumericLiteralTests
+import LexingTests.NullLiteralTests
 
 allTests :: Test
 allTests = TestList 
 	[ booleanLiteralTests
 	, punctuatorTests
 	, keywordTests
-	, numericLiteralTests ]
+	, numericLiteralTests
+    , nullLiteralTests
+    ]
+
 
 main :: IO ()
 main = do 
