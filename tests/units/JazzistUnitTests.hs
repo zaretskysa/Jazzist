@@ -6,6 +6,7 @@ import LexingTests.PunctuatorTests
 import LexingTests.KeywordTests
 import LexingTests.NumericLiteralTests
 import LexingTests.NullLiteralTests
+import LexingTests.CommentTests
 
 allTests :: Test
 allTests = TestList 
@@ -14,8 +15,8 @@ allTests = TestList
 	, keywordTests
 	, numericLiteralTests
     , nullLiteralTests
+    , commentTests
     ]
-
 
 main :: IO ()
 main = do 
