@@ -4,12 +4,14 @@ import System.Exit (exitFailure, exitSuccess)
 import LexingTests.BooleanLiteralTests
 import LexingTests.PunctuatorTests
 import LexingTests.KeywordTests
+import LexingTests.NumericLiteralTests
 
 allTests :: Test
 allTests = TestList 
 	[ booleanLiteralTests
 	, punctuatorTests
-	, keywordTests ]
+	, keywordTests
+	, numericLiteralTests ]
 
 main :: IO ()
 main = do 
