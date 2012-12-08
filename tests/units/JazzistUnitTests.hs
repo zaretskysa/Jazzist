@@ -7,6 +7,7 @@ import LexingTests.KeywordTests
 import LexingTests.NumericLiteralTests
 import LexingTests.NullLiteralTests
 import LexingTests.CommentTests
+import LexingTests.StringLiteralTests
 
 allTests :: Test
 allTests = TestList 
@@ -16,6 +17,7 @@ allTests = TestList
 	, numericLiteralTests
     , nullLiteralTests
     , commentTests
+    , stringLiteralTests
     ]
 
 main :: IO ()

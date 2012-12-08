@@ -43,7 +43,7 @@ escapeSequenceElement = do
 escapeSequence :: Parser Char
 escapeSequence = do
     characterEscapeSequence
---  <|> 0 without decimal digit
+--  <|> 0 without decimal digit TODO
     <|> hexEscapeSequence
     <|> unicodeEscapeSequence
 
@@ -93,7 +93,7 @@ singleStringCharacter :: Parser Char
 singleStringCharacter = do
     characterWithoutSingleQuoteAndBackSlashAndLineTerminator
     <|> escapeSequenceElement
---  <|> lineContinuation
+--  <|> lineContinuation TODO
 
 characterWithoutSingleQuoteAndBackSlashAndLineTerminator :: Parser Char
 characterWithoutSingleQuoteAndBackSlashAndLineTerminator = do
