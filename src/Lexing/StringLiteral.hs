@@ -17,28 +17,31 @@ doubleQuotedString = do
     char '"'
     values <- many doubleStringCharacter
     char '"'
-    return values
+    return $ concat values
 
-doubleStringCharacter :: Parser Char
+doubleStringCharacter :: Parser String
 doubleStringCharacter = do
     characterWithoutDoubleQuoteAndBackSlashAndLineTerminator
-    <|> escapeSequenceElement
---  <|> lineContinuation
+    <|> try escapeSequenceElement
+    <|> lineContinuation
 
-lineContinuation :: Parser Char
+lineContinuation :: Parser String
 lineContinuation = do
-    char '\\' 
+    char '\\'
     lineTerminatorSequence
+    return []
 
-characterWithoutDoubleQuoteAndBackSlashAndLineTerminator :: Parser Char
+characterWithoutDoubleQuoteAndBackSlashAndLineTerminator :: Parser String
 characterWithoutDoubleQuoteAndBackSlashAndLineTerminator = do
     try $ notFollowedBy $ (char '"' <|> char '\\' <|> lineTerminator)
-    anyChar
+    c <- anyChar
+    return [c]
 
-escapeSequenceElement :: Parser Char
+escapeSequenceElement :: Parser String
 escapeSequenceElement = do
     char '\\'
-    escapeSequence
+    c <- escapeSequence
+    return [c]
 
 escapeSequence :: Parser Char
 escapeSequence = do
@@ -87,15 +90,16 @@ singleQuotedString = do
     char '\''
     values <- many singleStringCharacter
     char '\''
-    return values
+    return $ concat values
 
-singleStringCharacter :: Parser Char
+singleStringCharacter :: Parser String
 singleStringCharacter = do
     characterWithoutSingleQuoteAndBackSlashAndLineTerminator
-    <|> escapeSequenceElement
---  <|> lineContinuation TODO
+    <|> try escapeSequenceElement
+    <|> lineContinuation
 
-characterWithoutSingleQuoteAndBackSlashAndLineTerminator :: Parser Char
+characterWithoutSingleQuoteAndBackSlashAndLineTerminator :: Parser String
 characterWithoutSingleQuoteAndBackSlashAndLineTerminator = do
     try $ notFollowedBy $ (char '\'' <|> char '\\' <|> lineTerminator)
-    anyChar
+    c <- anyChar
+    return [c]

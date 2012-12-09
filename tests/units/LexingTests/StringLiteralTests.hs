@@ -41,6 +41,10 @@ stringLiteralTests = TestLabel "String literal tests" $ TestList
     , oneDigitUnicodeEscapeSequence
     , capitalPrefixUnicodeEscapeSequence
     , fiveDigitsHexEscapeSequence
+    , lineContinuation
+    , doubleLineContinuation
+    , lineContinuationAndNewLine
+    , phraseWithLineContinuations
     ]
 
 successful :: String -> String -> Test
@@ -150,4 +154,18 @@ capitalPrefixUnicodeEscapeSequence = successful "'\\U0065'" "U0065"
 
 fiveDigitsHexEscapeSequence :: Test
 fiveDigitsHexEscapeSequence = successful ("'\\u00410'") ("A0")
+
+lineContinuation :: Test
+lineContinuation = successful ("'\\\n'") ("")
+
+doubleLineContinuation :: Test
+doubleLineContinuation = successful ("'\\\n\\\n'") ("")
+
+lineContinuationAndNewLine :: Test
+lineContinuationAndNewLine = successful ("'\\\n\\n'") ("\n")
+
+phraseWithLineContinuations :: Test
+phraseWithLineContinuations = successful 
+    ("'\\\nKill \\\nall human\\\ns\\\n,\\\n \\\nmust\\\n \\\nkill all hum\\\nans...\\\n'") 
+    ("Kill all humans, must kill all humans...")
 

@@ -5,17 +5,13 @@ import Text.ParserCombinators.Parsec
 lineTerminatorSequence :: Parser Char
 lineTerminatorSequence = do
 	lineFeed
-	<|> carriageReturnWithoutLineFeed
+	<|> try carriageReturnWithoutLineFeed
 	<|> lineSeparator
 	<|> paragraphSeparator
 	<|> carriageReturnAndLineFeed
 
 carriageReturnAndLineFeed :: Parser Char
-carriageReturnAndLineFeed =  lineFeed 
-					     <|> carriageReturnWithoutLineFeed 
-					     <|> lineFeed 
-					     <|> paragraphSeparator
-					     <|> carriageReturnAndLineFeed
+carriageReturnAndLineFeed =  carriageReturn >> lineFeed
 
 carriageReturnWithoutLineFeed :: Parser Char
 carriageReturnWithoutLineFeed = do
