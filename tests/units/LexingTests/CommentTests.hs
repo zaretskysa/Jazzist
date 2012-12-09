@@ -21,6 +21,8 @@ commentTests = TestLabel "Comment tests" $ TestList
     , oneSlashSingleLineComment
     , multiLineCommentWithoutAsterisk
     , multiLineCommentWithoutSlash
+    , bunchOfAsterisksMultiLineComment
+    , bunchOfBackSlashesSingleLineComment
     ]
 
 successfulCommentParsing :: String -> String -> Test
@@ -70,3 +72,9 @@ multiLineCommentWithoutAsterisk = failedCommentParsing "/*/"
 
 multiLineCommentWithoutSlash :: Test
 multiLineCommentWithoutSlash = failedCommentParsing "/**"
+
+bunchOfAsterisksMultiLineComment :: Test
+bunchOfAsterisksMultiLineComment = successfulCommentParsing "/*****/" "***"
+
+bunchOfBackSlashesSingleLineComment :: Test
+bunchOfBackSlashesSingleLineComment = successfulCommentParsing "/////" "///"
