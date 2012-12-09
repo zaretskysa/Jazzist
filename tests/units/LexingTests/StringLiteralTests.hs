@@ -45,6 +45,10 @@ stringLiteralTests = TestLabel "String literal tests" $ TestList
     , doubleLineContinuation
     , lineContinuationAndNewLine
     , phraseWithLineContinuations
+    , justNullEscapeSequence
+    , doubleNullEscapeSequence
+    , nullEscapeSequenceFollowedByDigit
+    , nullEscapeSequenceFollowedByLetter
     ]
 
 successful :: String -> String -> Test
@@ -169,3 +173,14 @@ phraseWithLineContinuations = successful
     ("'\\\nKill \\\nall human\\\ns\\\n,\\\n \\\nmust\\\n \\\nkill all hum\\\nans...\\\n'") 
     ("Kill all humans, must kill all humans...")
 
+justNullEscapeSequence :: Test
+justNullEscapeSequence = successful ("'\\0'") ("\0")
+
+doubleNullEscapeSequence :: Test
+doubleNullEscapeSequence = successful ("'\\0\\0'") ("\0\0")
+
+nullEscapeSequenceFollowedByDigit :: Test
+nullEscapeSequenceFollowedByDigit = failed ("'\\07'")
+
+nullEscapeSequenceFollowedByLetter :: Test
+nullEscapeSequenceFollowedByLetter = successful ("'\\0a'") ("\0a")

@@ -46,9 +46,12 @@ escapeSequenceElement = do
 escapeSequence :: Parser Char
 escapeSequence = do
     characterEscapeSequence
---  <|> 0 without decimal digit TODO
+    <|> try nullEscapeSequence
     <|> hexEscapeSequence
     <|> unicodeEscapeSequence
+
+nullEscapeSequence :: Parser Char
+nullEscapeSequence = char '0' >> notFollowedBy digit >> return '\0'
 
 characterEscapeSequence :: Parser Char
 characterEscapeSequence = singleEscapeCharacter <|> nonEscapeCharacter
