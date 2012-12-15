@@ -4,35 +4,36 @@ data Program =
     Program [SourceElement] deriving (Show)
 
 data SourceElement = 
-    StatementSourceElement (Statement (Expression SourceElement) SourceElement)
+    StatementSourceElement (Statement (LeftHandSideExpression SourceElement)  (Expression SourceElement) SourceElement)
     | FunctionDeclarationSourceElement String [String] (FunctionBody SourceElement)
     deriving (Show)
 
-data Statement expression sourceElement =
-    BlockStmt (Block expression sourceElement)
+data Statement lhsExpr expression sourceElement =
+    BlockStmt (Block lhsExpr expression sourceElement)
     | VariableStmt [(VariableDeclaration sourceElement)] -- TODO: use non-empty list
     | EmptyStmt
     | ExpressionStmt expression
-    | IfStmt expression (Statement expression sourceElement) (MaybeStatement expression sourceElement)
-    | IterationStmt (IterationStatement expression sourceElement)
+    | IfStmt expression (Statement lhsExpr expression sourceElement) (MaybeStatement lhsExpr expression sourceElement)
+    | IterationStmt (IterationStatement lhsExpr expression sourceElement)
     | ContinueStmt MaybeString
     | BreakStmt MaybeString
     | ReturnStmt (MaybeExpression sourceElement)
-    | WithStmt expression (Statement expression sourceElement)
-    | LabelledStmt String (Statement expression sourceElement)
-    | SwitchStmt expression (CaseBlock expression sourceElement)
+    | WithStmt expression (Statement lhsExpr expression sourceElement)
+    | LabelledStmt String (Statement lhsExpr expression sourceElement)
+    | SwitchStmt expression (CaseBlock lhsExpr expression sourceElement)
     | ThrowStmt expression
-    | TryStmt (TryStatement expression sourceElement)
+    | TryStmt (TryStatement lhsExpr expression sourceElement)
     | DebuggerStmt
     deriving (Show)
 
-data Block expression sourceElement = 
-    Block [(Statement expression sourceElement)] 
+data Block lhsExpr expression sourceElement = 
+    Block [(Statement lhsExpr expression sourceElement)] 
     deriving (Show)
 
 type MaybeString = Maybe String
 
-type MaybeStatement expression sourceElement = Maybe (Statement expression sourceElement)
+type MaybeStatement lhsExpr expression sourceElement = 
+    Maybe (Statement lhsExpr expression sourceElement)
 
 -- variable name and initializer
 data VariableDeclaration sourceElement = 
@@ -47,13 +48,13 @@ type MaybeInitializer sourceElement = Maybe (Initializer sourceElement)
 
 -- TODO: separate while and for statements
 -- TODO: use NoIn ?
-data IterationStatement expression sourceElement =
-    DoWhileIterationStatement (Statement expression sourceElement) expression
-    | WhileIterationStatement expression (Statement expression sourceElement)
-    | ExprTripletForIterationStatement (MaybeExpression sourceElement) (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement expression sourceElement)
-    | VarAndDoubleExprForIterationStatement [(VariableDeclaration sourceElement)] (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement expression sourceElement) --use non empty list
-    | LHSExprInExprForIterationStatement (LeftHandSideExpression sourceElement) expression (Statement expression sourceElement)
-    | VarInExprIteratioinStatement  (VariableDeclaration sourceElement) expression (Statement expression sourceElement)
+data IterationStatement lhsExpr expression sourceElement =
+    DoWhileIterationStatement (Statement lhsExpr expression sourceElement) expression
+    | WhileIterationStatement expression (Statement lhsExpr expression sourceElement)
+    | ExprTripletForIterationStatement (MaybeExpression sourceElement) (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement lhsExpr expression sourceElement)
+    | VarAndDoubleExprForIterationStatement [(VariableDeclaration sourceElement)] (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement lhsExpr expression sourceElement) --use non empty list
+    | LHSExprInExprForIterationStatement lhsExpr expression (Statement lhsExpr expression sourceElement)
+    | VarInExprIteratioinStatement  (VariableDeclaration sourceElement) expression (Statement lhsExpr expression sourceElement)
     deriving (Show)
 
 data ReturnStatement sourceElement =
@@ -61,30 +62,32 @@ data ReturnStatement sourceElement =
     | ExpressionReturnStatement (Expression sourceElement)
     deriving (Show)
 
-data CaseBlock expression sourceElement = 
-    CaseBlock [(CaseClause expression sourceElement)] (MaybeDefaultClause expression sourceElement) [(CaseClause expression sourceElement)] 
+data CaseBlock lhsExpr expression sourceElement = 
+    CaseBlock [(CaseClause lhsExpr expression sourceElement)] (MaybeDefaultClause lhsExpr expression sourceElement) [(CaseClause lhsExpr expression sourceElement)] 
     deriving (Show)
 
-data CaseClause expression sourceElement = 
-    CaseClause (Expression sourceElement) [(Statement expression sourceElement)] 
+data CaseClause lhsExpr expression sourceElement = 
+    CaseClause (Expression sourceElement) [(Statement lhsExpr expression sourceElement)] 
     deriving (Show)
 
-data DefaultClause expression sourceElement = 
-    DefaultClause [(Statement expression sourceElement)] 
+data DefaultClause lhsExpr expression sourceElement = 
+    DefaultClause [(Statement lhsExpr expression sourceElement)] 
     deriving (Show)
 
-type MaybeDefaultClause expression sourceElement = 
-    Maybe (DefaultClause expression sourceElement)
+type MaybeDefaultClause lhsExpr expression sourceElement = 
+    Maybe (DefaultClause lhsExpr expression sourceElement)
 
-data TryStatement expression sourceElement = 
-    BlockCatchTryStatement (Block expression sourceElement) (Catch expression sourceElement)
-    | BlockFinallyTryStatement (Block expression sourceElement) (Finally expression sourceElement)
-    | BlockCatchFinallyTryStatement (Block expression sourceElement) (Catch expression sourceElement) (Finally expression sourceElement)
+data TryStatement lhsExpr expression sourceElement = 
+    BlockCatchTryStatement (Block lhsExpr expression sourceElement) (Catch lhsExpr expression sourceElement)
+    | BlockFinallyTryStatement (Block lhsExpr expression sourceElement) (Finally lhsExpr expression sourceElement)
+    | BlockCatchFinallyTryStatement (Block lhsExpr expression sourceElement) (Catch lhsExpr expression sourceElement) (Finally lhsExpr expression sourceElement)
     deriving (Show)
 
-data Catch expression sourceElement = Catch String (Block expression sourceElement) deriving (Show)
+data Catch lhsExpr expression sourceElement = Catch String (Block lhsExpr expression sourceElement) deriving (Show)
 
-data Finally expression sourceElement = Finally (Block expression sourceElement) deriving (Show)
+data Finally lhsExpr expression sourceElement = 
+    Finally (Block lhsExpr expression sourceElement) 
+    deriving (Show)
 
 
 -- Assignment expression
