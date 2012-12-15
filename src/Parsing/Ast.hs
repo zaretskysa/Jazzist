@@ -1,13 +1,14 @@
 module Parsing.Ast where
 
 import Parsing.Statement
+import Parsing.Function
 
 data Program = 
     Program [SourceElement] deriving (Show)
 
 data SourceElement = 
     StatementSourceElement (Statement (AssignmentExpression SourceElement) (LeftHandSideExpression SourceElement)  (Expression SourceElement) SourceElement)
-    | FunctionDeclarationSourceElement String [String] (FunctionBody SourceElement)
+    | FunctionDeclarationSourceElement String [String] (FunctionBody SourceElement) -- TODO: Introduce FunctionDeclaration structure
     deriving (Show)
 
 type MaybeString = Maybe String
@@ -125,8 +126,6 @@ data PropertyName =
     StringPropertyName String
     | NumericPropertyName Double
     deriving (Show)
-
-data FunctionBody sourceElement = FunctionBody [sourceElement] deriving (Show)
 
 -- Logical Expressions
 

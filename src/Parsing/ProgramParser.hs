@@ -5,6 +5,7 @@ import Parsing.TokenParser
 import Parsing.Parsers.Literal
 import Parsing.Parsers.TokenHelper
 import Parsing.Statement
+import Parsing.Function
 
 program :: TokenParser Program
 program = do
