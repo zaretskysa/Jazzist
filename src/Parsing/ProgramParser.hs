@@ -26,7 +26,7 @@ functionDeclarationSourceElement = do
     body <- betweenCurlyBrackets functionBody
     return $ FunctionDeclarationSourceElement ident params body
 
-statement :: TokenParser Statement
+statement :: TokenParser (Statement SourceElement)
 statement = 
     blockStatement
     <|> emptyStatement
@@ -44,35 +44,35 @@ statement =
     <|> tryStatement
     <|> debuggerStatement
 
-debuggerStatement :: TokenParser Statement
+debuggerStatement :: TokenParser (Statement SourceElement)
 debuggerStatement = debuggerKeyword >> semicolon >> return DebuggerStmt
 
-tryStatement :: TokenParser Statement
+tryStatement :: TokenParser (Statement SourceElement)
 tryStatement = do
     tryStmt <- parseTryStatement
     return $ TryStmt tryStmt
 
-parseTryStatement :: TokenParser TryStatement
+parseTryStatement :: TokenParser (TryStatement SourceElement)
 parseTryStatement = do
     try blockCatchFinallyTryStatement
     <|> try blockCatchTryStatement
     <|> try blockFinnalyTryStatement
 
-blockCatchTryStatement :: TokenParser TryStatement
+blockCatchTryStatement :: TokenParser (TryStatement SourceElement)
 blockCatchTryStatement = do
     tryKeyword
     b <- block
     c <- parseCatch
     return $ BlockCatchTryStatement b c
 
-blockFinnalyTryStatement :: TokenParser TryStatement
+blockFinnalyTryStatement :: TokenParser (TryStatement SourceElement)
 blockFinnalyTryStatement = do
     tryKeyword
     b <- block
     f <- finally
     return $ BlockFinallyTryStatement b f
 
-blockCatchFinallyTryStatement :: TokenParser TryStatement
+blockCatchFinallyTryStatement :: TokenParser (TryStatement SourceElement)
 blockCatchFinallyTryStatement = do
     tryKeyword
     b <- block
@@ -80,20 +80,20 @@ blockCatchFinallyTryStatement = do
     f <- finally
     return $ BlockCatchFinallyTryStatement b c f
 
-parseCatch :: TokenParser Catch
+parseCatch :: TokenParser (Catch SourceElement)
 parseCatch = do
     catchKeyword
     ident <- betweenRoundBrackets identifierToken
     b <- block
     return $ Catch ident b
 
-finally :: TokenParser Finally
+finally :: TokenParser (Finally SourceElement)
 finally = do
     finallyKeyword
     b <- block
     return $ Finally b
 
-throwStatement :: TokenParser Statement
+throwStatement :: TokenParser (Statement SourceElement)
 throwStatement = do
     throwKeyword
     --TODO: no line terminator here
@@ -101,21 +101,21 @@ throwStatement = do
     semicolon
     return $ ThrowStmt expr
 
-labelledStatement :: TokenParser Statement
+labelledStatement :: TokenParser (Statement SourceElement)
 labelledStatement = do
     ident <- identifierToken
     colon
     stmt <- statement
     return $ LabelledStmt ident stmt
 
-switchStatement :: TokenParser Statement
+switchStatement :: TokenParser (Statement SourceElement)
 switchStatement = do
     switchKeyword
     expr <- betweenRoundBrackets expression
     blk <- caseBlock
     return $ SwitchStmt expr blk
 
-caseBlock :: TokenParser CaseBlock
+caseBlock :: TokenParser (CaseBlock SourceElement)
 caseBlock = do
     leftCurlyBracket
     beginClauses <- many caseClause
@@ -124,7 +124,7 @@ caseBlock = do
     rightCurlyBracket
     return $ CaseBlock beginClauses defaultPart endClauses
 
-caseClause :: TokenParser CaseClause
+caseClause :: TokenParser (CaseClause SourceElement)
 caseClause = do
     caseKeyword
     expr <- expression
@@ -132,41 +132,41 @@ caseClause = do
     stmts <- many statement
     return $ CaseClause expr stmts
 
-defaultClause :: TokenParser DefaultClause
+defaultClause :: TokenParser (DefaultClause SourceElement)
 defaultClause = do
     defaultKeyword >> colon
     stmts <- many statement
     return $ DefaultClause stmts
 
-withStatement :: TokenParser Statement
+withStatement :: TokenParser (Statement SourceElement)
 withStatement = do
     withKeyword
     expr <- betweenRoundBrackets expression
     stmt <- statement
     return $ WithStmt expr stmt
 
-returnStatement :: TokenParser Statement
+returnStatement :: TokenParser (Statement SourceElement)
 returnStatement = do
     returnKeyword
     expr <- maybeParse expression --TODO: no line termimator here
     semicolon
     return $ ReturnStmt expr
 
-breakStatement :: TokenParser Statement
+breakStatement :: TokenParser (Statement SourceElement)
 breakStatement = do
     breakKeyword
     ident <- maybeParse identifierToken --TODO: no line termimator here
     semicolon
     return $ BreakStmt ident
 
-continueStatement :: TokenParser Statement
+continueStatement :: TokenParser (Statement SourceElement)
 continueStatement = do
     continueKeyword
     ident <- maybeParse identifierToken --TODO: no line termimator here
     semicolon
     return $ ContinueStmt ident
 
-iterationStatement :: TokenParser Statement
+iterationStatement :: TokenParser (Statement SourceElement)
 iterationStatement = 
     doWhileIterationStatement
     <|> whileIterationStatement
@@ -175,7 +175,7 @@ iterationStatement =
     <|> try lhsExprInExprForIterationStatement
     <|> varInExprIteratioinStatement
 
-doWhileIterationStatement :: TokenParser Statement
+doWhileIterationStatement :: TokenParser (Statement SourceElement)
 doWhileIterationStatement = do
     doKeyword
     stmt <- statement
@@ -184,14 +184,14 @@ doWhileIterationStatement = do
     semicolon
     return $ IterationStmt $ DoWhileIterationStatement stmt expr
 
-whileIterationStatement :: TokenParser Statement
+whileIterationStatement :: TokenParser (Statement SourceElement)
 whileIterationStatement = do
     whileKeyword
     expr <- betweenRoundBrackets expression
     stmt <- statement
     return $ IterationStmt $ WhileIterationStatement expr stmt
 
-exprTripletForIterationStatement :: TokenParser Statement
+exprTripletForIterationStatement :: TokenParser (Statement SourceElement)
 exprTripletForIterationStatement = do
     forKeyword
     leftRoundBracket
@@ -204,10 +204,10 @@ exprTripletForIterationStatement = do
     stmt <- statement
     return $ IterationStmt $ ExprTripletForIterationStatement expr1 expr2 expr3 stmt
 
-maybeExpression :: TokenParser MaybeExpression
+maybeExpression :: TokenParser (MaybeExpression SourceElement)
 maybeExpression = maybeParse expression
 
-varAndDoubleExprForIterationStatement :: TokenParser Statement
+varAndDoubleExprForIterationStatement :: TokenParser (Statement SourceElement)
 varAndDoubleExprForIterationStatement = do
     forKeyword
     leftRoundBracket
@@ -221,10 +221,10 @@ varAndDoubleExprForIterationStatement = do
     stmt <- statement
     return $ IterationStmt $ VarAndDoubleExprForIterationStatement varDecls expr1 expr2 stmt
 
-variableDeclarationList :: TokenParser [VariableDeclaration]
+variableDeclarationList :: TokenParser [(VariableDeclaration SourceElement)]
 variableDeclarationList = sepBy1 variableDeclaration comma
 
-lhsExprInExprForIterationStatement :: TokenParser Statement
+lhsExprInExprForIterationStatement :: TokenParser (Statement SourceElement)
 lhsExprInExprForIterationStatement = do
     forKeyword
     leftRoundBracket
@@ -235,7 +235,7 @@ lhsExprInExprForIterationStatement = do
     stmt <- statement
     return $ IterationStmt $ LHSExprInExprForIterationStatement lhs expr stmt
 
-varInExprIteratioinStatement :: TokenParser Statement
+varInExprIteratioinStatement :: TokenParser (Statement SourceElement)
 varInExprIteratioinStatement = do
     forKeyword
     leftRoundBracket
@@ -247,7 +247,7 @@ varInExprIteratioinStatement = do
     stmt <- statement
     return $ IterationStmt $ VarInExprIteratioinStatement varDecl expr stmt
 
-ifStatement :: TokenParser Statement
+ifStatement :: TokenParser (Statement SourceElement)
 ifStatement = do
     ifKeyword
     expr <- betweenRoundBrackets expression
@@ -255,7 +255,7 @@ ifStatement = do
     stmt2 <- maybeParse (elseKeyword >> statement)
     return $ IfStmt expr stmt1 stmt2
 
-expressionStatement :: TokenParser Statement
+expressionStatement :: TokenParser (Statement SourceElement)
 expressionStatement = do
     try $ notFollowedBy leftCurlyBracket
     try $ notFollowedBy functionKeyword
@@ -263,53 +263,53 @@ expressionStatement = do
     semicolon
     return $ ExpressionStmt expr
 
-blockStatement :: TokenParser Statement
+blockStatement :: TokenParser (Statement SourceElement)
 blockStatement = do
     b <- block
     return $ BlockStmt b
 
-block :: TokenParser Block
+block :: TokenParser (Block SourceElement)
 block = do
     stmts <- betweenCurlyBrackets $ many statement
     return $ Block stmts
 
-emptyStatement :: TokenParser Statement
+emptyStatement :: TokenParser (Statement SourceElement)
 emptyStatement = semicolon >> return EmptyStmt
 
-variableStatement :: TokenParser Statement
+variableStatement :: TokenParser (Statement SourceElement)
 variableStatement = do
     varKeyword
     varDeclList <- sepBy1 variableDeclaration comma
     semicolon
     return $ VariableStmt varDeclList
 
-variableDeclaration :: TokenParser VariableDeclaration
+variableDeclaration :: TokenParser (VariableDeclaration SourceElement)
 variableDeclaration = do
     ident <- identifierToken
     initial <- maybeInitializer
     return $ VariableDeclaration ident initial
 
-maybeInitializer :: TokenParser MaybeInitializer
+maybeInitializer :: TokenParser (MaybeInitializer SourceElement)
 maybeInitializer = maybeParse initializer
 
-initializer :: TokenParser Initializer
+initializer :: TokenParser (Initializer SourceElement)
 initializer = do
     assign
     assignExpr <- assignmentExpression
     return $ Initializer assignExpr
 
-assignmentExpression :: TokenParser AssignmentExpression
+assignmentExpression :: TokenParser (AssignmentExpression SourceElement)
 assignmentExpression = 
     try assignmentOperatorExpression
     <|> conditionalAssignmentExpression 
     <?> "AssignmentExpression"
 
-conditionalAssignmentExpression :: TokenParser AssignmentExpression
+conditionalAssignmentExpression :: TokenParser (AssignmentExpression SourceElement)
 conditionalAssignmentExpression = do
     cond <- conditionalExpression
     return $ ConditionalAssignmentExpression cond
 
-assignmentOperatorExpression :: TokenParser AssignmentExpression
+assignmentOperatorExpression :: TokenParser (AssignmentExpression SourceElement)
 assignmentOperatorExpression = do
     lhs <- leftHandSideExpression
     op <- assignmentOperator
@@ -334,17 +334,17 @@ assignmentOperator = do
         BitwiseOrAssignPunctuator -> return BitwiseOrAssignOperator
         _ -> fail "incorrect assign operator"
 
-conditionalExpression :: TokenParser ConditionalExpression
+conditionalExpression :: TokenParser (ConditionalExpression SourceElement)
 conditionalExpression = 
     try teranaryOperatorConditionalExpression
     <|> logicalOrContionalExpression
 
-logicalOrContionalExpression :: TokenParser ConditionalExpression
+logicalOrContionalExpression :: TokenParser (ConditionalExpression SourceElement)
 logicalOrContionalExpression = do
     logOr <- logicalOrExpression
     return $ LogicalOrConditionalExpression logOr
 
-teranaryOperatorConditionalExpression :: TokenParser ConditionalExpression
+teranaryOperatorConditionalExpression :: TokenParser (ConditionalExpression SourceElement)
 teranaryOperatorConditionalExpression = do
     logOr <- logicalOrExpression
     questionMark
@@ -353,186 +353,186 @@ teranaryOperatorConditionalExpression = do
     assign2 <- assignmentExpression
     return $ TeranaryOperatorConditionalExpression logOr assign1 assign2
 
-logicalOrExpression :: TokenParser LogicalOrExpression
+logicalOrExpression :: TokenParser (LogicalOrExpression SourceElement)
 logicalOrExpression = do
     unary <- unaryLogicalOrExpression
     buildRestOfLogicalOrExpression unary
 
-buildRestOfLogicalOrExpression :: LogicalOrExpression -> TokenParser LogicalOrExpression
+buildRestOfLogicalOrExpression :: (LogicalOrExpression SourceElement) -> TokenParser (LogicalOrExpression SourceElement)
 buildRestOfLogicalOrExpression left = 
     try $ nonEmptyRestOfLogicalOrExpression left
     <|> emptyRestOfLogicalOrExpression left
 
-nonEmptyRestOfLogicalOrExpression :: LogicalOrExpression -> TokenParser LogicalOrExpression
+nonEmptyRestOfLogicalOrExpression :: (LogicalOrExpression SourceElement) -> TokenParser (LogicalOrExpression SourceElement)
 nonEmptyRestOfLogicalOrExpression left = do
     logicalOr
     logAnd <- logicalAndExpression
     buildRestOfLogicalOrExpression $ BinaryLogicalOrExpression left logAnd
 
-emptyRestOfLogicalOrExpression :: LogicalOrExpression -> TokenParser LogicalOrExpression
+emptyRestOfLogicalOrExpression :: (LogicalOrExpression SourceElement) -> TokenParser (LogicalOrExpression SourceElement)
 emptyRestOfLogicalOrExpression left = return left
 
-unaryLogicalOrExpression :: TokenParser LogicalOrExpression
+unaryLogicalOrExpression :: TokenParser (LogicalOrExpression SourceElement)
 unaryLogicalOrExpression = do
     logAnd <- logicalAndExpression
     return $ UnaryLogicalOrExpression logAnd
 
-logicalAndExpression :: TokenParser LogicalAndExpression
+logicalAndExpression :: TokenParser (LogicalAndExpression SourceElement)
 logicalAndExpression = do
     unary <- unaryLogicalAndExpression
     buildRestOfLogicalAndExpression unary
 
-buildRestOfLogicalAndExpression :: LogicalAndExpression -> TokenParser LogicalAndExpression
+buildRestOfLogicalAndExpression :: (LogicalAndExpression SourceElement) -> TokenParser (LogicalAndExpression SourceElement)
 buildRestOfLogicalAndExpression left =
     try $ nonEmptyRestOfLogicalAndExpression left
     <|> emptyRestOfLogicalAndExpression left
 
-nonEmptyRestOfLogicalAndExpression :: LogicalAndExpression -> TokenParser LogicalAndExpression
+nonEmptyRestOfLogicalAndExpression :: (LogicalAndExpression SourceElement) -> TokenParser (LogicalAndExpression SourceElement)
 nonEmptyRestOfLogicalAndExpression left = do
     logicalAnd
     bitOr <- bitwiseOrExpression
     buildRestOfLogicalAndExpression $ BinaryLogicalAndExpression left bitOr
 
-emptyRestOfLogicalAndExpression :: LogicalAndExpression -> TokenParser LogicalAndExpression
+emptyRestOfLogicalAndExpression :: (LogicalAndExpression SourceElement) -> TokenParser (LogicalAndExpression SourceElement)
 emptyRestOfLogicalAndExpression left = return left
 
-unaryLogicalAndExpression :: TokenParser LogicalAndExpression
+unaryLogicalAndExpression :: TokenParser (LogicalAndExpression SourceElement)
 unaryLogicalAndExpression = do
     bitOr <- bitwiseOrExpression
     return $ UnaryLogicalAndExpression bitOr
 
-bitwiseOrExpression :: TokenParser BitwiseOrExpression
+bitwiseOrExpression :: TokenParser (BitwiseOrExpression SourceElement)
 bitwiseOrExpression = do 
     bitXor <- unaryBitwiseOrExpression
     buildRestOfBitwiseOrExpression bitXor
 
-buildRestOfBitwiseOrExpression :: BitwiseOrExpression -> TokenParser BitwiseOrExpression
+buildRestOfBitwiseOrExpression :: (BitwiseOrExpression SourceElement) -> TokenParser (BitwiseOrExpression SourceElement)
 buildRestOfBitwiseOrExpression left =
     try $ nonEmptyRestOfBitwiseOrExpression left
     <|> emptyRestOfBitwiseOrExpression left
 
-nonEmptyRestOfBitwiseOrExpression :: BitwiseOrExpression -> TokenParser BitwiseOrExpression
+nonEmptyRestOfBitwiseOrExpression :: (BitwiseOrExpression SourceElement) -> TokenParser (BitwiseOrExpression SourceElement)
 nonEmptyRestOfBitwiseOrExpression left = do
     bitwiseOr
     bitXor <- bitwiseXorExpression
     buildRestOfBitwiseOrExpression $ BinaryBitwiseOrExpression left bitXor
 
-emptyRestOfBitwiseOrExpression :: BitwiseOrExpression -> TokenParser BitwiseOrExpression
+emptyRestOfBitwiseOrExpression :: (BitwiseOrExpression SourceElement) -> TokenParser (BitwiseOrExpression SourceElement)
 emptyRestOfBitwiseOrExpression left = return left
 
-unaryBitwiseOrExpression :: TokenParser BitwiseOrExpression
+unaryBitwiseOrExpression :: TokenParser (BitwiseOrExpression SourceElement)
 unaryBitwiseOrExpression = do
     bitXor <- bitwiseXorExpression
     return $ UnaryBitwiseOrExpression bitXor
 
-bitwiseXorExpression :: TokenParser BitwiseXorExpression
+bitwiseXorExpression :: TokenParser (BitwiseXorExpression SourceElement)
 bitwiseXorExpression = do
     bitAnd <- unaryBitwiseXorExpression
     buildRestOfBitwiseXorExpression bitAnd
 
-buildRestOfBitwiseXorExpression :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
+buildRestOfBitwiseXorExpression :: (BitwiseXorExpression SourceElement) -> TokenParser (BitwiseXorExpression SourceElement)
 buildRestOfBitwiseXorExpression left = 
     try $ nonEmptyRestOfBitwiseXorExpression left
     <|> emptyRestOfBitwiseXorExpresssion left
 
-nonEmptyRestOfBitwiseXorExpression :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
+nonEmptyRestOfBitwiseXorExpression :: (BitwiseXorExpression SourceElement) -> TokenParser (BitwiseXorExpression SourceElement)
 nonEmptyRestOfBitwiseXorExpression left = do
     bitwiseXor
     bitAnd <- bitwiseAndExpression
     buildRestOfBitwiseXorExpression $ BinaryBitwiseXorExpression left bitAnd
 
-emptyRestOfBitwiseXorExpresssion :: BitwiseXorExpression -> TokenParser BitwiseXorExpression
+emptyRestOfBitwiseXorExpresssion :: (BitwiseXorExpression SourceElement) -> TokenParser (BitwiseXorExpression SourceElement)
 emptyRestOfBitwiseXorExpresssion left = return left
 
-unaryBitwiseXorExpression :: TokenParser BitwiseXorExpression
+unaryBitwiseXorExpression :: TokenParser (BitwiseXorExpression SourceElement)
 unaryBitwiseXorExpression = do
     bitAnd <- bitwiseAndExpression
     return $ UnaryBitwiseXorExpression bitAnd
 
-bitwiseAndExpression :: TokenParser BitwiseAndExpression
+bitwiseAndExpression :: TokenParser (BitwiseAndExpression SourceElement)
 bitwiseAndExpression = do
     equality <- unaryBitwiseAndExpression
     buildRestOfBitwiseAndExpresssion equality
 
-buildRestOfBitwiseAndExpresssion :: BitwiseAndExpression -> TokenParser BitwiseAndExpression
+buildRestOfBitwiseAndExpresssion :: (BitwiseAndExpression SourceElement) -> TokenParser (BitwiseAndExpression SourceElement)
 buildRestOfBitwiseAndExpresssion left = 
     try $ nonEmptyRestOfBitwiseAndExpression left
     <|> emptyRestOfBitwiseAndExpression left
 
-nonEmptyRestOfBitwiseAndExpression :: BitwiseAndExpression -> TokenParser BitwiseAndExpression
+nonEmptyRestOfBitwiseAndExpression :: (BitwiseAndExpression SourceElement) -> TokenParser (BitwiseAndExpression SourceElement)
 nonEmptyRestOfBitwiseAndExpression left = do
     bitwiseAnd
     equality <- equalityExpression
     buildRestOfBitwiseAndExpresssion $ BinaryBitwiseAndExpression left equality
 
-emptyRestOfBitwiseAndExpression :: BitwiseAndExpression -> TokenParser BitwiseAndExpression
+emptyRestOfBitwiseAndExpression :: (BitwiseAndExpression SourceElement) -> TokenParser (BitwiseAndExpression SourceElement)
 emptyRestOfBitwiseAndExpression left = return left
 
-unaryBitwiseAndExpression :: TokenParser BitwiseAndExpression
+unaryBitwiseAndExpression :: TokenParser (BitwiseAndExpression SourceElement)
 unaryBitwiseAndExpression = do
     equality <- equalityExpression
     return $ UnaryBitwiseAndExpression equality
 
-equalityExpression :: TokenParser EqualityExpression
+equalityExpression :: TokenParser (EqualityExpression SourceElement)
 equalityExpression = do
     relational <- relationalEqualityExpression
     buildRestOfEqualityExpression relational
 
-buildRestOfEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+buildRestOfEqualityExpression :: (EqualityExpression SourceElement) -> TokenParser (EqualityExpression SourceElement)
 buildRestOfEqualityExpression left = 
     try $ nonEmptyRestOfEqualityExpression left
     <|> emptyRestOfEqualityExpression left
 
-nonEmptyRestOfEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+nonEmptyRestOfEqualityExpression :: (EqualityExpression SourceElement) -> TokenParser (EqualityExpression SourceElement)
 nonEmptyRestOfEqualityExpression left = 
     restOfEqualsEqualityExpression left
     <|> restOfNotEqualsEqualityExpression left
     <|> restOfStrictEqualsEqualityExpression left
     <|> restOfStrictNotEqualsEqualityExpression left
 
-restOfEqualsEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+restOfEqualsEqualityExpression :: (EqualityExpression SourceElement) -> TokenParser (EqualityExpression SourceElement)
 restOfEqualsEqualityExpression left = do
     equals
     relational <- relationalExpression
     buildRestOfEqualityExpression $ EqualsEqualityExpression left relational
 
-restOfNotEqualsEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+restOfNotEqualsEqualityExpression :: (EqualityExpression SourceElement) -> TokenParser (EqualityExpression SourceElement)
 restOfNotEqualsEqualityExpression left = do
     notEquals
     relational <- relationalExpression
     buildRestOfEqualityExpression $ NotEqualsEqualityExpression left relational
 
-restOfStrictEqualsEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+restOfStrictEqualsEqualityExpression :: (EqualityExpression SourceElement) -> TokenParser (EqualityExpression SourceElement)
 restOfStrictEqualsEqualityExpression left = do
     strictEquals
     relational <- relationalExpression
     buildRestOfEqualityExpression $ StrictEqualsEqualityExpression left relational
 
-restOfStrictNotEqualsEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+restOfStrictNotEqualsEqualityExpression :: (EqualityExpression SourceElement) -> TokenParser (EqualityExpression SourceElement)
 restOfStrictNotEqualsEqualityExpression left = do
     strictNotEquals
     relational <- relationalExpression
     buildRestOfEqualityExpression $ StrictNotEqualsEqualityExpression left relational
 
-emptyRestOfEqualityExpression :: EqualityExpression -> TokenParser EqualityExpression
+emptyRestOfEqualityExpression :: (EqualityExpression SourceElement) -> TokenParser (EqualityExpression SourceElement)
 emptyRestOfEqualityExpression left = return left
 
-relationalEqualityExpression :: TokenParser EqualityExpression
+relationalEqualityExpression :: TokenParser (EqualityExpression SourceElement)
 relationalEqualityExpression = do
     relation <- relationalExpression
     return $ RelationalEqualityExpression relation
 
-relationalExpression :: TokenParser RelationalExpression
+relationalExpression :: TokenParser (RelationalExpression SourceElement)
 relationalExpression = do
     shift <- shiftRelationalExpression
     buildRestOfRelationalExpression shift
 
-buildRestOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+buildRestOfRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 buildRestOfRelationalExpression left =
     try $ nonEmptyRestOfRelationalExpression left
     <|> emptyRestOfRelationalExpression left
 
-nonEmptyRestOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+nonEmptyRestOfRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 nonEmptyRestOfRelationalExpression left =
     restOfLessThanRelationalExpression left
     <|> restOfGreaterThanRelationalExpression left
@@ -541,170 +541,170 @@ nonEmptyRestOfRelationalExpression left =
     <|> restOfInstanceOfRelationalExpression left
     <|> restOfInRelationalExpression left
 
-restOfLessThanRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfLessThanRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 restOfLessThanRelationalExpression left = do
     lessThan
     shift <- shiftExpression
     buildRestOfRelationalExpression $ LessThanRelationalExpression left shift
 
-restOfGreaterThanRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfGreaterThanRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 restOfGreaterThanRelationalExpression left = do
     greaterThan
     shift <- shiftExpression
     buildRestOfRelationalExpression $ GreaterThanRelationalExpression left shift
 
-restOfLessThanEqualsRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfLessThanEqualsRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 restOfLessThanEqualsRelationalExpression left = do
     lessThanEquals
     shift <- shiftExpression
     buildRestOfRelationalExpression $ LessThanEqualsRelationalExpression left shift
 
-restOfGreaterThanEqualsRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfGreaterThanEqualsRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 restOfGreaterThanEqualsRelationalExpression left = do
     greaterThanEquals
     shift <- shiftExpression
     buildRestOfRelationalExpression $ GreaterThanEqualsRelationalExpression left shift
 
-restOfInstanceOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfInstanceOfRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 restOfInstanceOfRelationalExpression left = do
     instanceOfKeyword
     shift <- shiftExpression
     buildRestOfRelationalExpression $ InstanceOfRelationalExpression left shift
 
-restOfInRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+restOfInRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 restOfInRelationalExpression left = do
     inKeyword
     shift <- shiftExpression
     buildRestOfRelationalExpression $ InRelationalExpression left shift
 
-emptyRestOfRelationalExpression :: RelationalExpression -> TokenParser RelationalExpression
+emptyRestOfRelationalExpression :: (RelationalExpression SourceElement) -> TokenParser (RelationalExpression SourceElement)
 emptyRestOfRelationalExpression left = return left
 
-shiftRelationalExpression :: TokenParser RelationalExpression
+shiftRelationalExpression :: TokenParser (RelationalExpression SourceElement)
 shiftRelationalExpression = do
     shift <- shiftExpression
     return $ ShiftRelationalExpression shift
 
-shiftExpression :: TokenParser ShiftExpression
+shiftExpression :: TokenParser (ShiftExpression SourceElement)
 shiftExpression = do
     left <- additiveShiftExpression
     buildRestOfShiftExpression left
 
-buildRestOfShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+buildRestOfShiftExpression :: (ShiftExpression SourceElement) -> TokenParser (ShiftExpression SourceElement)
 buildRestOfShiftExpression left = 
     try $ nonEmptyRestOfShiftExpression left
     <|> emptyRestOfShiftExpression left
 
-nonEmptyRestOfShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+nonEmptyRestOfShiftExpression :: (ShiftExpression SourceElement) -> TokenParser (ShiftExpression SourceElement)
 nonEmptyRestOfShiftExpression left = 
     restOfLeftShiftExpression left
     <|> restOfRightShiftExpression left
     <|> restOfUnsignedRightShiftExpression left
 
-restOfLeftShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+restOfLeftShiftExpression :: (ShiftExpression SourceElement) -> TokenParser (ShiftExpression SourceElement)
 restOfLeftShiftExpression left = do
     leftShift
     additive <- additiveExpression
     buildRestOfShiftExpression $ LeftShiftExpression left additive
 
-restOfRightShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+restOfRightShiftExpression :: (ShiftExpression SourceElement) -> TokenParser (ShiftExpression SourceElement)
 restOfRightShiftExpression left = do
     rightShift
     additive <- additiveExpression
     buildRestOfShiftExpression $ RightShiftExpression left additive
 
-restOfUnsignedRightShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+restOfUnsignedRightShiftExpression :: (ShiftExpression SourceElement) -> TokenParser (ShiftExpression SourceElement)
 restOfUnsignedRightShiftExpression left = do
     unsignedRightShift
     additive <- additiveExpression
     buildRestOfShiftExpression $ UnsignedRightShiftExpression left additive
 
-emptyRestOfShiftExpression :: ShiftExpression -> TokenParser ShiftExpression
+emptyRestOfShiftExpression :: (ShiftExpression SourceElement) -> TokenParser (ShiftExpression SourceElement)
 emptyRestOfShiftExpression left = return left
 
-additiveShiftExpression :: TokenParser ShiftExpression
+additiveShiftExpression :: TokenParser (ShiftExpression SourceElement)
 additiveShiftExpression = do
     additive <- additiveExpression
     return $ AdditiveShiftExpression additive
 
-additiveExpression :: TokenParser AdditiveExpression
+additiveExpression :: TokenParser (AdditiveExpression SourceElement)
 additiveExpression = do
     left <- multAdditiveExpression
     buildRestOfAdditiveExpression left
 
-buildRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+buildRestOfAdditiveExpression :: (AdditiveExpression SourceElement) -> TokenParser (AdditiveExpression SourceElement)
 buildRestOfAdditiveExpression left = 
     try $ nonEmptyRestOfAdditiveExpression left
     <|> emptyRestOfAdditiveExpression left
 
-nonEmptyRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+nonEmptyRestOfAdditiveExpression :: (AdditiveExpression SourceElement) -> TokenParser (AdditiveExpression SourceElement)
 nonEmptyRestOfAdditiveExpression left = 
     plusRestOfAdditiveExpression left
     <|> minusRestOfAdditiveExpression left
 
-plusRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+plusRestOfAdditiveExpression :: (AdditiveExpression SourceElement) -> TokenParser (AdditiveExpression SourceElement)
 plusRestOfAdditiveExpression left = do
     plus
     multExpr <- multiplicativeExpression
     buildRestOfAdditiveExpression $ PlusAdditiveExpression left multExpr
 
-minusRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+minusRestOfAdditiveExpression :: (AdditiveExpression SourceElement) -> TokenParser (AdditiveExpression SourceElement)
 minusRestOfAdditiveExpression left = do
     minus
     multExpr <- multiplicativeExpression
     buildRestOfAdditiveExpression $ MinusAdditiveExpression left multExpr
 
-emptyRestOfAdditiveExpression :: AdditiveExpression -> TokenParser AdditiveExpression
+emptyRestOfAdditiveExpression :: (AdditiveExpression SourceElement) -> TokenParser (AdditiveExpression SourceElement)
 emptyRestOfAdditiveExpression left = return left
 
-multAdditiveExpression :: TokenParser AdditiveExpression
+multAdditiveExpression :: TokenParser (AdditiveExpression SourceElement)
 multAdditiveExpression = do
     mult <- multiplicativeExpression
     return $ MultAdditiveExpression mult
 
-multiplicativeExpression :: TokenParser MultiplicativeExpression
+multiplicativeExpression :: TokenParser (MultiplicativeExpression SourceElement)
 multiplicativeExpression = do
     left <- unaryMultiplicativeExpression
     buildRestOfMultiplicativeExpression left
 
-buildRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+buildRestOfMultiplicativeExpression :: (MultiplicativeExpression SourceElement) -> TokenParser (MultiplicativeExpression SourceElement)
 buildRestOfMultiplicativeExpression left = 
     try $ nonEmptyRestOfMultiplicativeExpression left
     <|> emptyRestOfMultiplicativeExpression left
 
-emptyRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+emptyRestOfMultiplicativeExpression :: (MultiplicativeExpression SourceElement) -> TokenParser (MultiplicativeExpression SourceElement)
 emptyRestOfMultiplicativeExpression left = return left
 
-nonEmptyRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+nonEmptyRestOfMultiplicativeExpression :: (MultiplicativeExpression SourceElement) -> TokenParser (MultiplicativeExpression SourceElement)
 nonEmptyRestOfMultiplicativeExpression left = 
     mulRestOfMultiplicativeExpression left
     <|> divRestOfMultiplicativeExpression left
     <|> modulusRestOfMultiplicativeExpression left
 
-mulRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+mulRestOfMultiplicativeExpression :: (MultiplicativeExpression SourceElement) -> TokenParser (MultiplicativeExpression SourceElement)
 mulRestOfMultiplicativeExpression left = do
     mul
     unary <- unaryExpression
     buildRestOfMultiplicativeExpression $ MulMultiplicativeExpression left unary
 
-divRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+divRestOfMultiplicativeExpression :: (MultiplicativeExpression SourceElement) -> TokenParser (MultiplicativeExpression SourceElement)
 divRestOfMultiplicativeExpression left = do
     divOp
     unary <- unaryExpression
     buildRestOfMultiplicativeExpression $ DivMultiplicativeExpression left unary
 
-modulusRestOfMultiplicativeExpression :: MultiplicativeExpression -> TokenParser MultiplicativeExpression
+modulusRestOfMultiplicativeExpression :: (MultiplicativeExpression SourceElement) -> TokenParser (MultiplicativeExpression SourceElement)
 modulusRestOfMultiplicativeExpression left = do
     modulus
     unary <- unaryExpression
     buildRestOfMultiplicativeExpression $ ModulusMultiplicativeExpression left unary
 
-unaryMultiplicativeExpression :: TokenParser MultiplicativeExpression
+unaryMultiplicativeExpression :: TokenParser (MultiplicativeExpression SourceElement)
 unaryMultiplicativeExpression = do
     unary <- unaryExpression
     return $ UnaryMultiplicativeExpression unary
 
-unaryExpression :: TokenParser UnaryExpression
+unaryExpression :: TokenParser (UnaryExpression SourceElement)
 unaryExpression = 
     postfixUnaryExpression
     <|> deleteUnaryExpression
@@ -717,134 +717,134 @@ unaryExpression =
     <|> bitwiseNotUnaryExpression
     <|> logicalNotUnaryExpression
 
-postfixUnaryExpression :: TokenParser UnaryExpression
+postfixUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 postfixUnaryExpression = do
     postfix <- postfixExpression
     return $ PostfixUnaryExpression postfix
 
-deleteUnaryExpression :: TokenParser UnaryExpression
+deleteUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 deleteUnaryExpression = do
     deleteKeyword
     unary <- unaryExpression
     return $ VoidUnaryExpression unary
 
-voidUnaryExpression :: TokenParser UnaryExpression
+voidUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 voidUnaryExpression = do
     voidKeyword
     unary <- unaryExpression
     return $ VoidUnaryExpression unary
 
-typeOfUnaryExpression :: TokenParser UnaryExpression
+typeOfUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 typeOfUnaryExpression = do
     typeOfKeyword
     unary <- unaryExpression
     return $ TypeOfUnaryExpression unary
 
-incrementPlusUnaryExpression :: TokenParser UnaryExpression
+incrementPlusUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 incrementPlusUnaryExpression = do
     incrementPlus
     unary <- unaryExpression
     return $ IncrementPlusUnaryExpression unary
 
-incrementMinusUnaryExpression :: TokenParser UnaryExpression
+incrementMinusUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 incrementMinusUnaryExpression = do
     incrementMinus
     unary <- unaryExpression
     return $ IncrementMinusUnaryExpression unary
 
-plusUnaryExpression :: TokenParser UnaryExpression
+plusUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 plusUnaryExpression = do
     plus
     unary <- unaryExpression
     return $ PlusUnaryExpression unary
 
-minusUnaryExpression :: TokenParser UnaryExpression
+minusUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 minusUnaryExpression = do
     minus
     unary <- unaryExpression
     return $ MinusUnaryExpression unary
 
-bitwiseNotUnaryExpression :: TokenParser UnaryExpression
+bitwiseNotUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 bitwiseNotUnaryExpression = do
     bitwiseNot
     unary <- unaryExpression
     return $ BitwiseNotUnaryExpression unary
 
-logicalNotUnaryExpression :: TokenParser UnaryExpression
+logicalNotUnaryExpression :: TokenParser (UnaryExpression SourceElement)
 logicalNotUnaryExpression = do
     logicalNot
     unary <- unaryExpression
     return $ LogicalNotUnaryExpression unary
 
-postfixExpression :: TokenParser PostfixExpression
+postfixExpression :: TokenParser (PostfixExpression SourceElement)
 postfixExpression = 
     try incrementPlusPostfixExpression
     <|> try incrementMinusPostfixExpression
     <|> lhsPostfixExpression
 
-lhsPostfixExpression :: TokenParser PostfixExpression
+lhsPostfixExpression :: TokenParser (PostfixExpression SourceElement)
 lhsPostfixExpression = do 
     lhs <- leftHandSideExpression
     return $ LHSPostfixExpression lhs
 
-incrementPlusPostfixExpression :: TokenParser PostfixExpression
+incrementPlusPostfixExpression :: TokenParser (PostfixExpression SourceElement)
 incrementPlusPostfixExpression = do 
     lhs <- leftHandSideExpression
     --TODO: no line terminator here
     incrementPlus
     return $ IncrementPlusPostfixExpression lhs
 
-incrementMinusPostfixExpression :: TokenParser PostfixExpression
+incrementMinusPostfixExpression :: TokenParser (PostfixExpression SourceElement)
 incrementMinusPostfixExpression = do 
     lhs <- leftHandSideExpression
     --TODO: no line terminator here
     incrementMinus
     return $ IncrementMinusPostfixExpression lhs
 
-leftHandSideExpression :: TokenParser LeftHandSideExpression
+leftHandSideExpression :: TokenParser (LeftHandSideExpression SourceElement)
 leftHandSideExpression = 
     try callLHSExpression
     <|> newLHSExpression
 
-newLHSExpression :: TokenParser LeftHandSideExpression
+newLHSExpression :: TokenParser (LeftHandSideExpression SourceElement)
 newLHSExpression = do
     new <- newExpression
     return $ NewLHSExpression new
 
-callLHSExpression :: TokenParser LeftHandSideExpression
+callLHSExpression :: TokenParser (LeftHandSideExpression SourceElement)
 callLHSExpression = do
     call <- callExpression
     return $ CallLHSExpression call
 
-newExpression :: TokenParser NewExpression
+newExpression :: TokenParser (NewExpression SourceElement)
 newExpression = 
     try memberNewExpression
     <|> newNewExpression
 
-memberNewExpression :: TokenParser NewExpression
+memberNewExpression :: TokenParser (NewExpression SourceElement)
 memberNewExpression = do
     member <- memberExpression
     return $ MemberNewExpression member
 
-memberExpression :: TokenParser MemberExpression
+memberExpression :: TokenParser (MemberExpression SourceElement)
 memberExpression = memberExpression'
 
 -- left recursion in grammar... BURN IN HELL!!
-memberExpression' :: TokenParser MemberExpression
+memberExpression' :: TokenParser (MemberExpression SourceElement)
 memberExpression' = do
     primary <- primaryMemberExpression <|> functionMemberExpression <|> newMemberExpression
     buildFunc <- restOfMemberExpression
     return $ buildFunc primary
 
-restOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+restOfMemberExpression :: TokenParser ((MemberExpression SourceElement) -> (MemberExpression SourceElement))
 restOfMemberExpression = try nonEmptyRestOfMemberExpression <|> emptyRestOfMemberExpression
 
-nonEmptyRestOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+nonEmptyRestOfMemberExpression :: TokenParser ((MemberExpression SourceElement) -> (MemberExpression SourceElement))
 nonEmptyRestOfMemberExpression = 
     restOfAccessByBracketMemberExpression
     <|> restOfAccessByDotMemberExpression
 
-restOfAccessByBracketMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+restOfAccessByBracketMemberExpression :: TokenParser ((MemberExpression SourceElement) -> (MemberExpression SourceElement))
 restOfAccessByBracketMemberExpression = do
     leftSquareBracket
     expr <- expression
@@ -852,22 +852,22 @@ restOfAccessByBracketMemberExpression = do
     buildFunc <- restOfMemberExpression
     return $ \ memberExpr -> buildFunc $ PropertyAccessByBracketsMemberExpression memberExpr expr
 
-restOfAccessByDotMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+restOfAccessByDotMemberExpression :: TokenParser ((MemberExpression SourceElement) -> (MemberExpression SourceElement))
 restOfAccessByDotMemberExpression = do
     dot
     ident <- identifierToken
     buildFunc <- restOfMemberExpression
     return $ \ memberExpr -> buildFunc $ PropertyAccessByDotMemberExpression memberExpr ident
 
-emptyRestOfMemberExpression :: TokenParser (MemberExpression -> MemberExpression)
+emptyRestOfMemberExpression :: TokenParser ((MemberExpression SourceElement) -> (MemberExpression SourceElement))
 emptyRestOfMemberExpression = return (\ primary -> primary)
 
-functionMemberExpression :: TokenParser MemberExpression
+functionMemberExpression :: TokenParser (MemberExpression SourceElement)
 functionMemberExpression = do
     func <- functionExpression
     return $ FunctionMemberExpression func
 
-functionExpression :: TokenParser FunctionExpression
+functionExpression :: TokenParser (FunctionExpression SourceElement)
 functionExpression = do
     functionKeyword
     name <- maybeParse identifierToken
@@ -875,74 +875,74 @@ functionExpression = do
     body <- betweenCurlyBrackets functionBody
     return $ FunctionExpression name params body
 
-propertyAccessByDotMemberExpression :: TokenParser MemberExpression
+propertyAccessByDotMemberExpression :: TokenParser (MemberExpression SourceElement)
 propertyAccessByDotMemberExpression = undefined
 
-newMemberExpression :: TokenParser MemberExpression
+newMemberExpression :: TokenParser (MemberExpression SourceElement)
 newMemberExpression = do
     newKeyword
     memberExpr <- memberExpression
     args <- arguments
     return $ NewMemberExpression memberExpr args
 
-arguments :: TokenParser [AssignmentExpression]
+arguments :: TokenParser [(AssignmentExpression SourceElement)]
 arguments = betweenRoundBrackets $ sepBy assignmentExpression comma
 
-primaryMemberExpression :: TokenParser MemberExpression
+primaryMemberExpression :: TokenParser (MemberExpression SourceElement)
 primaryMemberExpression = do
     primary <- primaryExpression
     return $ PrimaryMemberExpression primary
 
-newNewExpression :: TokenParser NewExpression
+newNewExpression :: TokenParser (NewExpression SourceElement)
 newNewExpression = do
     newKeyword
     newExpr <- newExpression
     return $ NewNewExpression newExpr
 
-callExpression :: TokenParser CallExpression
+callExpression :: TokenParser (CallExpression SourceElement)
 callExpression = do
     base <- memberWithArgumentsCallExpression
     buildRestOfCallExpression base
 
-buildRestOfCallExpression :: CallExpression -> TokenParser CallExpression
+buildRestOfCallExpression :: (CallExpression SourceElement) -> TokenParser (CallExpression SourceElement)
 buildRestOfCallExpression base = 
     (try $ nonEmptyRestOfCallExpression base)
     <|> emptyRestOfCallExpression base
 
-nonEmptyRestOfCallExpression :: CallExpression -> TokenParser CallExpression
+nonEmptyRestOfCallExpression :: (CallExpression SourceElement) -> TokenParser (CallExpression SourceElement)
 nonEmptyRestOfCallExpression base =
     try (nonEmptyRestOfCallWithArgumentsCallExpression base)
     <|> try (nonEmptyRestOfPropertyAccessByBracketsCallExpression base)
     <|> nonEmptyRestOfPropertyAccessByDotCallExpression base
 
-nonEmptyRestOfPropertyAccessByBracketsCallExpression :: CallExpression -> TokenParser CallExpression
+nonEmptyRestOfPropertyAccessByBracketsCallExpression :: (CallExpression SourceElement) -> TokenParser (CallExpression SourceElement)
 nonEmptyRestOfPropertyAccessByBracketsCallExpression base = do
     leftSquareBracket
     expr <- expression
     rightSquareBracket
     buildRestOfCallExpression $ PropertyAccessByBracketsCallExpression base expr
 
-nonEmptyRestOfPropertyAccessByDotCallExpression :: CallExpression -> TokenParser CallExpression
+nonEmptyRestOfPropertyAccessByDotCallExpression :: (CallExpression SourceElement) -> TokenParser (CallExpression SourceElement)
 nonEmptyRestOfPropertyAccessByDotCallExpression base = do
     dot
     ident <- identifierName
     buildRestOfCallExpression $ PropertyAccessByDotCallExpression base ident
 
-nonEmptyRestOfCallWithArgumentsCallExpression :: CallExpression -> TokenParser CallExpression
+nonEmptyRestOfCallWithArgumentsCallExpression :: (CallExpression SourceElement) -> TokenParser (CallExpression SourceElement)
 nonEmptyRestOfCallWithArgumentsCallExpression base = do
     args <- arguments
     buildRestOfCallExpression $ CallWithArgumentsCallExpression base args
 
-emptyRestOfCallExpression :: CallExpression -> TokenParser CallExpression
+emptyRestOfCallExpression :: (CallExpression SourceElement) -> TokenParser (CallExpression SourceElement)
 emptyRestOfCallExpression base = return base
 
-memberWithArgumentsCallExpression :: TokenParser CallExpression
+memberWithArgumentsCallExpression :: TokenParser (CallExpression SourceElement)
 memberWithArgumentsCallExpression = do
     memberExpr <- memberExpression
     args <- arguments
     return $ MemberWithArgumentsCallExpression memberExpr args
 
-primaryExpression :: TokenParser PrimaryExpression
+primaryExpression :: TokenParser (PrimaryExpression SourceElement)
 primaryExpression = 
     thisPrimaryExpression
     <|> identifierPrimaryExpression
@@ -952,42 +952,42 @@ primaryExpression =
     <|> expressionPrimaryExpression
     <?> "PrimaryExpression"
 
-expressionPrimaryExpression :: TokenParser PrimaryExpression
+expressionPrimaryExpression :: TokenParser (PrimaryExpression SourceElement)
 expressionPrimaryExpression = do
     expr <- betweenRoundBrackets expression
     return $ ExpressionPrimaryExpression expr
 
-expression :: TokenParser Expression
+expression :: TokenParser (Expression SourceElement)
 expression = do
     assigns <- sepBy1 assignmentExpression comma
     return $ Expression assigns
 
-identifierPrimaryExpression :: TokenParser PrimaryExpression
+identifierPrimaryExpression :: TokenParser (PrimaryExpression SourceElement)
 identifierPrimaryExpression = do
     str <- identifierToken
     return $ IdentifierPrimaryExpression str
 
-thisPrimaryExpression :: TokenParser PrimaryExpression
+thisPrimaryExpression :: TokenParser (PrimaryExpression SourceElement)
 thisPrimaryExpression = thisKeyword >> return ThisPrimaryExpression
 
-literalPrimaryExpression :: TokenParser PrimaryExpression
+literalPrimaryExpression :: TokenParser (PrimaryExpression SourceElement)
 literalPrimaryExpression = do
     lit <- literal
     return $ LiteralPrimaryExpression lit
 
-arrayLiteralPrimaryExpression :: TokenParser PrimaryExpression
+arrayLiteralPrimaryExpression :: TokenParser (PrimaryExpression SourceElement)
 arrayLiteralPrimaryExpression = do
     arr <- arrayLiteral
     return $ ArrayLiteralPrimaryExpression arr
 
-arrayLiteral :: TokenParser ArrayLiteral
+arrayLiteral :: TokenParser (ArrayLiteral SourceElement)
 arrayLiteral = do
     leftSquareBracket
     elements <- arrayLiteralElements
     rightSquareBracket
     return $ ArrayLiteral elements
 
-arrayLiteralElements :: TokenParser [MaybeAssignmentExpression]
+arrayLiteralElements :: TokenParser [(MaybeAssignmentExpression SourceElement)]
 arrayLiteralElements = do
     assignments <- sepBy (maybeParse assignmentExpression) comma
     if null assignments
@@ -996,19 +996,19 @@ arrayLiteralElements = do
             Nothing -> return $ reverse $ drop 1 (reverse assignments)
             _ -> return assignments
 
-objectLiteralPrimaryExpression :: TokenParser PrimaryExpression
+objectLiteralPrimaryExpression :: TokenParser (PrimaryExpression SourceElement)
 objectLiteralPrimaryExpression = do
     properties <- betweenCurlyBrackets $ sepEndBy propertyAssignment comma
     return $ ObjectLiteralPrimaryExpression $ ObjectLiteral properties
 
-propertyAssignment :: TokenParser PropertyAssignment
+propertyAssignment :: TokenParser (PropertyAssignment SourceElement)
 propertyAssignment = 
     try fieldPropertyAssignment
     <|> getterPropertyAssignment
     <|> setterPropertyAssignment
     <?> "PropertyAssignment"
 
-fieldPropertyAssignment :: TokenParser PropertyAssignment
+fieldPropertyAssignment :: TokenParser (PropertyAssignment SourceElement)
 fieldPropertyAssignment = do
     name <- propertyName
     colon
@@ -1031,7 +1031,7 @@ numericPropertyName = do
     num <- numericLiteralToken
     return $ NumericPropertyName num
 
-getterPropertyAssignment :: TokenParser PropertyAssignment
+getterPropertyAssignment :: TokenParser (PropertyAssignment SourceElement)
 getterPropertyAssignment = do
     getKeyword
     name <- propertyName
@@ -1039,7 +1039,7 @@ getterPropertyAssignment = do
     body <- betweenCurlyBrackets functionBody
     return $ GetterPropertyAssignment name body
 
-setterPropertyAssignment :: TokenParser PropertyAssignment
+setterPropertyAssignment :: TokenParser (PropertyAssignment SourceElement)
 setterPropertyAssignment = do
     setKeyword
     name <- propertyName
@@ -1047,7 +1047,7 @@ setterPropertyAssignment = do
     body <- betweenCurlyBrackets functionBody
     return $ SetterPropertyAssignment name param body
 
-functionBody :: TokenParser FunctionBody
+functionBody :: TokenParser (FunctionBody SourceElement)
 functionBody = do
     srcElements <- many sourceElement
     return $ FunctionBody srcElements

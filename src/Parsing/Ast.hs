@@ -4,91 +4,91 @@ data Program =
     Program [SourceElement] deriving (Show)
 
 data SourceElement = 
-    StatementSourceElement Statement
-    | FunctionDeclarationSourceElement String [String] FunctionBody
+    StatementSourceElement (Statement SourceElement)
+    | FunctionDeclarationSourceElement String [String] (FunctionBody SourceElement)
     deriving (Show)
 
-data Statement =
-    BlockStmt Block
-    | VariableStmt [VariableDeclaration] -- TODO: use non-empty list
+data Statement sourceElement =
+    BlockStmt (Block sourceElement)
+    | VariableStmt [(VariableDeclaration sourceElement)] -- TODO: use non-empty list
     | EmptyStmt
-    | ExpressionStmt Expression
-    | IfStmt Expression Statement MaybeStatement
-    | IterationStmt IterationStatement
+    | ExpressionStmt (Expression sourceElement)
+    | IfStmt (Expression sourceElement) (Statement sourceElement) (MaybeStatement sourceElement)
+    | IterationStmt (IterationStatement sourceElement)
     | ContinueStmt MaybeString
     | BreakStmt MaybeString
-    | ReturnStmt MaybeExpression
-    | WithStmt Expression Statement
-    | LabelledStmt String Statement
-    | SwitchStmt Expression CaseBlock
-    | ThrowStmt Expression
-    | TryStmt TryStatement
+    | ReturnStmt (MaybeExpression sourceElement)
+    | WithStmt (Expression sourceElement) (Statement sourceElement)
+    | LabelledStmt String (Statement sourceElement)
+    | SwitchStmt (Expression sourceElement) (CaseBlock sourceElement)
+    | ThrowStmt (Expression sourceElement)
+    | TryStmt (TryStatement sourceElement)
     | DebuggerStmt
     deriving (Show)
 
-data Block = Block [Statement] deriving (Show)
+data Block sourceElement = Block [(Statement sourceElement)] deriving (Show)
 
 type MaybeString = Maybe String
 
-type MaybeStatement = Maybe Statement
+type MaybeStatement sourceElement = Maybe (Statement sourceElement)
 
 -- variable name and initializer
-data VariableDeclaration = 
-    VariableDeclaration String MaybeInitializer
+data VariableDeclaration sourceElement = 
+    VariableDeclaration String (MaybeInitializer sourceElement)
     deriving (Show)
 
-data Initializer = 
-    Initializer AssignmentExpression 
+data Initializer sourceElement = 
+    Initializer (AssignmentExpression sourceElement) 
     deriving (Show)
 
-type MaybeInitializer = Maybe Initializer
+type MaybeInitializer sourceElement = Maybe (Initializer sourceElement)
 
 -- TODO: separate while and for statements
 -- TODO: use NoIn ?
-data IterationStatement =
-    DoWhileIterationStatement Statement Expression
-    | WhileIterationStatement Expression Statement
-    | ExprTripletForIterationStatement MaybeExpression MaybeExpression MaybeExpression Statement
-    | VarAndDoubleExprForIterationStatement [VariableDeclaration] MaybeExpression MaybeExpression Statement --use non empty list
-    | LHSExprInExprForIterationStatement LeftHandSideExpression Expression Statement
-    | VarInExprIteratioinStatement  VariableDeclaration Expression Statement
+data IterationStatement sourceElement =
+    DoWhileIterationStatement (Statement sourceElement) (Expression sourceElement)
+    | WhileIterationStatement (Expression sourceElement) (Statement sourceElement)
+    | ExprTripletForIterationStatement (MaybeExpression sourceElement) (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement sourceElement)
+    | VarAndDoubleExprForIterationStatement [(VariableDeclaration sourceElement)] (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement sourceElement) --use non empty list
+    | LHSExprInExprForIterationStatement (LeftHandSideExpression sourceElement) (Expression sourceElement) (Statement sourceElement)
+    | VarInExprIteratioinStatement  (VariableDeclaration sourceElement) (Expression sourceElement) (Statement sourceElement)
     deriving (Show)
 
-data ReturnStatement =
+data ReturnStatement sourceElement =
     JustReturnStatement
-    | ExpressionReturnStatement Expression
+    | ExpressionReturnStatement (Expression sourceElement)
     deriving (Show)
 
-data CaseBlock = 
-    CaseBlock [CaseClause] MaybeDefaultClause [CaseClause] 
+data CaseBlock sourceElement = 
+    CaseBlock [(CaseClause sourceElement)] (MaybeDefaultClause sourceElement) [(CaseClause sourceElement)] 
     deriving (Show)
 
-data CaseClause = 
-    CaseClause Expression [Statement] deriving (Show)
+data CaseClause sourceElement = 
+    CaseClause (Expression sourceElement) [(Statement sourceElement)] deriving (Show)
 
-data DefaultClause = DefaultClause [Statement] deriving (Show)
+data DefaultClause sourceElement = DefaultClause [(Statement sourceElement)] deriving (Show)
 
-type MaybeDefaultClause = Maybe DefaultClause
+type MaybeDefaultClause sourceElement = Maybe (DefaultClause sourceElement)
 
-data TryStatement = 
-    BlockCatchTryStatement Block Catch
-    | BlockFinallyTryStatement Block Finally
-    | BlockCatchFinallyTryStatement Block Catch Finally
+data TryStatement sourceElement = 
+    BlockCatchTryStatement (Block sourceElement) (Catch sourceElement)
+    | BlockFinallyTryStatement (Block sourceElement) (Finally sourceElement)
+    | BlockCatchFinallyTryStatement (Block sourceElement) (Catch sourceElement) (Finally sourceElement)
     deriving (Show)
 
-data Catch = Catch String Block deriving (Show)
+data Catch sourceElement = Catch String (Block sourceElement) deriving (Show)
 
-data Finally = Finally Block deriving (Show)
+data Finally sourceElement = Finally (Block sourceElement) deriving (Show)
 
 
 -- Assignment expression
 
-data AssignmentExpression = 
-    ConditionalAssignmentExpression ConditionalExpression
-    | AssignmentOperatorExpression LeftHandSideExpression AssignmentOperator AssignmentExpression
+data AssignmentExpression sourceElement = 
+    ConditionalAssignmentExpression (ConditionalExpression sourceElement)
+    | AssignmentOperatorExpression (LeftHandSideExpression sourceElement) AssignmentOperator (AssignmentExpression sourceElement)
     deriving (Show)
 
-type MaybeAssignmentExpression = Maybe AssignmentExpression
+type MaybeAssignmentExpression sourceElement = Maybe (AssignmentExpression sourceElement)
 
 data AssignmentOperator =
     SingleAssignOperator
@@ -105,9 +105,9 @@ data AssignmentOperator =
     | BitwiseOrAssignOperator
     deriving (Show)
 
-data ConditionalExpression = 
-    LogicalOrConditionalExpression LogicalOrExpression
-    | TeranaryOperatorConditionalExpression LogicalOrExpression AssignmentExpression AssignmentExpression
+data ConditionalExpression sourceElement = 
+    LogicalOrConditionalExpression (LogicalOrExpression sourceElement)
+    | TeranaryOperatorConditionalExpression (LogicalOrExpression sourceElement) (AssignmentExpression sourceElement) (AssignmentExpression sourceElement)
     deriving (Show)
 
 --data AssignmentExpressionNoIn = 
@@ -124,50 +124,50 @@ data ConditionalExpression =
 
 -- Left hand side expressions
 
-data MemberExpression = 
+data MemberExpression sourceElement = 
     DummyMemberExpression
-    | PrimaryMemberExpression PrimaryExpression
-    | FunctionMemberExpression FunctionExpression
-    | PropertyAccessByBracketsMemberExpression MemberExpression Expression
-    | PropertyAccessByDotMemberExpression MemberExpression String
-    | NewMemberExpression MemberExpression [AssignmentExpression]
+    | PrimaryMemberExpression (PrimaryExpression sourceElement)
+    | FunctionMemberExpression (FunctionExpression sourceElement)
+    | PropertyAccessByBracketsMemberExpression (MemberExpression sourceElement) (Expression sourceElement)
+    | PropertyAccessByDotMemberExpression (MemberExpression sourceElement) String
+    | NewMemberExpression (MemberExpression sourceElement) [(AssignmentExpression sourceElement)]
     deriving (Show)
 
-data FunctionExpression = 
-    FunctionExpression MaybeString [String] FunctionBody
+data FunctionExpression sourceElement = 
+    FunctionExpression MaybeString [String] (FunctionBody sourceElement)
     deriving (Show)
 
-data NewExpression =
-    MemberNewExpression MemberExpression
-    | NewNewExpression NewExpression
+data NewExpression sourceElement =
+    MemberNewExpression (MemberExpression sourceElement)
+    | NewNewExpression (NewExpression sourceElement)
     deriving (Show)
 
-data CallExpression =
-    MemberWithArgumentsCallExpression MemberExpression [AssignmentExpression]
-    | CallWithArgumentsCallExpression CallExpression [AssignmentExpression]
-    | PropertyAccessByBracketsCallExpression CallExpression Expression
-    | PropertyAccessByDotCallExpression CallExpression String
+data CallExpression sourceElement =
+    MemberWithArgumentsCallExpression (MemberExpression sourceElement) [(AssignmentExpression sourceElement)]
+    | CallWithArgumentsCallExpression (CallExpression sourceElement) [(AssignmentExpression sourceElement)]
+    | PropertyAccessByBracketsCallExpression (CallExpression sourceElement) (Expression sourceElement)
+    | PropertyAccessByDotCallExpression (CallExpression sourceElement) String
     deriving (Show)
 
-data LeftHandSideExpression =
-    NewLHSExpression NewExpression
-    | CallLHSExpression CallExpression
+data LeftHandSideExpression sourceElement =
+    NewLHSExpression (NewExpression sourceElement)
+    | CallLHSExpression (CallExpression sourceElement)
     deriving (Show)
 
  -- Primary expression
 
-data PrimaryExpression = 
+data PrimaryExpression sourceElement = 
     ThisPrimaryExpression
     | IdentifierPrimaryExpression String
     | LiteralPrimaryExpression Literal
-    | ArrayLiteralPrimaryExpression ArrayLiteral
-    | ObjectLiteralPrimaryExpression ObjectLiteral
-    | ExpressionPrimaryExpression Expression
+    | ArrayLiteralPrimaryExpression (ArrayLiteral sourceElement)
+    | ObjectLiteralPrimaryExpression (ObjectLiteral sourceElement)
+    | ExpressionPrimaryExpression (Expression sourceElement)
     deriving (Show)
 
-data ObjectLiteral = ObjectLiteral [PropertyAssignment] deriving (Show)
+data ObjectLiteral sourceElement = ObjectLiteral [(PropertyAssignment sourceElement)] deriving (Show)
 
-data ArrayLiteral = ArrayLiteral [MaybeAssignmentExpression] deriving (Show)
+data ArrayLiteral sourceElement = ArrayLiteral [(MaybeAssignmentExpression sourceElement)] deriving (Show)
 
 data Literal = 
     NullLiteral
@@ -177,10 +177,10 @@ data Literal =
 --  | RegularExpressionLiteral TODO
     deriving (Show)
 
-data PropertyAssignment =
-    FieldPropertyAssignment PropertyName AssignmentExpression
-    | GetterPropertyAssignment PropertyName FunctionBody
-    | SetterPropertyAssignment PropertyName PropertySetParameterList FunctionBody
+data PropertyAssignment sourceElement =
+    FieldPropertyAssignment PropertyName (AssignmentExpression sourceElement)
+    | GetterPropertyAssignment PropertyName (FunctionBody sourceElement)
+    | SetterPropertyAssignment PropertyName PropertySetParameterList (FunctionBody sourceElement)
     deriving (Show)
 
 type PropertySetParameterList = String
@@ -190,27 +190,27 @@ data PropertyName =
     | NumericPropertyName Double
     deriving (Show)
 
-data FunctionBody = FunctionBody [SourceElement] deriving (Show)
+data FunctionBody sourceElement = FunctionBody [sourceElement] deriving (Show)
 
 -- Logical Expressions
 
-data LogicalAndExpression = 
-    UnaryLogicalAndExpression BitwiseOrExpression
-    | BinaryLogicalAndExpression LogicalAndExpression BitwiseOrExpression
+data LogicalAndExpression sourceElement = 
+    UnaryLogicalAndExpression (BitwiseOrExpression sourceElement)
+    | BinaryLogicalAndExpression (LogicalAndExpression sourceElement) (BitwiseOrExpression sourceElement)
     deriving (Show)
 
-data LogicalOrExpression =
-    UnaryLogicalOrExpression LogicalAndExpression
-    | BinaryLogicalOrExpression LogicalOrExpression LogicalAndExpression
+data LogicalOrExpression sourceElement =
+    UnaryLogicalOrExpression (LogicalAndExpression sourceElement)
+    | BinaryLogicalOrExpression (LogicalOrExpression sourceElement) (LogicalAndExpression sourceElement)
     deriving (Show)
 
 -- Comma operator
 
-data Expression = 
-    Expression [AssignmentExpression] -- TODO: non empty
+data Expression sourceElement = 
+    Expression [(AssignmentExpression sourceElement)] -- TODO: non empty
     deriving (Show)
 
-type MaybeExpression = Maybe Expression
+type MaybeExpression sourceElement = Maybe (Expression sourceElement)
 
 --data ExpressionNoIn =
 --    ExpressionNoIn [AssignmentExpressionNoIn]
@@ -220,90 +220,90 @@ type MaybeExpression = Maybe Expression
 
 -- Binary bitwise operators
 
-data BitwiseAndExpression = 
-    UnaryBitwiseAndExpression EqualityExpression
-    | BinaryBitwiseAndExpression BitwiseAndExpression EqualityExpression
+data BitwiseAndExpression sourceElement = 
+    UnaryBitwiseAndExpression (EqualityExpression sourceElement)
+    | BinaryBitwiseAndExpression (BitwiseAndExpression sourceElement) (EqualityExpression sourceElement)
     deriving (Show)
 
-data BitwiseXorExpression =
-    UnaryBitwiseXorExpression BitwiseAndExpression
-    | BinaryBitwiseXorExpression BitwiseXorExpression BitwiseAndExpression
+data BitwiseXorExpression sourceElement =
+    UnaryBitwiseXorExpression (BitwiseAndExpression sourceElement)
+    | BinaryBitwiseXorExpression (BitwiseXorExpression sourceElement) (BitwiseAndExpression sourceElement)
     deriving (Show)
 
-data BitwiseOrExpression =
-    UnaryBitwiseOrExpression BitwiseXorExpression
-    | BinaryBitwiseOrExpression BitwiseOrExpression BitwiseXorExpression
+data BitwiseOrExpression sourceElement =
+    UnaryBitwiseOrExpression (BitwiseXorExpression sourceElement)
+    | BinaryBitwiseOrExpression (BitwiseOrExpression sourceElement) (BitwiseXorExpression sourceElement)
     deriving (Show)
 
 -- Equality operators
 
-data EqualityExpression =
-    RelationalEqualityExpression RelationalExpression
-    | EqualsEqualityExpression EqualityExpression RelationalExpression
-    | NotEqualsEqualityExpression EqualityExpression RelationalExpression
-    | StrictEqualsEqualityExpression EqualityExpression RelationalExpression
-    | StrictNotEqualsEqualityExpression EqualityExpression RelationalExpression
+data EqualityExpression sourceElement =
+    RelationalEqualityExpression (RelationalExpression sourceElement)
+    | EqualsEqualityExpression (EqualityExpression sourceElement) (RelationalExpression sourceElement)
+    | NotEqualsEqualityExpression (EqualityExpression sourceElement) (RelationalExpression sourceElement)
+    | StrictEqualsEqualityExpression (EqualityExpression sourceElement) (RelationalExpression sourceElement)
+    | StrictNotEqualsEqualityExpression (EqualityExpression sourceElement) (RelationalExpression sourceElement)
     deriving (Show)
 
 -- Relational operators
 
-data RelationalExpression =
-    ShiftRelationalExpression ShiftExpression
-    | LessThanRelationalExpression RelationalExpression ShiftExpression
-    | GreaterThanRelationalExpression RelationalExpression ShiftExpression
-    | LessThanEqualsRelationalExpression RelationalExpression ShiftExpression
-    | GreaterThanEqualsRelationalExpression RelationalExpression ShiftExpression
-    | InstanceOfRelationalExpression RelationalExpression ShiftExpression
-    | InRelationalExpression RelationalExpression ShiftExpression
+data RelationalExpression sourceElement =
+    ShiftRelationalExpression (ShiftExpression sourceElement)
+    | LessThanRelationalExpression (RelationalExpression sourceElement) (ShiftExpression sourceElement)
+    | GreaterThanRelationalExpression (RelationalExpression sourceElement) (ShiftExpression sourceElement)
+    | LessThanEqualsRelationalExpression (RelationalExpression sourceElement) (ShiftExpression sourceElement)
+    | GreaterThanEqualsRelationalExpression (RelationalExpression sourceElement) (ShiftExpression sourceElement)
+    | InstanceOfRelationalExpression (RelationalExpression sourceElement) (ShiftExpression sourceElement)
+    | InRelationalExpression (RelationalExpression sourceElement) (ShiftExpression sourceElement)
     deriving (Show)
 
 -- Bitwise shift operators
 
-data ShiftExpression = 
-    AdditiveShiftExpression AdditiveExpression
-    | LeftShiftExpression ShiftExpression AdditiveExpression
-    | RightShiftExpression ShiftExpression AdditiveExpression
-    | UnsignedRightShiftExpression ShiftExpression AdditiveExpression
+data ShiftExpression sourceElement = 
+    AdditiveShiftExpression (AdditiveExpression sourceElement)
+    | LeftShiftExpression (ShiftExpression sourceElement) (AdditiveExpression sourceElement)
+    | RightShiftExpression (ShiftExpression sourceElement) (AdditiveExpression sourceElement)
+    | UnsignedRightShiftExpression (ShiftExpression sourceElement) (AdditiveExpression sourceElement)
     deriving (Show)
 
 -- Additive operators
 
-data AdditiveExpression = 
-    MultAdditiveExpression MultiplicativeExpression
-    | PlusAdditiveExpression AdditiveExpression MultiplicativeExpression
-    | MinusAdditiveExpression AdditiveExpression MultiplicativeExpression
+data AdditiveExpression sourceElement = 
+    MultAdditiveExpression (MultiplicativeExpression sourceElement)
+    | PlusAdditiveExpression (AdditiveExpression sourceElement) (MultiplicativeExpression sourceElement)
+    | MinusAdditiveExpression (AdditiveExpression sourceElement) (MultiplicativeExpression sourceElement)
     deriving (Show)
 
 -- Multiplicative operators
 
-data MultiplicativeExpression =
-    UnaryMultiplicativeExpression UnaryExpression
-    | MulMultiplicativeExpression MultiplicativeExpression UnaryExpression
-    | DivMultiplicativeExpression MultiplicativeExpression UnaryExpression
-    | ModulusMultiplicativeExpression MultiplicativeExpression UnaryExpression
+data MultiplicativeExpression sourceElement =
+    UnaryMultiplicativeExpression (UnaryExpression sourceElement)
+    | MulMultiplicativeExpression (MultiplicativeExpression sourceElement) (UnaryExpression sourceElement)
+    | DivMultiplicativeExpression (MultiplicativeExpression sourceElement) (UnaryExpression sourceElement)
+    | ModulusMultiplicativeExpression (MultiplicativeExpression sourceElement) (UnaryExpression sourceElement)
     deriving (Show)
 
 -- Unary operators
 
-data UnaryExpression =
-    PostfixUnaryExpression PostfixExpression
-    | DeleteUnaryExpression UnaryExpression
-    | VoidUnaryExpression UnaryExpression
-    | TypeOfUnaryExpression UnaryExpression
-    | IncrementPlusUnaryExpression UnaryExpression
-    | IncrementMinusUnaryExpression UnaryExpression
-    | PlusUnaryExpression UnaryExpression
-    | MinusUnaryExpression UnaryExpression
-    | BitwiseNotUnaryExpression UnaryExpression
-    | LogicalNotUnaryExpression UnaryExpression
+data UnaryExpression sourceElement =
+    PostfixUnaryExpression (PostfixExpression sourceElement)
+    | DeleteUnaryExpression (UnaryExpression sourceElement)
+    | VoidUnaryExpression (UnaryExpression sourceElement)
+    | TypeOfUnaryExpression (UnaryExpression sourceElement)
+    | IncrementPlusUnaryExpression (UnaryExpression sourceElement)
+    | IncrementMinusUnaryExpression (UnaryExpression sourceElement)
+    | PlusUnaryExpression (UnaryExpression sourceElement)
+    | MinusUnaryExpression (UnaryExpression sourceElement)
+    | BitwiseNotUnaryExpression (UnaryExpression sourceElement)
+    | LogicalNotUnaryExpression (UnaryExpression sourceElement)
     deriving (Show)
 
 -- Postfix expressions
 
-data PostfixExpression =
-    LHSPostfixExpression LeftHandSideExpression
-    | IncrementPlusPostfixExpression LeftHandSideExpression
-    | IncrementMinusPostfixExpression LeftHandSideExpression
+data PostfixExpression sourceElement =
+    LHSPostfixExpression (LeftHandSideExpression sourceElement)
+    | IncrementPlusPostfixExpression (LeftHandSideExpression sourceElement)
+    | IncrementMinusPostfixExpression (LeftHandSideExpression sourceElement)
     deriving (Show)
 
 
