@@ -2,6 +2,7 @@ module Parsing.Parsers.Literal where
 
 import Parsing.Ast
 import Parsing.TokenParser
+import Parsing.Expression
 
 literal :: TokenParser Literal
 literal = 
