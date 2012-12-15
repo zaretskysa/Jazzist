@@ -4,6 +4,7 @@ import Parsing.Ast
 import Parsing.TokenParser
 import Parsing.Parsers.Literal
 import Parsing.Parsers.TokenHelper
+import Parsing.Statement
 
 program :: TokenParser Program
 program = do
