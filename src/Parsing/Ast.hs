@@ -17,7 +17,7 @@ data Statement assignExpr lhsExpr expression sourceElement =
     | IterationStmt (IterationStatement assignExpr lhsExpr expression sourceElement)
     | ContinueStmt MaybeString
     | BreakStmt MaybeString
-    | ReturnStmt (MaybeExpression sourceElement)
+    | ReturnStmt (MaybeExpression expression)
     | WithStmt expression (Statement assignExpr lhsExpr expression sourceElement)
     | LabelledStmt String (Statement assignExpr lhsExpr expression sourceElement)
     | SwitchStmt expression (CaseBlock assignExpr lhsExpr expression sourceElement)
@@ -51,8 +51,8 @@ type MaybeInitializer assignExpr = Maybe (Initializer assignExpr)
 data IterationStatement assignExpr lhsExpr expression sourceElement =
     DoWhileIterationStatement (Statement assignExpr lhsExpr expression sourceElement) expression
     | WhileIterationStatement expression (Statement assignExpr lhsExpr expression sourceElement)
-    | ExprTripletForIterationStatement (MaybeExpression sourceElement) (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement assignExpr lhsExpr expression sourceElement)
-    | VarAndDoubleExprForIterationStatement [(VariableDeclaration assignExpr sourceElement)] (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement assignExpr lhsExpr expression sourceElement) --use non empty list
+    | ExprTripletForIterationStatement (MaybeExpression expression) (MaybeExpression expression) (MaybeExpression expression) (Statement assignExpr lhsExpr expression sourceElement)
+    | VarAndDoubleExprForIterationStatement [(VariableDeclaration assignExpr sourceElement)] (MaybeExpression expression) (MaybeExpression expression) (Statement assignExpr lhsExpr expression sourceElement) --use non empty list
     | LHSExprInExprForIterationStatement lhsExpr expression (Statement assignExpr lhsExpr expression sourceElement)
     | VarInExprIteratioinStatement  (VariableDeclaration assignExpr sourceElement) expression (Statement assignExpr lhsExpr expression sourceElement)
     deriving (Show)
@@ -219,7 +219,7 @@ data Expression sourceElement =
     Expression [(AssignmentExpression sourceElement)] -- TODO: non empty
     deriving (Show)
 
-type MaybeExpression sourceElement = Maybe (Expression sourceElement)
+type MaybeExpression expression = Maybe expression
 
 --data ExpressionNoIn =
 --    ExpressionNoIn [AssignmentExpressionNoIn]

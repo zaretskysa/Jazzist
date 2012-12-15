@@ -204,7 +204,7 @@ exprTripletForIterationStatement = do
     stmt <- statement
     return $ IterationStmt $ ExprTripletForIterationStatement expr1 expr2 expr3 stmt
 
-maybeExpression :: TokenParser (MaybeExpression SourceElement)
+maybeExpression :: TokenParser (MaybeExpression (Expression SourceElement))
 maybeExpression = maybeParse expression
 
 varAndDoubleExprForIterationStatement :: TokenParser (Statement (AssignmentExpression SourceElement) (LeftHandSideExpression SourceElement) (Expression SourceElement) SourceElement)
