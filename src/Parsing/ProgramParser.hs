@@ -289,10 +289,10 @@ variableDeclaration = do
     initial <- maybeInitializer
     return $ VariableDeclaration ident initial
 
-maybeInitializer :: TokenParser (MaybeInitializer (AssignmentExpression SourceElement) SourceElement)
+maybeInitializer :: TokenParser (MaybeInitializer (AssignmentExpression SourceElement))
 maybeInitializer = maybeParse initializer
 
-initializer :: TokenParser (Initializer (AssignmentExpression SourceElement) SourceElement)
+initializer :: TokenParser (Initializer (AssignmentExpression SourceElement))
 initializer = do
     assign
     assignExpr <- assignmentExpression

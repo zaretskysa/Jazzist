@@ -37,14 +37,14 @@ type MaybeStatement assignExpr lhsExpr expression sourceElement =
 
 -- variable name and initializer
 data VariableDeclaration assignExpr sourceElement = 
-    VariableDeclaration String (MaybeInitializer assignExpr sourceElement)
+    VariableDeclaration String (MaybeInitializer assignExpr)
     deriving (Show)
 
-data Initializer assignExpr sourceElement = 
+data Initializer assignExpr = 
     Initializer assignExpr
     deriving (Show)
 
-type MaybeInitializer assignExpr sourceElement = Maybe (Initializer assignExpr sourceElement)
+type MaybeInitializer assignExpr = Maybe (Initializer assignExpr)
 
 -- TODO: separate while and for statements
 -- TODO: use NoIn ?
