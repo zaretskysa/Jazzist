@@ -26,7 +26,7 @@ functionDeclarationSourceElement = do
     body <- betweenCurlyBrackets functionBody
     return $ FunctionDeclarationSourceElement ident params body
 
-statement :: TokenParser (Statement SourceElement)
+statement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 statement = 
     blockStatement
     <|> emptyStatement
@@ -44,35 +44,35 @@ statement =
     <|> tryStatement
     <|> debuggerStatement
 
-debuggerStatement :: TokenParser (Statement SourceElement)
+debuggerStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 debuggerStatement = debuggerKeyword >> semicolon >> return DebuggerStmt
 
-tryStatement :: TokenParser (Statement SourceElement)
+tryStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 tryStatement = do
     tryStmt <- parseTryStatement
     return $ TryStmt tryStmt
 
-parseTryStatement :: TokenParser (TryStatement SourceElement)
+parseTryStatement :: TokenParser (TryStatement (Expression SourceElement) SourceElement)
 parseTryStatement = do
     try blockCatchFinallyTryStatement
     <|> try blockCatchTryStatement
     <|> try blockFinnalyTryStatement
 
-blockCatchTryStatement :: TokenParser (TryStatement SourceElement)
+blockCatchTryStatement :: TokenParser (TryStatement (Expression SourceElement) SourceElement)
 blockCatchTryStatement = do
     tryKeyword
     b <- block
     c <- parseCatch
     return $ BlockCatchTryStatement b c
 
-blockFinnalyTryStatement :: TokenParser (TryStatement SourceElement)
+blockFinnalyTryStatement :: TokenParser (TryStatement (Expression SourceElement) SourceElement)
 blockFinnalyTryStatement = do
     tryKeyword
     b <- block
     f <- finally
     return $ BlockFinallyTryStatement b f
 
-blockCatchFinallyTryStatement :: TokenParser (TryStatement SourceElement)
+blockCatchFinallyTryStatement :: TokenParser (TryStatement (Expression SourceElement) SourceElement)
 blockCatchFinallyTryStatement = do
     tryKeyword
     b <- block
@@ -80,20 +80,20 @@ blockCatchFinallyTryStatement = do
     f <- finally
     return $ BlockCatchFinallyTryStatement b c f
 
-parseCatch :: TokenParser (Catch SourceElement)
+parseCatch :: TokenParser (Catch (Expression SourceElement) SourceElement)
 parseCatch = do
     catchKeyword
     ident <- betweenRoundBrackets identifierToken
     b <- block
     return $ Catch ident b
 
-finally :: TokenParser (Finally SourceElement)
+finally :: TokenParser (Finally (Expression SourceElement) SourceElement)
 finally = do
     finallyKeyword
     b <- block
     return $ Finally b
 
-throwStatement :: TokenParser (Statement SourceElement)
+throwStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 throwStatement = do
     throwKeyword
     --TODO: no line terminator here
@@ -101,21 +101,21 @@ throwStatement = do
     semicolon
     return $ ThrowStmt expr
 
-labelledStatement :: TokenParser (Statement SourceElement)
+labelledStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 labelledStatement = do
     ident <- identifierToken
     colon
     stmt <- statement
     return $ LabelledStmt ident stmt
 
-switchStatement :: TokenParser (Statement SourceElement)
+switchStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 switchStatement = do
     switchKeyword
     expr <- betweenRoundBrackets expression
     blk <- caseBlock
     return $ SwitchStmt expr blk
 
-caseBlock :: TokenParser (CaseBlock SourceElement)
+caseBlock :: TokenParser (CaseBlock (Expression SourceElement) SourceElement)
 caseBlock = do
     leftCurlyBracket
     beginClauses <- many caseClause
@@ -124,7 +124,7 @@ caseBlock = do
     rightCurlyBracket
     return $ CaseBlock beginClauses defaultPart endClauses
 
-caseClause :: TokenParser (CaseClause SourceElement)
+caseClause :: TokenParser (CaseClause (Expression SourceElement) SourceElement)
 caseClause = do
     caseKeyword
     expr <- expression
@@ -132,41 +132,41 @@ caseClause = do
     stmts <- many statement
     return $ CaseClause expr stmts
 
-defaultClause :: TokenParser (DefaultClause SourceElement)
+defaultClause :: TokenParser (DefaultClause (Expression SourceElement) SourceElement)
 defaultClause = do
     defaultKeyword >> colon
     stmts <- many statement
     return $ DefaultClause stmts
 
-withStatement :: TokenParser (Statement SourceElement)
+withStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 withStatement = do
     withKeyword
     expr <- betweenRoundBrackets expression
     stmt <- statement
     return $ WithStmt expr stmt
 
-returnStatement :: TokenParser (Statement SourceElement)
+returnStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 returnStatement = do
     returnKeyword
     expr <- maybeParse expression --TODO: no line termimator here
     semicolon
     return $ ReturnStmt expr
 
-breakStatement :: TokenParser (Statement SourceElement)
+breakStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 breakStatement = do
     breakKeyword
     ident <- maybeParse identifierToken --TODO: no line termimator here
     semicolon
     return $ BreakStmt ident
 
-continueStatement :: TokenParser (Statement SourceElement)
+continueStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 continueStatement = do
     continueKeyword
     ident <- maybeParse identifierToken --TODO: no line termimator here
     semicolon
     return $ ContinueStmt ident
 
-iterationStatement :: TokenParser (Statement SourceElement)
+iterationStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 iterationStatement = 
     doWhileIterationStatement
     <|> whileIterationStatement
@@ -175,7 +175,7 @@ iterationStatement =
     <|> try lhsExprInExprForIterationStatement
     <|> varInExprIteratioinStatement
 
-doWhileIterationStatement :: TokenParser (Statement SourceElement)
+doWhileIterationStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 doWhileIterationStatement = do
     doKeyword
     stmt <- statement
@@ -184,14 +184,14 @@ doWhileIterationStatement = do
     semicolon
     return $ IterationStmt $ DoWhileIterationStatement stmt expr
 
-whileIterationStatement :: TokenParser (Statement SourceElement)
+whileIterationStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 whileIterationStatement = do
     whileKeyword
     expr <- betweenRoundBrackets expression
     stmt <- statement
     return $ IterationStmt $ WhileIterationStatement expr stmt
 
-exprTripletForIterationStatement :: TokenParser (Statement SourceElement)
+exprTripletForIterationStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 exprTripletForIterationStatement = do
     forKeyword
     leftRoundBracket
@@ -207,7 +207,7 @@ exprTripletForIterationStatement = do
 maybeExpression :: TokenParser (MaybeExpression SourceElement)
 maybeExpression = maybeParse expression
 
-varAndDoubleExprForIterationStatement :: TokenParser (Statement SourceElement)
+varAndDoubleExprForIterationStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 varAndDoubleExprForIterationStatement = do
     forKeyword
     leftRoundBracket
@@ -224,7 +224,7 @@ varAndDoubleExprForIterationStatement = do
 variableDeclarationList :: TokenParser [(VariableDeclaration SourceElement)]
 variableDeclarationList = sepBy1 variableDeclaration comma
 
-lhsExprInExprForIterationStatement :: TokenParser (Statement SourceElement)
+lhsExprInExprForIterationStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 lhsExprInExprForIterationStatement = do
     forKeyword
     leftRoundBracket
@@ -235,7 +235,7 @@ lhsExprInExprForIterationStatement = do
     stmt <- statement
     return $ IterationStmt $ LHSExprInExprForIterationStatement lhs expr stmt
 
-varInExprIteratioinStatement :: TokenParser (Statement SourceElement)
+varInExprIteratioinStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 varInExprIteratioinStatement = do
     forKeyword
     leftRoundBracket
@@ -247,7 +247,7 @@ varInExprIteratioinStatement = do
     stmt <- statement
     return $ IterationStmt $ VarInExprIteratioinStatement varDecl expr stmt
 
-ifStatement :: TokenParser (Statement SourceElement)
+ifStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 ifStatement = do
     ifKeyword
     expr <- betweenRoundBrackets expression
@@ -255,7 +255,7 @@ ifStatement = do
     stmt2 <- maybeParse (elseKeyword >> statement)
     return $ IfStmt expr stmt1 stmt2
 
-expressionStatement :: TokenParser (Statement SourceElement)
+expressionStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 expressionStatement = do
     try $ notFollowedBy leftCurlyBracket
     try $ notFollowedBy functionKeyword
@@ -263,20 +263,20 @@ expressionStatement = do
     semicolon
     return $ ExpressionStmt expr
 
-blockStatement :: TokenParser (Statement SourceElement)
+blockStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 blockStatement = do
     b <- block
     return $ BlockStmt b
 
-block :: TokenParser (Block SourceElement)
+block :: TokenParser (Block (Expression SourceElement) SourceElement)
 block = do
     stmts <- betweenCurlyBrackets $ many statement
     return $ Block stmts
 
-emptyStatement :: TokenParser (Statement SourceElement)
+emptyStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 emptyStatement = semicolon >> return EmptyStmt
 
-variableStatement :: TokenParser (Statement SourceElement)
+variableStatement :: TokenParser (Statement (Expression SourceElement) SourceElement)
 variableStatement = do
     varKeyword
     varDeclList <- sepBy1 variableDeclaration comma

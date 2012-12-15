@@ -4,33 +4,35 @@ data Program =
     Program [SourceElement] deriving (Show)
 
 data SourceElement = 
-    StatementSourceElement (Statement SourceElement)
+    StatementSourceElement (Statement (Expression SourceElement) SourceElement)
     | FunctionDeclarationSourceElement String [String] (FunctionBody SourceElement)
     deriving (Show)
 
-data Statement sourceElement =
-    BlockStmt (Block sourceElement)
+data Statement expression sourceElement =
+    BlockStmt (Block expression sourceElement)
     | VariableStmt [(VariableDeclaration sourceElement)] -- TODO: use non-empty list
     | EmptyStmt
-    | ExpressionStmt (Expression sourceElement)
-    | IfStmt (Expression sourceElement) (Statement sourceElement) (MaybeStatement sourceElement)
-    | IterationStmt (IterationStatement sourceElement)
+    | ExpressionStmt expression
+    | IfStmt expression (Statement expression sourceElement) (MaybeStatement expression sourceElement)
+    | IterationStmt (IterationStatement expression sourceElement)
     | ContinueStmt MaybeString
     | BreakStmt MaybeString
     | ReturnStmt (MaybeExpression sourceElement)
-    | WithStmt (Expression sourceElement) (Statement sourceElement)
-    | LabelledStmt String (Statement sourceElement)
-    | SwitchStmt (Expression sourceElement) (CaseBlock sourceElement)
-    | ThrowStmt (Expression sourceElement)
-    | TryStmt (TryStatement sourceElement)
+    | WithStmt expression (Statement expression sourceElement)
+    | LabelledStmt String (Statement expression sourceElement)
+    | SwitchStmt expression (CaseBlock expression sourceElement)
+    | ThrowStmt expression
+    | TryStmt (TryStatement expression sourceElement)
     | DebuggerStmt
     deriving (Show)
 
-data Block sourceElement = Block [(Statement sourceElement)] deriving (Show)
+data Block expression sourceElement = 
+    Block [(Statement expression sourceElement)] 
+    deriving (Show)
 
 type MaybeString = Maybe String
 
-type MaybeStatement sourceElement = Maybe (Statement sourceElement)
+type MaybeStatement expression sourceElement = Maybe (Statement expression sourceElement)
 
 -- variable name and initializer
 data VariableDeclaration sourceElement = 
@@ -45,13 +47,13 @@ type MaybeInitializer sourceElement = Maybe (Initializer sourceElement)
 
 -- TODO: separate while and for statements
 -- TODO: use NoIn ?
-data IterationStatement sourceElement =
-    DoWhileIterationStatement (Statement sourceElement) (Expression sourceElement)
-    | WhileIterationStatement (Expression sourceElement) (Statement sourceElement)
-    | ExprTripletForIterationStatement (MaybeExpression sourceElement) (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement sourceElement)
-    | VarAndDoubleExprForIterationStatement [(VariableDeclaration sourceElement)] (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement sourceElement) --use non empty list
-    | LHSExprInExprForIterationStatement (LeftHandSideExpression sourceElement) (Expression sourceElement) (Statement sourceElement)
-    | VarInExprIteratioinStatement  (VariableDeclaration sourceElement) (Expression sourceElement) (Statement sourceElement)
+data IterationStatement expression sourceElement =
+    DoWhileIterationStatement (Statement expression sourceElement) expression
+    | WhileIterationStatement expression (Statement expression sourceElement)
+    | ExprTripletForIterationStatement (MaybeExpression sourceElement) (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement expression sourceElement)
+    | VarAndDoubleExprForIterationStatement [(VariableDeclaration sourceElement)] (MaybeExpression sourceElement) (MaybeExpression sourceElement) (Statement expression sourceElement) --use non empty list
+    | LHSExprInExprForIterationStatement (LeftHandSideExpression sourceElement) expression (Statement expression sourceElement)
+    | VarInExprIteratioinStatement  (VariableDeclaration sourceElement) expression (Statement expression sourceElement)
     deriving (Show)
 
 data ReturnStatement sourceElement =
@@ -59,26 +61,30 @@ data ReturnStatement sourceElement =
     | ExpressionReturnStatement (Expression sourceElement)
     deriving (Show)
 
-data CaseBlock sourceElement = 
-    CaseBlock [(CaseClause sourceElement)] (MaybeDefaultClause sourceElement) [(CaseClause sourceElement)] 
+data CaseBlock expression sourceElement = 
+    CaseBlock [(CaseClause expression sourceElement)] (MaybeDefaultClause expression sourceElement) [(CaseClause expression sourceElement)] 
     deriving (Show)
 
-data CaseClause sourceElement = 
-    CaseClause (Expression sourceElement) [(Statement sourceElement)] deriving (Show)
-
-data DefaultClause sourceElement = DefaultClause [(Statement sourceElement)] deriving (Show)
-
-type MaybeDefaultClause sourceElement = Maybe (DefaultClause sourceElement)
-
-data TryStatement sourceElement = 
-    BlockCatchTryStatement (Block sourceElement) (Catch sourceElement)
-    | BlockFinallyTryStatement (Block sourceElement) (Finally sourceElement)
-    | BlockCatchFinallyTryStatement (Block sourceElement) (Catch sourceElement) (Finally sourceElement)
+data CaseClause expression sourceElement = 
+    CaseClause (Expression sourceElement) [(Statement expression sourceElement)] 
     deriving (Show)
 
-data Catch sourceElement = Catch String (Block sourceElement) deriving (Show)
+data DefaultClause expression sourceElement = 
+    DefaultClause [(Statement expression sourceElement)] 
+    deriving (Show)
 
-data Finally sourceElement = Finally (Block sourceElement) deriving (Show)
+type MaybeDefaultClause expression sourceElement = 
+    Maybe (DefaultClause expression sourceElement)
+
+data TryStatement expression sourceElement = 
+    BlockCatchTryStatement (Block expression sourceElement) (Catch expression sourceElement)
+    | BlockFinallyTryStatement (Block expression sourceElement) (Finally expression sourceElement)
+    | BlockCatchFinallyTryStatement (Block expression sourceElement) (Catch expression sourceElement) (Finally expression sourceElement)
+    deriving (Show)
+
+data Catch expression sourceElement = Catch String (Block expression sourceElement) deriving (Show)
+
+data Finally expression sourceElement = Finally (Block expression sourceElement) deriving (Show)
 
 
 -- Assignment expression
