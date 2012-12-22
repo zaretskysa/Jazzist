@@ -23,6 +23,7 @@ import Lexing.Token
 
 type TokenParser a = GenParser Token () a
 
+-- TODO: remove, use optionMaybe instead
 maybeParse :: TokenParser a -> TokenParser (Maybe a)
 maybeParse p = justParse p <|> return Nothing
 
@@ -120,7 +121,3 @@ stringLiteralToken = try $ do
     case tok of
         StringLiteralToken str -> return str
         _ -> fail "StringLiteralToken"
-
-
-
-

@@ -1,4 +1,10 @@
-module Lexing.NullLiteral where
+module Lexing.NullLiteral
+(
+    module Lexing.Token,
+
+    nullLiteral,
+    isNullLiteral
+) where
 
 import Text.ParserCombinators.Parsec
 

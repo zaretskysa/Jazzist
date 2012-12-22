@@ -1,4 +1,10 @@
-module Lexing.Keyword where
+module Lexing.Keyword
+(
+	module Lexing.Token,
+
+	keyword,
+	isKeyword
+) where
 
 import Text.ParserCombinators.Parsec
 

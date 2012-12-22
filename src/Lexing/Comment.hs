@@ -1,4 +1,9 @@
-module Lexing.Comment where
+module Lexing.Comment 
+(
+    module Lexing.Token,
+    
+    comment
+)where
 
 import Text.ParserCombinators.Parsec
 

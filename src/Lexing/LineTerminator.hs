@@ -1,4 +1,11 @@
-module Lexing.LineTerminator where
+module Lexing.LineTerminator
+(
+    module Lexing.Token,
+
+    lineTerminator,
+    lineTerminatorChar,
+    lineTerminatorSequence
+) where
 
 import Text.ParserCombinators.Parsec
 

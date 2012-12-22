@@ -1,4 +1,10 @@
-module Parsing.Parsers.Literal where
+module Parsing.Parsers.Literal
+(
+    module Parsing.Ast,
+    module Parsing.TokenParser,
+
+    literal
+) where
 
 import Parsing.Ast
 import Parsing.TokenParser
@@ -28,15 +34,3 @@ stringLiteral :: TokenParser Literal
 stringLiteral = do
     str <- stringLiteralToken
     return $ StringLiteral str
-
-
-
-
-
-
-
-
-
-
-
-

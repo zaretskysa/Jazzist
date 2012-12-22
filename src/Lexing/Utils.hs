@@ -1,4 +1,7 @@
-module Lexing.Utils where
+module Lexing.Utils
+(
+    intFromHex
+) where
 
 import Numeric
 

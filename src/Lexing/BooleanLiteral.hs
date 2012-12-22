@@ -1,4 +1,10 @@
-module Lexing.BooleanLiteral where
+module Lexing.BooleanLiteral
+(
+    module Lexing.Token,
+
+    booleanLiteral,
+    isBooleanLiteral    
+) where
 
 import Text.ParserCombinators.Parsec
 

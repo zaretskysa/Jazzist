@@ -1,4 +1,10 @@
-module Parsing.ProgramParser where
+module Parsing.ProgramParser
+(
+    module Parsing.Ast,
+    module Parsing.TokenParser,
+
+    program
+) where
 
 import Parsing.Ast
 import Parsing.TokenParser
@@ -874,9 +880,6 @@ functionExpression = do
     params <- betweenRoundBrackets $ sepBy identifierToken comma
     body <- betweenCurlyBrackets functionBody
     return $ FunctionExpression name params body
-
-propertyAccessByDotMemberExpression :: TokenParser MemberExpression
-propertyAccessByDotMemberExpression = undefined
 
 newMemberExpression :: TokenParser MemberExpression
 newMemberExpression = do

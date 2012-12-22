@@ -1,5 +1,7 @@
 module Lexing.Punctuator 
 (
+    module Lexing.Token,
+    
     punctuator
 ) where
 

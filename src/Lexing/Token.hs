@@ -1,4 +1,9 @@
-module Lexing.Token where
+module Lexing.Token
+(
+    Token(..),
+    Keyword(..),
+    Punctuator(..)
+) where
 
 data Token = 
     NumericLiteralToken Double

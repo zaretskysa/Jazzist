@@ -1,4 +1,9 @@
-module Lexing.Lexer where
+module Lexing.Lexer
+(
+    module Lexing.Token,
+
+    tokenize
+) where
 
 import Text.ParserCombinators.Parsec hiding (tokens, token)
 
@@ -13,11 +18,6 @@ import Lexing.Identifier
 import Lexing.Punctuator
 import Lexing.LineTerminator
 import Lexing.WhiteSpace
-
-tryToMakeTokens :: String -> String
-tryToMakeTokens input = case tokenize input of
-    Left err -> "No match: " ++ show err
-    Right value -> "Found value: " ++ show value
 
 tokenize :: String -> Either ParseError [Token]
 tokenize input = parse tokens "JsTokenizer" input

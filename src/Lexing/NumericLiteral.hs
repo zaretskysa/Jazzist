@@ -1,4 +1,9 @@
-module Lexing.NumericLiteral where
+module Lexing.NumericLiteral
+(
+	module Lexing.Token,
+
+	numericLiteral
+) where
 
 import Text.ParserCombinators.Parsec
 

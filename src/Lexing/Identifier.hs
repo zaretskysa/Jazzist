@@ -1,4 +1,9 @@
-module Lexing.Identifier where
+module Lexing.Identifier
+(
+	module Lexing.Token,
+
+	identifier
+) where
 
 import Data.Char
 import Text.ParserCombinators.Parsec
