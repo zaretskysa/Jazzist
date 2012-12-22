@@ -2,6 +2,8 @@ module Lexing.LineTerminator where
 
 import Text.ParserCombinators.Parsec
 
+import Lexing.Token
+
 lineTerminatorSequence :: Parser Char
 lineTerminatorSequence = do
 	lineFeed
@@ -19,8 +21,11 @@ carriageReturnWithoutLineFeed = do
 	notFollowedBy lineFeed
 	return cr
 
-lineTerminator :: Parser Char
-lineTerminator = lineFeed <|> carriageReturn <|> lineSeparator <|> paragraphSeparator
+lineTerminator :: Parser Token
+lineTerminator = lineTerminatorChar >> return LineTerminatorToken
+
+lineTerminatorChar :: Parser Char
+lineTerminatorChar = lineFeed <|> carriageReturn <|> lineSeparator <|> paragraphSeparator
 
 lineFeed :: Parser Char
 lineFeed = char '\x000a'

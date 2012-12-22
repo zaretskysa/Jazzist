@@ -11,6 +11,8 @@ import Lexing.NumericLiteral
 import Lexing.Comment
 import Lexing.Identifier
 import Lexing.Punctuator
+import Lexing.LineTerminator
+import Lexing.WhiteSpace
 
 tryToMakeTokens :: String -> String
 tryToMakeTokens input = case tokenize input of
@@ -21,7 +23,7 @@ tokenize :: String -> Either ParseError [Token]
 tokenize input = parse tokens "JsTokenizer" input
 
 tokens :: Parser [Token]
-tokens = spaces >> endBy token spaces
+tokens = spaces >> endBy token whiteSpaces
 
 token :: Parser Token
 token = 
@@ -33,3 +35,4 @@ token =
     <|> numericLiteral
     <|> try comment
     <|> punctuator
+    <|> lineTerminator

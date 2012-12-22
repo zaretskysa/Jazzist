@@ -33,7 +33,7 @@ lineContinuation = do
 
 characterWithoutDoubleQuoteAndBackSlashAndLineTerminator :: Parser String
 characterWithoutDoubleQuoteAndBackSlashAndLineTerminator = do
-    try $ notFollowedBy $ (char '"' <|> char '\\' <|> lineTerminator)
+    try $ notFollowedBy $ (char '"' <|> char '\\' <|> lineTerminatorChar)
     c <- anyChar
     return [c]
 
@@ -70,7 +70,7 @@ singleEscapeCharacter = do
 
 nonEscapeCharacter :: Parser Char
 nonEscapeCharacter = do
-    notFollowedBy (escapeCharacter <|> lineTerminator)
+    notFollowedBy (escapeCharacter <|> lineTerminatorChar)
     anyChar
 
 escapeCharacter :: Parser Char
@@ -103,6 +103,6 @@ singleStringCharacter = do
 
 characterWithoutSingleQuoteAndBackSlashAndLineTerminator :: Parser String
 characterWithoutSingleQuoteAndBackSlashAndLineTerminator = do
-    try $ notFollowedBy $ (char '\'' <|> char '\\' <|> lineTerminator)
+    try $ notFollowedBy $ (char '\'' <|> char '\\' <|> lineTerminatorChar)
     c <- anyChar
     return [c]

@@ -9,6 +9,7 @@ data Token =
     | BooleanLiteralToken Bool
     | CommentToken String
     | PunctuatorToken Punctuator
+    | LineTerminatorToken
     deriving (Show, Eq)
 
 data Keyword = 

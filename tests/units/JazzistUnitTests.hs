@@ -8,6 +8,8 @@ import LexingTests.NumericLiteralTests
 import LexingTests.NullLiteralTests
 import LexingTests.CommentTests
 import LexingTests.StringLiteralTests
+import LexingTests.WhiteSpaceTests
+import LexingTests.LineTerminatorTests
 
 allTests :: Test
 allTests = TestList 
@@ -18,6 +20,8 @@ allTests = TestList
     , nullLiteralTests
     , commentTests
     , stringLiteralTests
+    , whiteSpaceTests
+    , lineTerminatorTests
     ]
 
 main :: IO ()

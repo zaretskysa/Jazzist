@@ -71,5 +71,5 @@ singleLineCommentChars = many1 singleLineCommentChar
 
 singleLineCommentChar :: Parser Char
 singleLineCommentChar = do
-    try $ notFollowedBy lineTerminator
+    try $ notFollowedBy lineTerminatorChar
     anyChar
