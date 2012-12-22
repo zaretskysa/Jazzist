@@ -2,7 +2,7 @@ module Lexing.Keyword where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Tokens
+import Lexing.Token
 
 keyword :: Parser Token
 keyword = do 

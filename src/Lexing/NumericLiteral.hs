@@ -2,7 +2,7 @@ module Lexing.NumericLiteral where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Tokens
+import Lexing.Token
 import Lexing.Utils
 
 numericLiteral :: Parser Token

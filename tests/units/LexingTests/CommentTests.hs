@@ -5,7 +5,7 @@ module LexingTests.CommentTests
 
 import Test.HUnit
 import Lexing.Comment
-import Lexing.Tokens
+import Lexing.Token
 import TestUtils
 
 commentTests :: Test

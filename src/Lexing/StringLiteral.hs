@@ -4,7 +4,7 @@ import Data.Char
 import Text.ParserCombinators.Parsec
 
 import Lexing.Utils
-import Lexing.Tokens
+import Lexing.Token
 import Lexing.LineTerminator
 
 stringLiteral :: Parser Token

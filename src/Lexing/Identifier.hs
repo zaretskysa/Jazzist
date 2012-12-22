@@ -3,7 +3,7 @@ module Lexing.Identifier where
 import Data.Char
 import Text.ParserCombinators.Parsec
 
-import Lexing.Tokens
+import Lexing.Token
 import Lexing.Keyword
 import Lexing.NullLiteral
 import Lexing.BooleanLiteral

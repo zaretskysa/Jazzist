@@ -2,7 +2,7 @@ module Lexing.Lexer where
 
 import Text.ParserCombinators.Parsec hiding (tokens, token)
 
-import Lexing.Tokens
+import Lexing.Token
 import Lexing.NullLiteral
 import Lexing.BooleanLiteral
 import Lexing.Keyword

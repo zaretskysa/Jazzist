@@ -2,7 +2,7 @@ module TestUtils where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Tokens
+import Lexing.Token
 
 parseWholeInput :: Parser Token -> Parser Token
 parseWholeInput parser = do

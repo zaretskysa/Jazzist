@@ -5,7 +5,7 @@ module LexingTests.KeywordTests
 
 import Test.HUnit
 import Lexing.Keyword
-import Lexing.Tokens
+import Lexing.Token
 import TestUtils
 
 keywordTests :: Test

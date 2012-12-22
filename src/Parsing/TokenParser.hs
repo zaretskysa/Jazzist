@@ -2,7 +2,7 @@ module Parsing.TokenParser
 (
     module Text.ParserCombinators.Parsec.Prim,
     module Text.ParserCombinators.Parsec.Combinator,
-    module Lexing.Tokens,
+    module Lexing.Token,
     TokenParser,
     maybeParse,
     identifierToken,
@@ -19,7 +19,7 @@ import Text.ParserCombinators.Parsec.Combinator
 import Text.ParserCombinators.Parsec.Prim
 import Text.ParserCombinators.Parsec.Pos
 
-import Lexing.Tokens
+import Lexing.Token
 
 type TokenParser a = GenParser Token () a
 

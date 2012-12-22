@@ -5,7 +5,7 @@ module Lexing.Punctuator
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Tokens
+import Lexing.Token
 
 punctuator :: Parser Token
 punctuator = do

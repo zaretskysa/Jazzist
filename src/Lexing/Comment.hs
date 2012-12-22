@@ -2,7 +2,7 @@ module Lexing.Comment where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Tokens
+import Lexing.Token
 import Lexing.LineTerminator
 
 comment :: Parser Token

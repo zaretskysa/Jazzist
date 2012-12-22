@@ -5,7 +5,7 @@ module LexingTests.BooleanLiteralTests
 
 import Test.HUnit
 import Lexing.BooleanLiteral
-import Lexing.Tokens
+import Lexing.Token
 import TestUtils
 
 booleanLiteralTests :: Test

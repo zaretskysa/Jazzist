@@ -3,7 +3,7 @@ module Parsing.Parser where
 import Text.ParserCombinators.Parsec (parse, ParseError)
 
 import Parsing.Ast
-import Lexing.Tokens
+import Lexing.Token
 import Lexing.Lexer (tokenize)
 import Parsing.ProgramParser
 

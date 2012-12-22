@@ -2,7 +2,7 @@ module Lexing.BooleanLiteral where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Tokens
+import Lexing.Token
 
 booleanLiteral :: Parser Token
 booleanLiteral = do

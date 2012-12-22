@@ -5,7 +5,7 @@ module LexingTests.NullLiteralTests
 
 import Test.HUnit
 import Lexing.NullLiteral
-import Lexing.Tokens
+import Lexing.Token
 import TestUtils
 
 nullLiteralTests :: Test

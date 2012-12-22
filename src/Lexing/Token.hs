@@ -1,4 +1,4 @@
-module Lexing.Tokens where
+module Lexing.Token where
 
 data Token = 
     NumericLiteralToken Double

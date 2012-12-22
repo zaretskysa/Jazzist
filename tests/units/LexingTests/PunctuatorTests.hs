@@ -5,7 +5,7 @@ module LexingTests.PunctuatorTests
 
 import Test.HUnit
 import Lexing.Punctuator
-import Lexing.Tokens
+import Lexing.Token
 import TestUtils
 
 punctuatorTests :: Test
