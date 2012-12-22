@@ -15,24 +15,23 @@ nullLiteralTests = TestLabel "Null literal tests" $ TestList
     , parseAnotherCapitalizedNullLiteral
     ]
 
-parseNullLiteral :: Test
-parseNullLiteral = TestCase $ assertEqual
+successful :: String -> Test
+successful input = TestCase $ assertEqual
     ("Parse " ++ input)
-    (Just $ NullLiteralToken)
+    (Just NullLiteralToken)
     (parseWholeTestInput nullLiteral input)
-    where input = "null"
+
+failed :: String -> Test
+failed input = TestCase $ assertEqual
+    ("Parse " ++ input)
+    Nothing
+    (parseWholeTestInput nullLiteral input)
+
+parseNullLiteral :: Test
+parseNullLiteral = successful "null"
 
 parseCapitalizedNullLiteral :: Test
-parseCapitalizedNullLiteral = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseWholeTestInput nullLiteral input)
-    where input = "NULL"
+parseCapitalizedNullLiteral = failed "NULL"
 
 parseAnotherCapitalizedNullLiteral :: Test
-parseAnotherCapitalizedNullLiteral = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseWholeTestInput nullLiteral input)
-    where input = "Null"
-
+parseAnotherCapitalizedNullLiteral = failed "Null"

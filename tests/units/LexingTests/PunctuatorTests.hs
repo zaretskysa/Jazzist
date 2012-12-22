@@ -59,290 +59,158 @@ punctuatorTests = TestLabel "PunctuatorTests" $ TestList
 	, parseDivOp
 	, parseDivAssign ]
 
+successful :: String -> Punctuator -> Test
+successful input result = TestCase $ assertEqual
+    ("Parse " ++ input)
+    (Just $ PunctuatorToken result)
+    (parseWholeTestInput punctuator input)
+
+failed :: String -> Test
+failed input = TestCase $ assertEqual
+    ("Parse " ++ input)
+    Nothing
+    (parseWholeTestInput punctuator input)
+
 parseLeftCurlyBracket :: Test
-parseLeftCurlyBracket = TestCase $ assertEqual
-    "Parse left curly bracket"
-    (Just $ PunctuatorToken LeftCurlyBracketPunctuator)
-    (parseTestInput punctuator "{")
+parseLeftCurlyBracket = successful "{" LeftCurlyBracketPunctuator
 
 parseRightCurlyBracket :: Test
-parseRightCurlyBracket = TestCase $ assertEqual
-    "Parse right curly bracket"
-    (Just $ PunctuatorToken RightCurlyBracketPunctuator)
-    (parseTestInput punctuator "}")
+parseRightCurlyBracket = successful "}" RightCurlyBracketPunctuator
 
 parseLeftRoundBracket :: Test
-parseLeftRoundBracket = TestCase $ assertEqual
-    "Parse left round bracket"
-    (Just $ PunctuatorToken LeftRoundBracketPunctuator)
-    (parseTestInput punctuator "(")
+parseLeftRoundBracket = successful "(" LeftRoundBracketPunctuator
 
 parseRightRoundBracket :: Test
-parseRightRoundBracket = TestCase $ assertEqual
-    "Parse right round bracket"
-    (Just $ PunctuatorToken RightRoundBracketPunctuator)
-    (parseTestInput punctuator ")")
+parseRightRoundBracket = successful ")" RightRoundBracketPunctuator
 
 parseLeftRSquareBracket :: Test
-parseLeftRSquareBracket = TestCase $ assertEqual
-    "Parse left square bracket"
-    (Just $ PunctuatorToken LeftSquareBracketPunctuator)
-    (parseTestInput punctuator "[")
+parseLeftRSquareBracket = successful "[" LeftSquareBracketPunctuator
 
 parseRightSquareBracket :: Test
-parseRightSquareBracket = TestCase $ assertEqual
-    "Parse right square bracket"
-    (Just $ PunctuatorToken RightSquareBracketPunctuator)
-    (parseTestInput punctuator "]")
+parseRightSquareBracket = successful "]" RightSquareBracketPunctuator
 
 parseDot :: Test
-parseDot = TestCase $ assertEqual
-    "Parse dot"
-    (Just $ PunctuatorToken DotPunctuator)
-    (parseTestInput punctuator ".")
+parseDot = successful "." DotPunctuator
 
 parseSemicolon :: Test
-parseSemicolon = TestCase $ assertEqual
-    "Parse semicolon"
-    (Just $ PunctuatorToken SemicolonPunctuator)
-    (parseTestInput punctuator ";")
+parseSemicolon = successful ";" SemicolonPunctuator
 
 parseComma :: Test
-parseComma = TestCase $ assertEqual
-    "Parse comma"
-    (Just $ PunctuatorToken CommaPunctuator)
-    (parseTestInput punctuator ",")
+parseComma = successful "," CommaPunctuator
 
 parseLessThanEquals :: Test
-parseLessThanEquals = TestCase $ assertEqual
-    "Parse <="
-    (Just $ PunctuatorToken LessThanEqualsPunctuator)
-    (parseTestInput punctuator "<=")
+parseLessThanEquals = successful "<=" LessThanEqualsPunctuator
 
 parseGreaterThanEquals :: Test
-parseGreaterThanEquals = TestCase $ assertEqual
-    "Parse >="
-    (Just $ PunctuatorToken GreaterThanEqualsPunctuator)
-    (parseTestInput punctuator ">=")
+parseGreaterThanEquals = successful ">=" GreaterThanEqualsPunctuator
 
 parseLessThan :: Test
-parseLessThan = TestCase $ assertEqual
-    "Parse <"
-    (Just $ PunctuatorToken LessThanPunctuator)
-    (parseTestInput punctuator "<")
+parseLessThan = successful "<" LessThanPunctuator
 
 parseGreaterThan :: Test
-parseGreaterThan = TestCase $ assertEqual
-    "Parse >"
-    (Just $ PunctuatorToken GreaterThanPunctuator)
-    (parseTestInput punctuator ">")
+parseGreaterThan = successful ">" GreaterThanPunctuator
 
 parseEquals :: Test
-parseEquals = TestCase $ assertEqual
-    "Parse =="
-    (Just $ PunctuatorToken EqualsPunctuator)
-    (parseTestInput punctuator "==")
+parseEquals = successful "==" EqualsPunctuator
 
 parseNotEquals :: Test
-parseNotEquals = TestCase $ assertEqual
-    "Parse !="
-    (Just $ PunctuatorToken NotEqualsPunctuator)
-    (parseTestInput punctuator "!=")
+parseNotEquals = successful "!=" NotEqualsPunctuator
 
 parseStrictEquals :: Test
-parseStrictEquals = TestCase $ assertEqual
-    "Parse ==="
-    (Just $ PunctuatorToken StrictEqualsPunctuator)
-    (parseTestInput punctuator "===")
+parseStrictEquals = successful "===" StrictEqualsPunctuator
 
 parseStrictNotEquals :: Test
-parseStrictNotEquals = TestCase $ assertEqual
-    "Parse !=="
-    (Just $ PunctuatorToken StrictNotEqualsPunctuator)
-    (parseTestInput punctuator "!==")
+parseStrictNotEquals = successful "!==" StrictNotEqualsPunctuator
 
 parseIncrementPlus :: Test
-parseIncrementPlus = TestCase $ assertEqual
-    "Parse ++"
-    (Just $ PunctuatorToken IncrementPlusPunctuator)
-    (parseTestInput punctuator "++")
+parseIncrementPlus = successful "++" IncrementPlusPunctuator
 
 parsePlus :: Test
-parsePlus = TestCase $ assertEqual
-    "Parse +"
-    (Just $ PunctuatorToken PlusPunctuator)
-    (parseTestInput punctuator "+")
+parsePlus = successful "+" PlusPunctuator
 
 parseMinus :: Test
-parseMinus = TestCase $ assertEqual
-    "Parse -"
-    (Just $ PunctuatorToken MinusPunctuator)
-    (parseTestInput punctuator "-")
+parseMinus = successful "-" MinusPunctuator
 
 parseMul :: Test
-parseMul = TestCase $ assertEqual
-    "Parse *"
-    (Just $ PunctuatorToken MulPunctuator)
-    (parseTestInput punctuator "*")
+parseMul = successful "*" MulPunctuator
 
 parseModulus :: Test
-parseModulus = TestCase $ assertEqual
-    "Parse %"
-    (Just $ PunctuatorToken ModulusPunctuator)
-    (parseTestInput punctuator "%")
+parseModulus = successful "%" ModulusPunctuator
 
 parseIncrementMinus :: Test
-parseIncrementMinus = TestCase $ assertEqual
-    "Parse --"
-    (Just $ PunctuatorToken IncrementMinusPunctuator)
-    (parseTestInput punctuator "--")
+parseIncrementMinus = successful "--" IncrementMinusPunctuator
 
 parseMinusAssign :: Test
-parseMinusAssign = TestCase $ assertEqual
-    "Parse -="
-    (Just $ PunctuatorToken MinusAssignPunctuator)
-    (parseTestInput punctuator "-=")
+parseMinusAssign = successful "-=" MinusAssignPunctuator
 
 parseLeftShift :: Test
-parseLeftShift = TestCase $ assertEqual
-    "Parse <<"
-    (Just $ PunctuatorToken LeftShiftPunctuator)
-    (parseTestInput punctuator "<<")
+parseLeftShift = successful "<<" LeftShiftPunctuator
 
 parseRightShift :: Test
-parseRightShift = TestCase $ assertEqual
-    "Parse >>"
-    (Just $ PunctuatorToken RightShiftPunctuator)
-    (parseTestInput punctuator ">>")
+parseRightShift = successful ">>" RightShiftPunctuator
 
 parseUnsignedRightShiftAssign :: Test
-parseUnsignedRightShiftAssign = TestCase $ assertEqual
-    "Parse >>>="
-    (Just $ PunctuatorToken UnsignedRightShiftAssignPunctuator)
-    (parseTestInput punctuator ">>>=")
+parseUnsignedRightShiftAssign = successful ">>>=" UnsignedRightShiftAssignPunctuator
 
 parseUnsignedRightShift :: Test
-parseUnsignedRightShift = TestCase $ assertEqual
-    "Parse >>>"
-    (Just $ PunctuatorToken UnsignedRightShiftPunctuator)
-    (parseTestInput punctuator ">>>")
+parseUnsignedRightShift = successful ">>>" UnsignedRightShiftPunctuator
 
 parseBitwiseAnd :: Test
-parseBitwiseAnd = TestCase $ assertEqual
-    "Parse &"
-    (Just $ PunctuatorToken BitwiseAndPunctuator)
-    (parseTestInput punctuator "&")
+parseBitwiseAnd = successful "&" BitwiseAndPunctuator
 
 parseBitwiseOr :: Test
-parseBitwiseOr = TestCase $ assertEqual
-    "Parse |"
-    (Just $ PunctuatorToken BitwiseOrPunctuator)
-    (parseTestInput punctuator "|")
+parseBitwiseOr = successful "|" BitwiseOrPunctuator
 
 parseBitwiseXor :: Test
-parseBitwiseXor = TestCase $ assertEqual
-    "Parse ^"
-    (Just $ PunctuatorToken BitwiseXorPunctuator)
-    (parseTestInput punctuator "^")
+parseBitwiseXor = successful "^" BitwiseXorPunctuator
 
 parseLogicalNot :: Test
-parseLogicalNot = TestCase $ assertEqual
-    "Parse !"
-    (Just $ PunctuatorToken LogicalNotPunctuator)
-    (parseTestInput punctuator "!")
+parseLogicalNot = successful "!" LogicalNotPunctuator
 
 parseBitwiseNot :: Test
-parseBitwiseNot = TestCase $ assertEqual
-    "Parse ~"
-    (Just $ PunctuatorToken BitwiseNotPunctuator)
-    (parseTestInput punctuator "~")
+parseBitwiseNot = successful "~" BitwiseNotPunctuator
 
 parseLogicalAnd :: Test
-parseLogicalAnd = TestCase $ assertEqual
-    "Parse &&"
-    (Just $ PunctuatorToken LogicalAndPunctuator)
-    (parseTestInput punctuator "&&")
+parseLogicalAnd = successful "&&" LogicalAndPunctuator
 
 parseLogicalOr :: Test
-parseLogicalOr = TestCase $ assertEqual
-    "Parse ||"
-    (Just $ PunctuatorToken LogicalOrPunctuator)
-    (parseTestInput punctuator "||")
+parseLogicalOr = successful "||" LogicalOrPunctuator
 
 parseQuestionMark :: Test
-parseQuestionMark = TestCase $ assertEqual
-    "Parse ?"
-    (Just $ PunctuatorToken QuestionMarkPunctuator)
-    (parseTestInput punctuator "?")
+parseQuestionMark = successful "?" QuestionMarkPunctuator
 
 parseColon :: Test
-parseColon = TestCase $ assertEqual
-    "Parse :"
-    (Just $ PunctuatorToken ColonPunctuator)
-    (parseTestInput punctuator ":")
+parseColon = successful ":" ColonPunctuator
 
 parseAssign :: Test
-parseAssign = TestCase $ assertEqual
-    "Parse ="
-    (Just $ PunctuatorToken AssignPunctuator)
-    (parseTestInput punctuator "=")
+parseAssign = successful "=" AssignPunctuator
 
 parsePlusAssign :: Test
-parsePlusAssign = TestCase $ assertEqual
-    "Parse +="
-    (Just $ PunctuatorToken PlusAssignPunctuator)
-    (parseTestInput punctuator "+=")
+parsePlusAssign = successful "+=" PlusAssignPunctuator
 
 parseMulAssign :: Test
-parseMulAssign = TestCase $ assertEqual
-    "Parse *="
-    (Just $ PunctuatorToken MulAssignPunctuator)
-    (parseTestInput punctuator "*=")
+parseMulAssign = successful "*=" MulAssignPunctuator
 
 parseModulusAssign :: Test
-parseModulusAssign = TestCase $ assertEqual
-    "Parse %="
-    (Just $ PunctuatorToken ModulusAssignPunctuator)
-    (parseTestInput punctuator "%=")
+parseModulusAssign = successful "%=" ModulusAssignPunctuator
 
 parseLeftShiftAssign :: Test
-parseLeftShiftAssign = TestCase $ assertEqual
-    "Parse <<="
-    (Just $ PunctuatorToken LeftShiftAssignPunctuator)
-    (parseTestInput punctuator "<<=")
+parseLeftShiftAssign = successful "<<=" LeftShiftAssignPunctuator
 
 parseRightShiftAssign :: Test
-parseRightShiftAssign = TestCase $ assertEqual
-    "Parse >>="
-    (Just $ PunctuatorToken RightShiftAssignPunctuator)
-    (parseTestInput punctuator ">>=")
+parseRightShiftAssign = successful ">>=" RightShiftAssignPunctuator
 
 parseBitwiseAndAssign :: Test
-parseBitwiseAndAssign = TestCase $ assertEqual
-    "Parse &="
-    (Just $ PunctuatorToken BitwiseAndAssignPunctuator)
-    (parseTestInput punctuator "&=")
+parseBitwiseAndAssign = successful "&=" BitwiseAndAssignPunctuator
 
 parseBitwiseOrAssign :: Test
-parseBitwiseOrAssign = TestCase $ assertEqual
-    "Parse |="
-    (Just $ PunctuatorToken BitwiseOrAssignPunctuator)
-    (parseTestInput punctuator "|=")
+parseBitwiseOrAssign = successful "|=" BitwiseOrAssignPunctuator
 
 parseBitwiseXorAssign :: Test
-parseBitwiseXorAssign = TestCase $ assertEqual
-    "Parse ^="
-    (Just $ PunctuatorToken BitwiseXorAssignPunctuator)
-    (parseTestInput punctuator "^=")
+parseBitwiseXorAssign = successful "^=" BitwiseXorAssignPunctuator
 
 parseDivOp :: Test
-parseDivOp = TestCase $ assertEqual
-    "Parse /"
-    (Just $ PunctuatorToken DivPunctuator)
-    (parseTestInput punctuator "/")
+parseDivOp = successful "/" DivPunctuator
 
 parseDivAssign :: Test
-parseDivAssign = TestCase $ assertEqual
-    "Parse /="
-    (Just $ PunctuatorToken DivAssignPunctuator)
-    (parseTestInput punctuator "/=")
+parseDivAssign = successful "/=" DivAssignPunctuator

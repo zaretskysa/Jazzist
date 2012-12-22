@@ -10,186 +10,119 @@ import TestUtils
 
 keywordTests :: Test
 keywordTests = TestLabel "KeywordTests" $ TestList 
-	[ parseBreakKeyword
-	, parseCaseKeyword
-	, parseCatchKeyword
-	, parseContinueKeyword
-	, parseDebuggerKeyword
-	, parseDefaultKeyword
-	, parseDeleteKeyword
-	, parseDoKeyword
-	, parseElseKeyword
-	, parseFinallyKeyword
-	, parseForKeyword
-	, parseFunctionKeyword
-	, parseIfKeyword
-	, parseInKeyword
-	, parseInstanceOfKeyword
-	, parseNewKeyword
-	, parseReturnKeyword
-	, parseSwitchKeyword
-	, parseThisKeyword
-	, parseThrowKeyword
-	, parseTryKeyword
-	, parseTypeOfKeyword
-	, parseVarKeyword
-	, parseVoidKeyword
-	, parseWhileKeyword
-	, parseWithKeyword ]
+	[ breakKeyword
+	, caseKeyword
+	, catchKeyword
+	, continueKeyword
+	, debuggerKeyword
+	, defaultKeyword
+	, deleteKeyword
+	, doKeyword
+	, elseKeyword
+	, finallyKeyword
+	, forKeyword
+	, functionKeyword
+	, ifKeyword
+	, inKeyword
+	, instanceOfKeyword
+	, newKeyword
+	, returnKeyword
+	, switchKeyword
+	, thisKeyword
+	, throwKeyword
+	, tryKeyword
+	, typeOfKeyword
+	, varKeyword
+	, voidKeyword
+	, whileKeyword
+	, withKeyword ]
 
-parseBreakKeyword :: Test
-parseBreakKeyword = TestCase $ assertEqual
-    "Parse break keyword"
-    (Just $ KeywordToken BreakKeyword)
-    (parseTestInput keyword "break")
+successful :: String -> Keyword -> Test
+successful input result = TestCase $ assertEqual
+    ("Parse " ++ input)
+    (Just $ KeywordToken result)
+    (parseWholeTestInput keyword input)
 
-parseCaseKeyword :: Test
-parseCaseKeyword = TestCase $ assertEqual
-    "Parse case keyword"
-    (Just $ KeywordToken CaseKeyword)
-    (parseTestInput keyword "case")
+failed :: String -> Test
+failed input = TestCase $ assertEqual
+    ("Parse " ++ input)
+    Nothing
+    (parseWholeTestInput keyword input)
 
-parseCatchKeyword :: Test
-parseCatchKeyword = TestCase $ assertEqual
-    "Parse catch keyword"
-    (Just $ KeywordToken CatchKeyword)
-    (parseTestInput keyword "catch")
+breakKeyword :: Test
+breakKeyword = successful "break" BreakKeyword
 
-parseContinueKeyword :: Test
-parseContinueKeyword = TestCase $ assertEqual
-    "Parse continue keyword"
-    (Just $ KeywordToken ContinueKeyword)
-    (parseTestInput keyword "continue")
+caseKeyword :: Test
+caseKeyword = successful "case" CaseKeyword
 
-parseDebuggerKeyword :: Test
-parseDebuggerKeyword = TestCase $ assertEqual
-    "Parse debugger keyword"
-    (Just $ KeywordToken DebuggerKeyword)
-    (parseTestInput keyword "debugger")
+catchKeyword :: Test
+catchKeyword = successful "catch" CatchKeyword
 
-parseDefaultKeyword :: Test
-parseDefaultKeyword = TestCase $ assertEqual
-    "Parse default keyword"
-    (Just $ KeywordToken DefaultKeyword)
-    (parseTestInput keyword "default")
+continueKeyword :: Test
+continueKeyword = successful "continue" ContinueKeyword
 
-parseDeleteKeyword :: Test
-parseDeleteKeyword = TestCase $ assertEqual
-    "Parse delete keyword"
-    (Just $ KeywordToken DeleteKeyword)
-    (parseTestInput keyword "delete")
+debuggerKeyword :: Test
+debuggerKeyword = successful "debugger" DebuggerKeyword
 
-parseDoKeyword :: Test
-parseDoKeyword = TestCase $ assertEqual
-    "Parse do keyword"
-    (Just $ KeywordToken DoKeyword)
-    (parseTestInput keyword "do")
+defaultKeyword :: Test
+defaultKeyword = successful "default" DefaultKeyword
 
-parseElseKeyword :: Test
-parseElseKeyword = TestCase $ assertEqual
-    "Parse else keyword"
-    (Just $ KeywordToken ElseKeyword)
-    (parseTestInput keyword "else")
+deleteKeyword :: Test
+deleteKeyword = successful "delete" DeleteKeyword
 
-parseFinallyKeyword :: Test
-parseFinallyKeyword = TestCase $ assertEqual
-    "Parse finally keyword"
-    (Just $ KeywordToken FinallyKeyword)
-    (parseTestInput keyword "finally")
+doKeyword :: Test
+doKeyword = successful "do" DoKeyword
 
-parseForKeyword :: Test
-parseForKeyword = TestCase $ assertEqual
-    "Parse for keyword"
-    (Just $ KeywordToken ForKeyword)
-    (parseTestInput keyword "for")
+elseKeyword :: Test
+elseKeyword = successful "else" ElseKeyword
 
-parseFunctionKeyword :: Test
-parseFunctionKeyword = TestCase $ assertEqual
-    "Parse function keyword"
-    (Just $ KeywordToken FunctionKeyword)
-    (parseTestInput keyword "function")
+finallyKeyword :: Test
+finallyKeyword = successful "finally" FinallyKeyword
 
-parseIfKeyword :: Test
-parseIfKeyword = TestCase $ assertEqual
-    "Parse if keyword"
-    (Just $ KeywordToken IfKeyword)
-    (parseTestInput keyword "if")
+forKeyword :: Test
+forKeyword = successful "for" ForKeyword
 
-parseInKeyword :: Test
-parseInKeyword = TestCase $ assertEqual
-    "Parse in keyword"
-    (Just $ KeywordToken InKeyword)
-    (parseTestInput keyword "in")
+functionKeyword :: Test
+functionKeyword = successful "function" FunctionKeyword
 
-parseInstanceOfKeyword :: Test
-parseInstanceOfKeyword = TestCase $ assertEqual
-    "Parse instanceof keyword"
-    (Just $ KeywordToken InstanceOfKeyword)
-    (parseTestInput keyword "instanceof")
+ifKeyword :: Test
+ifKeyword = successful "if" IfKeyword
 
-parseNewKeyword :: Test
-parseNewKeyword = TestCase $ assertEqual
-    "Parse new keyword"
-    (Just $ KeywordToken NewKeyword)
-    (parseTestInput keyword "new")
+inKeyword :: Test
+inKeyword = successful "in" InKeyword
 
-parseReturnKeyword :: Test
-parseReturnKeyword = TestCase $ assertEqual
-    "Parse return keyword"
-    (Just $ KeywordToken ReturnKeyword)
-    (parseTestInput keyword "return")
+instanceOfKeyword :: Test
+instanceOfKeyword = successful "instanceof" InstanceOfKeyword
 
-parseSwitchKeyword :: Test
-parseSwitchKeyword = TestCase $ assertEqual
-    "Parse switch keyword"
-    (Just $ KeywordToken SwitchKeyword)
-    (parseTestInput keyword "switch")
+newKeyword :: Test
+newKeyword = successful "new" NewKeyword
 
-parseThisKeyword :: Test
-parseThisKeyword = TestCase $ assertEqual
-    "Parse this keyword"
-    (Just $ KeywordToken ThisKeyword)
-    (parseTestInput keyword "this")
+returnKeyword :: Test
+returnKeyword = successful "return" ReturnKeyword
 
-parseThrowKeyword :: Test
-parseThrowKeyword = TestCase $ assertEqual
-    "Parse throw keyword"
-    (Just $ KeywordToken ThrowKeyword)
-    (parseTestInput keyword "throw")
+switchKeyword :: Test
+switchKeyword = successful "switch" SwitchKeyword
 
-parseTryKeyword :: Test
-parseTryKeyword = TestCase $ assertEqual
-    "Parse try keyword"
-    (Just $ KeywordToken TryKeyword)
-    (parseTestInput keyword "try")
+thisKeyword :: Test
+thisKeyword = successful "this" ThisKeyword
 
-parseTypeOfKeyword :: Test
-parseTypeOfKeyword = TestCase $ assertEqual
-    "Parse typeof keyword"
-    (Just $ KeywordToken TypeOfKeyword)
-    (parseTestInput keyword "typeof")
+throwKeyword :: Test
+throwKeyword = successful "throw" ThrowKeyword
 
-parseVarKeyword :: Test
-parseVarKeyword = TestCase $ assertEqual
-    "Parse var keyword"
-    (Just $ KeywordToken VarKeyword)
-    (parseTestInput keyword "var")
+tryKeyword :: Test
+tryKeyword = successful "try" TryKeyword
 
-parseVoidKeyword :: Test
-parseVoidKeyword = TestCase $ assertEqual
-    "Parse void keyword"
-    (Just $ KeywordToken VoidKeyword)
-    (parseTestInput keyword "void")
+typeOfKeyword :: Test
+typeOfKeyword = successful "typeof" TypeOfKeyword
 
-parseWhileKeyword :: Test
-parseWhileKeyword = TestCase $ assertEqual
-    "Parse while keyword"
-    (Just $ KeywordToken WhileKeyword)
-    (parseTestInput keyword "while")
+varKeyword :: Test
+varKeyword = successful "var" VarKeyword
 
-parseWithKeyword :: Test
-parseWithKeyword = TestCase $ assertEqual
-    "Parse with keyword"
-    (Just $ KeywordToken WithKeyword)
-    (parseTestInput keyword "with")
+voidKeyword :: Test
+voidKeyword = successful "void" VoidKeyword
 
+whileKeyword :: Test
+whileKeyword = successful "while" WhileKeyword
+
+withKeyword :: Test
+withKeyword = successful "with" WithKeyword

@@ -10,201 +10,117 @@ import TestUtils
 
 numericLiteralTests :: Test
 numericLiteralTests = TestLabel "Numeric literal tests" $ TestList 
-    [ parseZeroWithEndingDot
-    , parseNineWithEndingDot
-    , parseSingleDot
-    , parseTwoLeadingZeros
-    , parseJustFractionalPart
-    , parseFractionalPartWithThreeDigits
-    , parseIntPartWithFractional
-    , parseIntWithLeadingPlus
-    , parseIntWithLeadingMinus
-    , parseNumberWithEndingExpIndicator
-    , parseNumberWithExpPart
-    , parseNumberWithPositiveExpPart
-    , parseNumberWithNegativeExpPart
-    , parseNumberWithIntAndExpPartWithoutFrac
-    , parseNumberWithFracAndExpPartWithoutInt
-    , parseFracNumberWithJustExpPart
-    , parseSimpleIntNumber
-    , parseIntNumberWithPositiveExp
-    , parseIntNumberWithNegativeExp
-    , parseIntNumberWithZeroExp
-    , parseHexNumber
-    , parseHexNumberWithCapitals
-    , parseHexNumberWithTwoLeadingZeros
-    , parseJustHexPrefix
-    , parseNumberWithTwoHexPrefixes
+    [ zeroWithEndingDot
+    , nineWithEndingDot
+    , singleDot
+    , twoLeadingZeros
+    , justFractionalPart
+    , fractionalPartWithThreeDigits
+    , intPartWithFractional
+    , intWithLeadingPlus
+    , intWithLeadingMinus
+    , numberWithEndingExpIndicator
+    , numberWithExpPart
+    , numberWithPositiveExpPart
+    , numberWithNegativeExpPart
+    , numberWithIntAndExpPartWithoutFrac
+    , numberWithFracAndExpPartWithoutInt
+    , fracNumberWithJustExpPart
+    , simpleIntNumber
+    , intNumberWithPositiveExp
+    , intNumberWithNegativeExp
+    , intNumberWithZeroExp
+    , hexNumber
+    , hexNumberWithCapitals
+    , hexNumberWithTwoLeadingZeros
+    , justHexPrefix
+    , numberWithTwoHexPrefixes
     ]
 
-parseZeroWithEndingDot :: Test
-parseZeroWithEndingDot = TestCase $ assertEqual
+successful :: String -> Double -> Test
+successful input result = TestCase $ assertEqual
     ("Parse " ++ input)
-    (Just $ NumericLiteralToken 0)
-    (parseTestInput numericLiteral input)
-    where input = "0."
+    (Just $ NumericLiteralToken result)
+    (parseWholeTestInput numericLiteral input)
 
-parseNineWithEndingDot :: Test
-parseNineWithEndingDot = TestCase $ assertEqual
-    "Parse 9."
-    (Just $ NumericLiteralToken 9)
-    (parseTestInput numericLiteral "9.")
-
-parseSingleDot :: Test
-parseSingleDot = TestCase $ assertEqual
-    "Parse ."
-    (Nothing)
-    (parseTestInput numericLiteral ".")
-
-parseTwoLeadingZeros :: Test
-parseTwoLeadingZeros = TestCase $ assertEqual
-    "Parse 00"
-    (Just $ NumericLiteralToken 0)
-    (parseTestInput numericLiteral "00")
-
-parseJustFractionalPart :: Test
-parseJustFractionalPart = TestCase $ assertEqual
-    "Parse .0"
-    (Just $ NumericLiteralToken 0)
-    (parseTestInput numericLiteral ".0")
-
-parseFractionalPartWithThreeDigits :: Test
-parseFractionalPartWithThreeDigits = TestCase $ assertEqual
+failed :: String -> Test
+failed input = TestCase $ assertEqual
     ("Parse " ++ input)
-    (Just $ NumericLiteralToken 0.123)
-    (parseTestInput numericLiteral input)
-    where input = ".123"
+    Nothing
+    (parseWholeTestInput numericLiteral input)
 
-parseIntPartWithFractional :: Test
-parseIntPartWithFractional = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 7.5)
-    (parseTestInput numericLiteral input)
-    where input = "7.5"
+zeroWithEndingDot :: Test
+zeroWithEndingDot = successful "0." 0
+
+nineWithEndingDot :: Test
+nineWithEndingDot = successful "9." 9
+
+singleDot :: Test
+singleDot = failed "."
+
+twoLeadingZeros :: Test
+twoLeadingZeros = failed "00"
+
+justFractionalPart :: Test
+justFractionalPart = successful ".0" 0
+
+fractionalPartWithThreeDigits :: Test
+fractionalPartWithThreeDigits = successful ".123" 0.123
+
+intPartWithFractional :: Test
+intPartWithFractional = successful "7.5" 7.5
 
 -- no signed numbers here, signed numbers are implemented as unary plus/minus expressions
-parseIntWithLeadingPlus :: Test
-parseIntWithLeadingPlus = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseTestInput numericLiteral input)
-    where input = "+7"
+intWithLeadingPlus :: Test
+intWithLeadingPlus = failed "+7"
 
-parseIntWithLeadingMinus :: Test
-parseIntWithLeadingMinus = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseTestInput numericLiteral input)
-    where input = "-7"
+intWithLeadingMinus :: Test
+intWithLeadingMinus = failed"-7"
 
-parseNumberWithEndingExpIndicator :: Test
-parseNumberWithEndingExpIndicator = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseWholeTestInput numericLiteral input)
-    where input = "1.2e"
+numberWithEndingExpIndicator :: Test
+numberWithEndingExpIndicator = failed "1.2e"
 
-parseNumberWithExpPart :: Test
-parseNumberWithExpPart = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 1234.5)
-    (parseWholeTestInput numericLiteral input)
-    where input = "1.2345e3"
+numberWithExpPart :: Test
+numberWithExpPart = successful "1.2345e3" 1234.5
 
-parseNumberWithPositiveExpPart :: Test
-parseNumberWithPositiveExpPart = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 1234.5)
-    (parseWholeTestInput numericLiteral input)
-    where input = "1.2345e+3"
+numberWithPositiveExpPart :: Test
+numberWithPositiveExpPart = successful "1.2345e+3" 1234.5
 
-parseNumberWithNegativeExpPart :: Test
-parseNumberWithNegativeExpPart = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 0.0012345)
-    (parseWholeTestInput numericLiteral input)
-    where input = "1.2345e-3"
+numberWithNegativeExpPart :: Test
+numberWithNegativeExpPart = successful "1.2345e-3" 0.0012345
 
-parseNumberWithIntAndExpPartWithoutFrac :: Test
-parseNumberWithIntAndExpPartWithoutFrac = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 1000)
-    (parseWholeTestInput numericLiteral input)
-    where input = "1.e3"
+numberWithIntAndExpPartWithoutFrac :: Test
+numberWithIntAndExpPartWithoutFrac = successful "1.e3" 1000
 
-parseNumberWithFracAndExpPartWithoutInt :: Test
-parseNumberWithFracAndExpPartWithoutInt = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 120)
-    (parseWholeTestInput numericLiteral input)
-    where input = ".12e3"
+numberWithFracAndExpPartWithoutInt :: Test
+numberWithFracAndExpPartWithoutInt = successful ".12e3" 120
 
-parseFracNumberWithJustExpPart :: Test
-parseFracNumberWithJustExpPart = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseWholeTestInput numericLiteral input)
-    where input = ".e3"
+fracNumberWithJustExpPart :: Test
+fracNumberWithJustExpPart = failed ".e3"
 
-parseSimpleIntNumber :: Test
-parseSimpleIntNumber = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 123)
-    (parseWholeTestInput numericLiteral input)
-    where input = "123"
+simpleIntNumber :: Test
+simpleIntNumber = successful "123" 123
 
-parseIntNumberWithPositiveExp :: Test
-parseIntNumberWithPositiveExp = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 12300)
-    (parseWholeTestInput numericLiteral input)
-    where input = "123e2"
+intNumberWithPositiveExp :: Test
+intNumberWithPositiveExp = successful "123e2" 12300
 
-parseIntNumberWithNegativeExp :: Test
-parseIntNumberWithNegativeExp = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 1.23)
-    (parseWholeTestInput numericLiteral input)
-    where input = "123e-2"
+intNumberWithNegativeExp :: Test
+intNumberWithNegativeExp = successful "123e-2" 1.23
 
-parseIntNumberWithZeroExp :: Test
-parseIntNumberWithZeroExp = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 123)
-    (parseWholeTestInput numericLiteral input)
-    where input = "123e0"
+intNumberWithZeroExp :: Test
+intNumberWithZeroExp = successful "123e0" 123
 
-parseHexNumber :: Test
-parseHexNumber = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 0x123abc)
-    (parseWholeTestInput numericLiteral input)
-    where input = "0x123abc"
+hexNumber :: Test
+hexNumber = successful "0x123abc" 0x123abc
 
-parseHexNumberWithCapitals :: Test
-parseHexNumberWithCapitals = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Just $ NumericLiteralToken 0x123abc)
-    (parseWholeTestInput numericLiteral input)
-    where input = "0X123ABC"
+hexNumberWithCapitals :: Test
+hexNumberWithCapitals = successful "0X123ABC" 0x123abc
 
-parseHexNumberWithTwoLeadingZeros :: Test
-parseHexNumberWithTwoLeadingZeros = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseWholeTestInput numericLiteral input)
-    where input = "00x123abc"
+hexNumberWithTwoLeadingZeros :: Test
+hexNumberWithTwoLeadingZeros = failed "00x123abc"
 
-parseJustHexPrefix :: Test
-parseJustHexPrefix = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseWholeTestInput numericLiteral input)
-    where input = "0x"
+justHexPrefix :: Test
+justHexPrefix = failed "0x"
 
-parseNumberWithTwoHexPrefixes :: Test
-parseNumberWithTwoHexPrefixes = TestCase $ assertEqual
-    ("Parse " ++ input)
-    (Nothing)
-    (parseWholeTestInput numericLiteral input)
-    where input = "0x0x123"
+numberWithTwoHexPrefixes :: Test
+numberWithTwoHexPrefixes = failed "0x0x123"

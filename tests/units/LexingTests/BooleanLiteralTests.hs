@@ -10,59 +10,47 @@ import TestUtils
 
 booleanLiteralTests :: Test
 booleanLiteralTests = TestLabel "BooleanLiteralTests" $ TestList 
-	[ parseTrueValue
-	, parseFalseValue
-	, parseFalseValueWithEndingNonSpace
-	, parseTrueValueWithEndingNonSpace
-	, parseFalseValueWithEndingSpace
-	, parseTrueValueWithEndingTab
-	, parseFalseStringWithBeginningSpace
-	, parseTrueStringWithBeginningTab ]
+    [ trueValue
+    , falseValue
+    , falseValueWithEndingNonSpace
+    , trueValueWithEndingNonSpace
+    , falseValueWithEndingSpace
+    , trueValueWithEndingTab
+    , falseStringWithBeginningSpace
+    , trueStringWithBeginningTab ]
 
-parseTrueValue :: Test
-parseTrueValue = TestCase $ assertEqual
-    "Parse true value"
-    (Just $ BooleanLiteralToken True)
-    (parseTestInput booleanLiteral "true")
+successful :: String -> Bool -> Test
+successful input result = TestCase $ assertEqual
+    ("Parse " ++ input)
+    (Just $ BooleanLiteralToken result)
+    (parseWholeTestInput booleanLiteral input)
 
-parseFalseValue :: Test
-parseFalseValue = TestCase $ assertEqual
-    "Parse false value"
-    (Just $ BooleanLiteralToken False)
-    (parseTestInput booleanLiteral "false")
-
-parseFalseValueWithEndingNonSpace :: Test
-parseFalseValueWithEndingNonSpace = TestCase $ assertEqual
-    "Parse false value with ending non space"
-    (Just $ BooleanLiteralToken False)
-    (parseTestInput booleanLiteral "falsek")
-
-parseTrueValueWithEndingNonSpace :: Test
-parseTrueValueWithEndingNonSpace = TestCase $ assertEqual
-    "Parse true value with ending non space"
-    (Just $ BooleanLiteralToken True)
-    (parseTestInput booleanLiteral "true7")
-
-parseFalseValueWithEndingSpace :: Test
-parseFalseValueWithEndingSpace = TestCase $ assertEqual
-    "Parse false value with ending space"
-    (Just $ BooleanLiteralToken False)
-    (parseTestInput booleanLiteral "false ")
-
-parseTrueValueWithEndingTab :: Test
-parseTrueValueWithEndingTab = TestCase $ assertEqual
-    "Parse true value with ending tab"
-    (Just $ BooleanLiteralToken True)
-    (parseTestInput booleanLiteral "true\t")
-
-parseFalseStringWithBeginningSpace :: Test
-parseFalseStringWithBeginningSpace = TestCase $ assertEqual
-    "Parse false string with beginning space"
+failed :: String -> Test
+failed input = TestCase $ assertEqual
+    ("Parse " ++ input)
     Nothing
-    (parseTestInput booleanLiteral " false")
+    (parseWholeTestInput booleanLiteral input)
 
-parseTrueStringWithBeginningTab :: Test
-parseTrueStringWithBeginningTab = TestCase $ assertEqual
-    "Parse true string with beginning tab"
-    Nothing
-    (parseTestInput booleanLiteral "\ttrue")
+trueValue :: Test
+trueValue = successful "true" True
+
+falseValue :: Test
+falseValue = successful "false" False
+
+falseValueWithEndingNonSpace :: Test
+falseValueWithEndingNonSpace = failed "falsek"
+
+trueValueWithEndingNonSpace :: Test
+trueValueWithEndingNonSpace = failed "true7"
+
+falseValueWithEndingSpace :: Test
+falseValueWithEndingSpace = failed "false "
+
+trueValueWithEndingTab :: Test
+trueValueWithEndingTab = failed "true\t"
+
+falseStringWithBeginningSpace :: Test
+falseStringWithBeginningSpace = failed " false"
+
+trueStringWithBeginningTab :: Test
+trueStringWithBeginningTab = failed "\ttrue"
