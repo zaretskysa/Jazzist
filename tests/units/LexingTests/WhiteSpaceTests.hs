@@ -1,52 +1,33 @@
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
+
 module LexingTests.WhiteSpaceTests
 (
-    whiteSpaceTests
+    htf_thisModulesTests
 ) where
 
-import Test.HUnit
+import Test.Framework
+
 import Lexing.WhiteSpace
 import TestUtils
 
-whiteSpaceTests :: Test
-whiteSpaceTests = TestLabel "White space tests" $ TestList 
-    [ emptyString
-    , oneSpace
-    , oneTab
-    , oneLineBreak
-    , oneLetter
-    , allSpaces
-    , allLineBreaks
-    ]
-
-successful :: String -> Test
-successful input = TestCase $ assertEqual
-    ("Parse " ++ input)
+successful input = assertEqual
     (Just ())
     (parseWholeTestInput whiteSpaces input)
 
-failed :: String -> Test
-failed input = TestCase $ assertEqual
-    ("Parse " ++ input)
+failed input = assertEqual
     Nothing
     (parseWholeTestInput whiteSpaces input)
 
-emptyString :: Test
-emptyString = successful ""
+test_emptyString = successful ""
 
-oneSpace :: Test
-oneSpace = successful " "
+test_oneSpace = successful " "
 
-oneLineBreak :: Test
-oneLineBreak = failed "\n"
+test_oneLineBreak = failed "\n"
 
-oneTab :: Test
-oneTab = successful "\t"
+test_oneTab = successful "\t"
 
-oneLetter :: Test
-oneLetter = failed "f"
+test_oneLetter = failed "f"
 
-allSpaces :: Test
-allSpaces = successful " \v\f\t"
+test_allSpaces = successful " \v\f\t"
 
-allLineBreaks :: Test
-allLineBreaks = failed "\n\r"
+test_allLineBreaks = failed "\n\r"

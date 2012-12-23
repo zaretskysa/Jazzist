@@ -1,37 +1,26 @@
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
+
 module LexingTests.NullLiteralTests
 (
-    nullLiteralTests
+    htf_thisModulesTests
 ) where
 
-import Test.HUnit
+import Test.Framework
+
 import Lexing.NullLiteral
 import Lexing.Token
 import TestUtils
 
-nullLiteralTests :: Test
-nullLiteralTests = TestLabel "Null literal tests" $ TestList 
-    [ parseNullLiteral
-    , parseCapitalizedNullLiteral
-    , parseAnotherCapitalizedNullLiteral
-    ]
-
-successful :: String -> Test
-successful input = TestCase $ assertEqual
-    ("Parse " ++ input)
+successful input = assertEqual
     (Just NullLiteralToken)
     (parseWholeTestInput nullLiteral input)
 
-failed :: String -> Test
-failed input = TestCase $ assertEqual
-    ("Parse " ++ input)
+failed input = assertEqual
     Nothing
     (parseWholeTestInput nullLiteral input)
 
-parseNullLiteral :: Test
-parseNullLiteral = successful "null"
+test_parseNullLiteral = successful "null"
 
-parseCapitalizedNullLiteral :: Test
-parseCapitalizedNullLiteral = failed "NULL"
+test_parseCapitalizedNullLiteral = failed "NULL"
 
-parseAnotherCapitalizedNullLiteral :: Test
-parseAnotherCapitalizedNullLiteral = failed "Null"
+test_parseAnotherCapitalizedNullLiteral = failed "Null"

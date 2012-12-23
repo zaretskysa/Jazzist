@@ -1,80 +1,48 @@
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
+
 module LexingTests.CommentTests
 (
-    commentTests
+    htf_thisModulesTests
 ) where
 
-import Test.HUnit
+import Test.Framework
+
 import Lexing.Comment
 import Lexing.Token
 import TestUtils
 
-commentTests :: Test
-commentTests = TestLabel "Comment tests" $ TestList 
-    [ emptySingleLineComment
-    , whitespaceInSingleLineComment
-    , emptySingleLineCommentWithEndingLineTerminator
-    , emptyMultiLineComment
-    , whitespaceMultiLineComment
-    , oneWordMultiLineComment
-    , lineTerminatorMultiLineComment
-    , twoWordsWithLineTerminatorMultiLineComment
-    , oneSlashSingleLineComment
-    , multiLineCommentWithoutAsterisk
-    , multiLineCommentWithoutSlash
-    , bunchOfAsterisksMultiLineComment
-    , bunchOfBackSlashesSingleLineComment
-    ]
-
-successfulCommentParsing :: String -> String -> Test
-successfulCommentParsing input result = TestCase $ assertEqual
-    ("Parse " ++ input)
+successsful input result = assertEqual
     (Just $ CommentToken result)
     (parseWholeTestInput comment input)
 
-failedCommentParsing :: String -> Test
-failedCommentParsing input = TestCase $ assertEqual
-    ("Parse " ++ input)
+failed input = assertEqual
     Nothing
     (parseWholeTestInput comment input)
 
-emptySingleLineComment :: Test
-emptySingleLineComment = successfulCommentParsing "//" ""
+test_emptySingleLineComment = successsful "//" ""
 
-whitespaceInSingleLineComment :: Test
-whitespaceInSingleLineComment = successfulCommentParsing "// " " "
+test_whitespaceInSingleLineComment = successsful "// " " "
 
-emptySingleLineCommentWithEndingLineTerminator :: Test
-emptySingleLineCommentWithEndingLineTerminator = failedCommentParsing "//\n"
+test_emptySingleLineCommentWithEndingLineTerminator = failed "//\n"
 
-oneWordSingleLineComment :: Test
-oneWordSingleLineComment = successfulCommentParsing "//hello" "hello"
+test_oneWordSingleLineComment = successsful "//hello" "hello"
 
-emptyMultiLineComment :: Test
-emptyMultiLineComment = successfulCommentParsing "/**/" ""
+test_emptyMultiLineComment = successsful "/**/" ""
 
-whitespaceMultiLineComment :: Test
-whitespaceMultiLineComment = successfulCommentParsing "/* */" " "
+test_whitespaceMultiLineComment = successsful "/* */" " "
 
-oneWordMultiLineComment :: Test
-oneWordMultiLineComment = successfulCommentParsing "/*hello*/" "hello"
+test_oneWordMultiLineComment = successsful "/*hello*/" "hello"
 
-lineTerminatorMultiLineComment :: Test
-lineTerminatorMultiLineComment = successfulCommentParsing "/*\n*/" "\n"
+test_lineTerminatorMultiLineComment = successsful "/*\n*/" "\n"
 
-twoWordsWithLineTerminatorMultiLineComment :: Test
-twoWordsWithLineTerminatorMultiLineComment = successfulCommentParsing "/*hello\ngalaxy*/" "hello\ngalaxy"
+test_twoWordsWithLineTerminatorMultiLineComment = successsful "/*hello\ngalaxy*/" "hello\ngalaxy"
 
-oneSlashSingleLineComment :: Test
-oneSlashSingleLineComment = failedCommentParsing "/hello"
+test_oneSlashSingleLineComment = failed "/hello"
 
-multiLineCommentWithoutAsterisk :: Test
-multiLineCommentWithoutAsterisk = failedCommentParsing "/*/"
+test_multiLineCommentWithoutAsterisk = failed "/*/"
 
-multiLineCommentWithoutSlash :: Test
-multiLineCommentWithoutSlash = failedCommentParsing "/**"
+test_multiLineCommentWithoutSlash = failed "/**"
 
-bunchOfAsterisksMultiLineComment :: Test
-bunchOfAsterisksMultiLineComment = successfulCommentParsing "/*****/" "***"
+test_bunchOfAsterisksMultiLineComment = successsful "/*****/" "***"
 
-bunchOfBackSlashesSingleLineComment :: Test
-bunchOfBackSlashesSingleLineComment = successfulCommentParsing "/////" "///"
+test_bunchOfBackSlashesSingleLineComment = successsful "/////" "///"

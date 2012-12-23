@@ -1,128 +1,72 @@
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
+
 module LexingTests.KeywordTests
 (
-	keywordTests
+	htf_thisModulesTests
 ) where
 
-import Test.HUnit
+import Test.Framework
+
 import Lexing.Keyword
 import Lexing.Token
 import TestUtils
 
-keywordTests :: Test
-keywordTests = TestLabel "KeywordTests" $ TestList 
-	[ breakKeyword
-	, caseKeyword
-	, catchKeyword
-	, continueKeyword
-	, debuggerKeyword
-	, defaultKeyword
-	, deleteKeyword
-	, doKeyword
-	, elseKeyword
-	, finallyKeyword
-	, forKeyword
-	, functionKeyword
-	, ifKeyword
-	, inKeyword
-	, instanceOfKeyword
-	, newKeyword
-	, returnKeyword
-	, switchKeyword
-	, thisKeyword
-	, throwKeyword
-	, tryKeyword
-	, typeOfKeyword
-	, varKeyword
-	, voidKeyword
-	, whileKeyword
-	, withKeyword ]
-
-successful :: String -> Keyword -> Test
-successful input result = TestCase $ assertEqual
-    ("Parse " ++ input)
+successful input result = assertEqual
     (Just $ KeywordToken result)
     (parseWholeTestInput keyword input)
 
-failed :: String -> Test
-failed input = TestCase $ assertEqual
-    ("Parse " ++ input)
+failed input = assertEqual
     Nothing
     (parseWholeTestInput keyword input)
 
-breakKeyword :: Test
-breakKeyword = successful "break" BreakKeyword
+test_breakKeyword = successful "break" BreakKeyword
 
-caseKeyword :: Test
-caseKeyword = successful "case" CaseKeyword
+test_caseKeyword = successful "case" CaseKeyword
 
-catchKeyword :: Test
-catchKeyword = successful "catch" CatchKeyword
+test_catchKeyword = successful "catch" CatchKeyword
 
-continueKeyword :: Test
-continueKeyword = successful "continue" ContinueKeyword
+test_continueKeyword = successful "continue" ContinueKeyword
 
-debuggerKeyword :: Test
-debuggerKeyword = successful "debugger" DebuggerKeyword
+test_debuggerKeyword = successful "debugger" DebuggerKeyword
 
-defaultKeyword :: Test
-defaultKeyword = successful "default" DefaultKeyword
+test_defaultKeyword = successful "default" DefaultKeyword
 
-deleteKeyword :: Test
-deleteKeyword = successful "delete" DeleteKeyword
+test_deleteKeyword = successful "delete" DeleteKeyword
 
-doKeyword :: Test
-doKeyword = successful "do" DoKeyword
+test_doKeyword = successful "do" DoKeyword
 
-elseKeyword :: Test
-elseKeyword = successful "else" ElseKeyword
+test_elseKeyword = successful "else" ElseKeyword
 
-finallyKeyword :: Test
-finallyKeyword = successful "finally" FinallyKeyword
+test_finallyKeyword = successful "finally" FinallyKeyword
 
-forKeyword :: Test
-forKeyword = successful "for" ForKeyword
+test_forKeyword = successful "for" ForKeyword
 
-functionKeyword :: Test
-functionKeyword = successful "function" FunctionKeyword
+test_functionKeyword = successful "function" FunctionKeyword
 
-ifKeyword :: Test
-ifKeyword = successful "if" IfKeyword
+test_ifKeyword = successful "if" IfKeyword
 
-inKeyword :: Test
-inKeyword = successful "in" InKeyword
+test_inKeyword = successful "in" InKeyword
 
-instanceOfKeyword :: Test
-instanceOfKeyword = successful "instanceof" InstanceOfKeyword
+test_instanceOfKeyword = successful "instanceof" InstanceOfKeyword
 
-newKeyword :: Test
-newKeyword = successful "new" NewKeyword
+test_newKeyword = successful "new" NewKeyword
 
-returnKeyword :: Test
-returnKeyword = successful "return" ReturnKeyword
+test_returnKeyword = successful "return" ReturnKeyword
 
-switchKeyword :: Test
-switchKeyword = successful "switch" SwitchKeyword
+test_switchKeyword = successful "switch" SwitchKeyword
 
-thisKeyword :: Test
-thisKeyword = successful "this" ThisKeyword
+test_thisKeyword = successful "this" ThisKeyword
 
-throwKeyword :: Test
-throwKeyword = successful "throw" ThrowKeyword
+test_throwKeyword = successful "throw" ThrowKeyword
 
-tryKeyword :: Test
-tryKeyword = successful "try" TryKeyword
+test_tryKeyword = successful "try" TryKeyword
 
-typeOfKeyword :: Test
-typeOfKeyword = successful "typeof" TypeOfKeyword
+test_typeOfKeyword = successful "typeof" TypeOfKeyword
 
-varKeyword :: Test
-varKeyword = successful "var" VarKeyword
+test_varKeyword = successful "var" VarKeyword
 
-voidKeyword :: Test
-voidKeyword = successful "void" VoidKeyword
+test_voidKeyword = successful "void" VoidKeyword
 
-whileKeyword :: Test
-whileKeyword = successful "while" WhileKeyword
+test_whileKeyword = successful "while" WhileKeyword
 
-withKeyword :: Test
-withKeyword = successful "with" WithKeyword
+test_withKeyword = successful "with" WithKeyword

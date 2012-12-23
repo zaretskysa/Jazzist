@@ -1,32 +1,16 @@
-import Test.HUnit
-import System.Exit (exitFailure, exitSuccess)
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
 
-import LexingTests.BooleanLiteralTests
-import LexingTests.PunctuatorTests
-import LexingTests.KeywordTests
-import LexingTests.NumericLiteralTests
-import LexingTests.NullLiteralTests
-import LexingTests.CommentTests
-import LexingTests.StringLiteralTests
-import LexingTests.WhiteSpaceTests
-import LexingTests.LineTerminatorTests
+import Test.Framework
 
-allTests :: Test
-allTests = TestList 
-	[ booleanLiteralTests
-	, punctuatorTests
-	, keywordTests
-	, numericLiteralTests
-    , nullLiteralTests
-    , commentTests
-    , stringLiteralTests
-    , whiteSpaceTests
-    , lineTerminatorTests
-    ]
+import {-@ HTF_TESTS @-} LexingTests.BooleanLiteralTests
+import {-@ HTF_TESTS @-} LexingTests.CommentTests
+import {-@ HTF_TESTS @-} LexingTests.KeywordTests
+import {-@ HTF_TESTS @-} LexingTests.LineTerminatorTests
+import {-@ HTF_TESTS @-} LexingTests.NullLiteralTests
+import {-@ HTF_TESTS @-} LexingTests.NumericLiteralTests
+import {-@ HTF_TESTS @-} LexingTests.PunctuatorTests
+import {-@ HTF_TESTS @-} LexingTests.StringLiteralTests
+import {-@ HTF_TESTS @-} LexingTests.WhiteSpaceTests
 
 main :: IO ()
-main = do 
-	counts <- runTestTT allTests
-	case counts of 
-		Counts _ _ 0 0 -> exitSuccess
-		_ -> exitFailure
+main = htfMain htf_importedTests

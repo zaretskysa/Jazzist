@@ -1,216 +1,116 @@
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
+
 module LexingTests.PunctuatorTests
 (
-	punctuatorTests
+	htf_thisModulesTests
 ) where
 
-import Test.HUnit
+import Test.Framework
+
 import Lexing.Punctuator
 import Lexing.Token
 import TestUtils
 
-punctuatorTests :: Test
-punctuatorTests = TestLabel "PunctuatorTests" $ TestList 
-	[ parseLeftCurlyBracket
-	, parseRightCurlyBracket
-	, parseLeftRoundBracket
-	, parseRightRoundBracket
-	, parseLeftRSquareBracket
-	, parseRightSquareBracket
-	, parseDot
-	, parseSemicolon
-	, parseComma
-	, parseLessThanEquals
-	, parseGreaterThanEquals
-	, parseLessThan
-	, parseGreaterThan
-	, parseEquals
-	, parseNotEquals
-	, parseStrictEquals
-	, parseStrictNotEquals
-	, parseIncrementPlus
-	, parsePlus
-	, parseMinus
-	, parseMul
-	, parseModulus
-	, parseIncrementMinus
-	, parseMinusAssign
-	, parseLeftShift
-	, parseRightShift
-	, parseUnsignedRightShiftAssign
-	, parseUnsignedRightShift
-	, parseBitwiseAnd
-	, parseBitwiseOr
-	, parseBitwiseXor
-	, parseLogicalNot
-	, parseBitwiseNot
-	, parseLogicalAnd
-	, parseLogicalOr
-	, parseQuestionMark
-	, parseColon
-	, parseAssign
-	, parsePlusAssign
-	, parseMulAssign
-	, parseModulusAssign
-	, parseLeftShiftAssign
-	, parseRightShiftAssign
-	, parseBitwiseAndAssign
-	, parseBitwiseOrAssign
-	, parseBitwiseXor
-	, parseDivOp
-	, parseDivAssign ]
-
-successful :: String -> Punctuator -> Test
-successful input result = TestCase $ assertEqual
-    ("Parse " ++ input)
+successful input result = assertEqual
     (Just $ PunctuatorToken result)
     (parseWholeTestInput punctuator input)
 
-failed :: String -> Test
-failed input = TestCase $ assertEqual
-    ("Parse " ++ input)
+failed input = assertEqual
     Nothing
     (parseWholeTestInput punctuator input)
 
-parseLeftCurlyBracket :: Test
-parseLeftCurlyBracket = successful "{" LeftCurlyBracketPunctuator
+test_parseLeftCurlyBracket = successful "{" LeftCurlyBracketPunctuator
 
-parseRightCurlyBracket :: Test
-parseRightCurlyBracket = successful "}" RightCurlyBracketPunctuator
+test_parseRightCurlyBracket = successful "}" RightCurlyBracketPunctuator
 
-parseLeftRoundBracket :: Test
-parseLeftRoundBracket = successful "(" LeftRoundBracketPunctuator
+test_parseLeftRoundBracket = successful "(" LeftRoundBracketPunctuator
 
-parseRightRoundBracket :: Test
-parseRightRoundBracket = successful ")" RightRoundBracketPunctuator
+test_parseRightRoundBracket = successful ")" RightRoundBracketPunctuator
 
-parseLeftRSquareBracket :: Test
-parseLeftRSquareBracket = successful "[" LeftSquareBracketPunctuator
+test_parseLeftRSquareBracket = successful "[" LeftSquareBracketPunctuator
 
-parseRightSquareBracket :: Test
-parseRightSquareBracket = successful "]" RightSquareBracketPunctuator
+test_parseRightSquareBracket = successful "]" RightSquareBracketPunctuator
 
-parseDot :: Test
-parseDot = successful "." DotPunctuator
+test_parseDot = successful "." DotPunctuator
 
-parseSemicolon :: Test
-parseSemicolon = successful ";" SemicolonPunctuator
+test_parseSemicolon = successful ";" SemicolonPunctuator
 
-parseComma :: Test
-parseComma = successful "," CommaPunctuator
+test_parseComma = successful "," CommaPunctuator
 
-parseLessThanEquals :: Test
-parseLessThanEquals = successful "<=" LessThanEqualsPunctuator
+test_parseLessThanEquals = successful "<=" LessThanEqualsPunctuator
 
-parseGreaterThanEquals :: Test
-parseGreaterThanEquals = successful ">=" GreaterThanEqualsPunctuator
+test_parseGreaterThanEquals = successful ">=" GreaterThanEqualsPunctuator
 
-parseLessThan :: Test
-parseLessThan = successful "<" LessThanPunctuator
+test_parseLessThan = successful "<" LessThanPunctuator
 
-parseGreaterThan :: Test
-parseGreaterThan = successful ">" GreaterThanPunctuator
+test_parseGreaterThan = successful ">" GreaterThanPunctuator
 
-parseEquals :: Test
-parseEquals = successful "==" EqualsPunctuator
+test_parseEquals = successful "==" EqualsPunctuator
 
-parseNotEquals :: Test
-parseNotEquals = successful "!=" NotEqualsPunctuator
+test_parseNotEquals = successful "!=" NotEqualsPunctuator
 
-parseStrictEquals :: Test
-parseStrictEquals = successful "===" StrictEqualsPunctuator
+test_parseStrictEquals = successful "===" StrictEqualsPunctuator
 
-parseStrictNotEquals :: Test
-parseStrictNotEquals = successful "!==" StrictNotEqualsPunctuator
+test_parseStrictNotEquals = successful "!==" StrictNotEqualsPunctuator
 
-parseIncrementPlus :: Test
-parseIncrementPlus = successful "++" IncrementPlusPunctuator
+test_parseIncrementPlus = successful "++" IncrementPlusPunctuator
 
-parsePlus :: Test
-parsePlus = successful "+" PlusPunctuator
+test_parsePlus = successful "+" PlusPunctuator
 
-parseMinus :: Test
-parseMinus = successful "-" MinusPunctuator
+test_parseMinus = successful "-" MinusPunctuator
 
-parseMul :: Test
-parseMul = successful "*" MulPunctuator
+test_parseMul = successful "*" MulPunctuator
 
-parseModulus :: Test
-parseModulus = successful "%" ModulusPunctuator
+test_parseModulus = successful "%" ModulusPunctuator
 
-parseIncrementMinus :: Test
-parseIncrementMinus = successful "--" IncrementMinusPunctuator
+test_parseIncrementMinus = successful "--" IncrementMinusPunctuator
 
-parseMinusAssign :: Test
-parseMinusAssign = successful "-=" MinusAssignPunctuator
+test_parseMinusAssign = successful "-=" MinusAssignPunctuator
 
-parseLeftShift :: Test
-parseLeftShift = successful "<<" LeftShiftPunctuator
+test_parseLeftShift = successful "<<" LeftShiftPunctuator
 
-parseRightShift :: Test
-parseRightShift = successful ">>" RightShiftPunctuator
+test_parseRightShift = successful ">>" RightShiftPunctuator
 
-parseUnsignedRightShiftAssign :: Test
-parseUnsignedRightShiftAssign = successful ">>>=" UnsignedRightShiftAssignPunctuator
+test_parseUnsignedRightShiftAssign = successful ">>>=" UnsignedRightShiftAssignPunctuator
 
-parseUnsignedRightShift :: Test
-parseUnsignedRightShift = successful ">>>" UnsignedRightShiftPunctuator
+test_parseUnsignedRightShift = successful ">>>" UnsignedRightShiftPunctuator
 
-parseBitwiseAnd :: Test
-parseBitwiseAnd = successful "&" BitwiseAndPunctuator
+test_parseBitwiseAnd = successful "&" BitwiseAndPunctuator
 
-parseBitwiseOr :: Test
-parseBitwiseOr = successful "|" BitwiseOrPunctuator
+test_parseBitwiseOr = successful "|" BitwiseOrPunctuator
 
-parseBitwiseXor :: Test
-parseBitwiseXor = successful "^" BitwiseXorPunctuator
+test_parseBitwiseXor = successful "^" BitwiseXorPunctuator
 
-parseLogicalNot :: Test
-parseLogicalNot = successful "!" LogicalNotPunctuator
+test_parseLogicalNot = successful "!" LogicalNotPunctuator
 
-parseBitwiseNot :: Test
-parseBitwiseNot = successful "~" BitwiseNotPunctuator
+test_parseBitwiseNot = successful "~" BitwiseNotPunctuator
 
-parseLogicalAnd :: Test
-parseLogicalAnd = successful "&&" LogicalAndPunctuator
+test_parseLogicalAnd = successful "&&" LogicalAndPunctuator
 
-parseLogicalOr :: Test
-parseLogicalOr = successful "||" LogicalOrPunctuator
+test_parseLogicalOr = successful "||" LogicalOrPunctuator
 
-parseQuestionMark :: Test
-parseQuestionMark = successful "?" QuestionMarkPunctuator
+test_parseQuestionMark = successful "?" QuestionMarkPunctuator
 
-parseColon :: Test
-parseColon = successful ":" ColonPunctuator
+test_parseColon = successful ":" ColonPunctuator
 
-parseAssign :: Test
-parseAssign = successful "=" AssignPunctuator
+test_parseAssign = successful "=" AssignPunctuator
 
-parsePlusAssign :: Test
-parsePlusAssign = successful "+=" PlusAssignPunctuator
+test_parsePlusAssign = successful "+=" PlusAssignPunctuator
 
-parseMulAssign :: Test
-parseMulAssign = successful "*=" MulAssignPunctuator
+test_parseMulAssign = successful "*=" MulAssignPunctuator
 
-parseModulusAssign :: Test
-parseModulusAssign = successful "%=" ModulusAssignPunctuator
+test_parseModulusAssign = successful "%=" ModulusAssignPunctuator
 
-parseLeftShiftAssign :: Test
-parseLeftShiftAssign = successful "<<=" LeftShiftAssignPunctuator
+test_parseLeftShiftAssign = successful "<<=" LeftShiftAssignPunctuator
 
-parseRightShiftAssign :: Test
-parseRightShiftAssign = successful ">>=" RightShiftAssignPunctuator
+test_parseRightShiftAssign = successful ">>=" RightShiftAssignPunctuator
 
-parseBitwiseAndAssign :: Test
-parseBitwiseAndAssign = successful "&=" BitwiseAndAssignPunctuator
+test_parseBitwiseAndAssign = successful "&=" BitwiseAndAssignPunctuator
 
-parseBitwiseOrAssign :: Test
-parseBitwiseOrAssign = successful "|=" BitwiseOrAssignPunctuator
+test_parseBitwiseOrAssign = successful "|=" BitwiseOrAssignPunctuator
 
-parseBitwiseXorAssign :: Test
-parseBitwiseXorAssign = successful "^=" BitwiseXorAssignPunctuator
+test_parseBitwiseXorAssign = successful "^=" BitwiseXorAssignPunctuator
 
-parseDivOp :: Test
-parseDivOp = successful "/" DivPunctuator
+test_parseDivOp = successful "/" DivPunctuator
 
-parseDivAssign :: Test
-parseDivAssign = successful "/=" DivAssignPunctuator
+test_parseDivAssign = successful "/=" DivAssignPunctuator

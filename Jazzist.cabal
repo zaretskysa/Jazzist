@@ -16,5 +16,6 @@ test-suite jazzist-unit-tests
   hs-source-dirs:    tests/units, src
   main-is:           JazzistUnitTests.hs
   build-depends:     base, 
-                     HUnit
+                     HUnit,
+                     HTF
 

@@ -1,42 +1,28 @@
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
+
 module LexingTests.LineTerminatorTests
 (
-    lineTerminatorTests
+    htf_thisModulesTests
 ) where
 
-import Test.HUnit
+import Test.Framework
 
 import Lexing.LineTerminator
 import Lexing.Token
 import TestUtils
 
-lineTerminatorTests :: Test
-lineTerminatorTests = TestLabel "Line terminator tests" $ TestList 
-    [ lineFeedString
-    , carriageReturnString
-    , lineSeparatorString
-    , paragraphSeparatorString
-    ]
-
-successful :: String -> Test
-successful input = TestCase $ assertEqual
-    ("Parse " ++ input)
+successful input = assertEqual
     (Just LineTerminatorToken)
     (parseWholeTestInput lineTerminator input)
 
-failed :: String -> Test
-failed input = TestCase $ assertEqual
-    ("Parse " ++ input)
+failed input = assertEqual
     Nothing
     (parseWholeTestInput lineTerminator input)
 
-lineFeedString :: Test
-lineFeedString = successful "\x000a"
+test_lineFeedString = successful "\x000a"
 
-carriageReturnString :: Test
-carriageReturnString = successful "\x000d"
+test_carriageReturnString = successful "\x000d"
 
-lineSeparatorString :: Test
-lineSeparatorString = successful "\x2028"
+test_lineSeparatorString = successful "\x2028"
 
-paragraphSeparatorString :: Test
-paragraphSeparatorString = successful "\x2029"
+test_paragraphSeparatorString = successful "\x2029"
