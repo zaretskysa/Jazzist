@@ -23,7 +23,11 @@ tokenize :: String -> Either ParseError [Token]
 tokenize input = parse tokens "JsTokenizer" input
 
 tokens :: Parser [Token]
-tokens = spaces >> endBy token whiteSpaces
+tokens = do 
+    whiteSpaces
+    toks <- sepBy token whiteSpaces
+    whiteSpaces >> eof
+    return toks
 
 token :: Parser Token
 token = 

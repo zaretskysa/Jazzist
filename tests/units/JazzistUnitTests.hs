@@ -11,6 +11,7 @@ import {-@ HTF_TESTS @-} LexingTests.NumericLiteralTests
 import {-@ HTF_TESTS @-} LexingTests.PunctuatorTests
 import {-@ HTF_TESTS @-} LexingTests.StringLiteralTests
 import {-@ HTF_TESTS @-} LexingTests.WhiteSpaceTests
+import {-@ HTF_TESTS @-} LexingTests.LexerTests
 
 main :: IO ()
 main = htfMain htf_importedTests
