@@ -14,7 +14,7 @@ successful :: String -> [Token] -> Assertion
 successful input expected = 
     case tokenize input of
         (Left _) -> assertFailure "Left value returned, but right expected"
-        (Right tokens) ->  assertEqual tokens expected
+        (Right tokens) ->  assertEqual expected tokens
 
 failed :: String -> Assertion
 failed input = 
@@ -92,3 +92,41 @@ test_stringLiterals = successful
     , StringLiteralToken "switch"
     , StringLiteralToken "kin dza dza"
     ]
+
+test_emptyString = successful "" []
+
+test_varDeclaration = successful
+    "var x = 7;"
+    [ KeywordToken VarKeyword
+    , IdentifierToken "x"
+    , PunctuatorToken AssignPunctuator
+    , NumericLiteralToken 7
+    , PunctuatorToken SemicolonPunctuator
+    ]
+
+test_complexVarDeclaration = successful
+    "var chainable = arguments.length && ( defaultExtra ||\ntypeof margin !== 'boolean' );"
+    [ KeywordToken VarKeyword
+    , IdentifierToken "chainable"
+    , PunctuatorToken AssignPunctuator
+    , IdentifierToken "arguments"
+    , PunctuatorToken DotPunctuator
+    , IdentifierToken "length"
+    , PunctuatorToken LogicalAndPunctuator
+    , PunctuatorToken LeftRoundBracketPunctuator
+    , IdentifierToken "defaultExtra"
+    , PunctuatorToken LogicalOrPunctuator
+    , LineTerminatorToken
+    , KeywordToken TypeOfKeyword
+    , IdentifierToken "margin"
+    , PunctuatorToken StrictNotEqualsPunctuator
+    , StringLiteralToken "boolean"
+    , PunctuatorToken RightRoundBracketPunctuator
+    , PunctuatorToken SemicolonPunctuator
+    ]
+
+test_incompleteStringLiteral = failed "'milky way"
+
+test_incomleteNumericLiteral = failed "123e"
+
+test_lineBreakInsideStringLiteral = failed "'Phobos \nand Deimos'"
