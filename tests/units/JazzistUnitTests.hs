@@ -13,5 +13,7 @@ import {-@ HTF_TESTS @-} LexingTests.StringLiteralTests
 import {-@ HTF_TESTS @-} LexingTests.WhiteSpaceTests
 import {-@ HTF_TESTS @-} LexingTests.LexerTests
 
+import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.PrimaryExpressionTests
+
 main :: IO ()
 main = htfMain htf_importedTests

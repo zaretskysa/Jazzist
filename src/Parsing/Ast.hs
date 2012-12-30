@@ -1,12 +1,12 @@
 module Parsing.Ast where
 
 data Program = 
-    Program [SourceElement] deriving (Show)
+    Program [SourceElement] deriving (Show, Eq)
 
 data SourceElement = 
     StatementSourceElement Statement
     | FunctionDeclarationSourceElement String [String] FunctionBody
-    deriving (Show)
+    deriving (Show, Eq)
 
 data Statement =
     BlockStmt Block
@@ -24,9 +24,9 @@ data Statement =
     | ThrowStmt Expression
     | TryStmt TryStatement
     | DebuggerStmt
-    deriving (Show)
+    deriving (Show, Eq)
 
-data Block = Block [Statement] deriving (Show)
+data Block = Block [Statement] deriving (Show, Eq)
 
 type MaybeString = Maybe String
 
@@ -35,11 +35,11 @@ type MaybeStatement = Maybe Statement
 -- variable name and initializer
 data VariableDeclaration = 
     VariableDeclaration String MaybeInitializer
-    deriving (Show)
+    deriving (Show, Eq)
 
 data Initializer = 
     Initializer AssignmentExpression 
-    deriving (Show)
+    deriving (Show, Eq)
 
 type MaybeInitializer = Maybe Initializer
 
@@ -52,21 +52,21 @@ data IterationStatement =
     | VarAndDoubleExprForIterationStatement [VariableDeclaration] MaybeExpression MaybeExpression Statement --use non empty list
     | LHSExprInExprForIterationStatement LeftHandSideExpression Expression Statement
     | VarInExprIteratioinStatement  VariableDeclaration Expression Statement
-    deriving (Show)
+    deriving (Show, Eq)
 
 data ReturnStatement =
     JustReturnStatement
     | ExpressionReturnStatement Expression
-    deriving (Show)
+    deriving (Show, Eq)
 
 data CaseBlock = 
     CaseBlock [CaseClause] MaybeDefaultClause [CaseClause] 
-    deriving (Show)
+    deriving (Show, Eq)
 
 data CaseClause = 
-    CaseClause Expression [Statement] deriving (Show)
+    CaseClause Expression [Statement] deriving (Show, Eq)
 
-data DefaultClause = DefaultClause [Statement] deriving (Show)
+data DefaultClause = DefaultClause [Statement] deriving (Show, Eq)
 
 type MaybeDefaultClause = Maybe DefaultClause
 
@@ -74,11 +74,11 @@ data TryStatement =
     BlockCatchTryStatement Block Catch
     | BlockFinallyTryStatement Block Finally
     | BlockCatchFinallyTryStatement Block Catch Finally
-    deriving (Show)
+    deriving (Show, Eq)
 
-data Catch = Catch String Block deriving (Show)
+data Catch = Catch String Block deriving (Show, Eq)
 
-data Finally = Finally Block deriving (Show)
+data Finally = Finally Block deriving (Show, Eq)
 
 
 -- Assignment expression
@@ -86,7 +86,7 @@ data Finally = Finally Block deriving (Show)
 data AssignmentExpression = 
     ConditionalAssignmentExpression ConditionalExpression
     | AssignmentOperatorExpression LeftHandSideExpression AssignmentOperator AssignmentExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 type MaybeAssignmentExpression = Maybe AssignmentExpression
 
@@ -103,24 +103,24 @@ data AssignmentOperator =
     | BitwiseAndAssignOperator
     | BitwiseXorAssignOperator
     | BitwiseOrAssignOperator
-    deriving (Show)
+    deriving (Show, Eq)
 
 data ConditionalExpression = 
     LogicalOrConditionalExpression LogicalOrExpression
     | TeranaryOperatorConditionalExpression LogicalOrExpression AssignmentExpression AssignmentExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 --data AssignmentExpressionNoIn = 
 --    ConditionalAssignmentExpressionNoIn ConditionalExpressionNoIn
 --    | AssignmentOperatorExpression LeftHandSideExpression AssignmentOperator AssignmentExpressionNoIn
---    deriving (Show)
+--    deriving (Show, Eq)
 --
 --type MaybeAssignmentExpressionNoIn = Maybe AssignmentExpressionNoIn
 --
 --data ConditionalExpressionNoIn = 
 --    LogicalOrConditionalExpressionNoIn LogicalOrExpressionNoIn
 --    | TeranaryOperatorConditionalExpressionNoIn LogicalOrExpressionNoIn AssignmentExpression AssignmentExpressionNoIn
---    deriving (Show)
+--    deriving (Show, Eq)
 
 -- Left hand side expressions
 
@@ -131,28 +131,28 @@ data MemberExpression =
     | PropertyAccessByBracketsMemberExpression MemberExpression Expression
     | PropertyAccessByDotMemberExpression MemberExpression String
     | NewMemberExpression MemberExpression [AssignmentExpression]
-    deriving (Show)
+    deriving (Show, Eq)
 
 data FunctionExpression = 
     FunctionExpression MaybeString [String] FunctionBody
-    deriving (Show)
+    deriving (Show, Eq)
 
 data NewExpression =
     MemberNewExpression MemberExpression
     | NewNewExpression NewExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 data CallExpression =
     MemberWithArgumentsCallExpression MemberExpression [AssignmentExpression]
     | CallWithArgumentsCallExpression CallExpression [AssignmentExpression]
     | PropertyAccessByBracketsCallExpression CallExpression Expression
     | PropertyAccessByDotCallExpression CallExpression String
-    deriving (Show)
+    deriving (Show, Eq)
 
 data LeftHandSideExpression =
     NewLHSExpression NewExpression
     | CallLHSExpression CallExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
  -- Primary expression
 
@@ -163,11 +163,11 @@ data PrimaryExpression =
     | ArrayLiteralPrimaryExpression ArrayLiteral
     | ObjectLiteralPrimaryExpression ObjectLiteral
     | ExpressionPrimaryExpression Expression
-    deriving (Show)
+    deriving (Show, Eq)
 
-data ObjectLiteral = ObjectLiteral [PropertyAssignment] deriving (Show)
+data ObjectLiteral = ObjectLiteral [PropertyAssignment] deriving (Show, Eq)
 
-data ArrayLiteral = ArrayLiteral [MaybeAssignmentExpression] deriving (Show)
+data ArrayLiteral = ArrayLiteral [MaybeAssignmentExpression] deriving (Show, Eq)
 
 data Literal = 
     NullLiteral
@@ -175,46 +175,46 @@ data Literal =
     | NumericLiteral Double
     | StringLiteral String
 --  | RegularExpressionLiteral TODO
-    deriving (Show)
+    deriving (Show, Eq)
 
 data PropertyAssignment =
     FieldPropertyAssignment PropertyName AssignmentExpression
     | GetterPropertyAssignment PropertyName FunctionBody
     | SetterPropertyAssignment PropertyName PropertySetParameterList FunctionBody
-    deriving (Show)
+    deriving (Show, Eq)
 
 type PropertySetParameterList = String
 
 data PropertyName = 
     StringPropertyName String
     | NumericPropertyName Double
-    deriving (Show)
+    deriving (Show, Eq)
 
-data FunctionBody = FunctionBody [SourceElement] deriving (Show)
+data FunctionBody = FunctionBody [SourceElement] deriving (Show, Eq)
 
 -- Logical Expressions
 
 data LogicalAndExpression = 
     UnaryLogicalAndExpression BitwiseOrExpression
     | BinaryLogicalAndExpression LogicalAndExpression BitwiseOrExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 data LogicalOrExpression =
     UnaryLogicalOrExpression LogicalAndExpression
     | BinaryLogicalOrExpression LogicalOrExpression LogicalAndExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 -- Comma operator
 
 data Expression = 
     Expression [AssignmentExpression] -- TODO: non empty
-    deriving (Show)
+    deriving (Show, Eq)
 
 type MaybeExpression = Maybe Expression
 
 --data ExpressionNoIn =
 --    ExpressionNoIn [AssignmentExpressionNoIn]
---    deriving (Show)
+--    deriving (Show, Eq)
 --
 --type MaybeExpressionNoIn = Maybe ExpressionNoIn
 
@@ -223,17 +223,17 @@ type MaybeExpression = Maybe Expression
 data BitwiseAndExpression = 
     UnaryBitwiseAndExpression EqualityExpression
     | BinaryBitwiseAndExpression BitwiseAndExpression EqualityExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 data BitwiseXorExpression =
     UnaryBitwiseXorExpression BitwiseAndExpression
     | BinaryBitwiseXorExpression BitwiseXorExpression BitwiseAndExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 data BitwiseOrExpression =
     UnaryBitwiseOrExpression BitwiseXorExpression
     | BinaryBitwiseOrExpression BitwiseOrExpression BitwiseXorExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 -- Equality operators
 
@@ -243,7 +243,7 @@ data EqualityExpression =
     | NotEqualsEqualityExpression EqualityExpression RelationalExpression
     | StrictEqualsEqualityExpression EqualityExpression RelationalExpression
     | StrictNotEqualsEqualityExpression EqualityExpression RelationalExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 -- Relational operators
 
@@ -255,7 +255,7 @@ data RelationalExpression =
     | GreaterThanEqualsRelationalExpression RelationalExpression ShiftExpression
     | InstanceOfRelationalExpression RelationalExpression ShiftExpression
     | InRelationalExpression RelationalExpression ShiftExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 -- Bitwise shift operators
 
@@ -264,7 +264,7 @@ data ShiftExpression =
     | LeftShiftExpression ShiftExpression AdditiveExpression
     | RightShiftExpression ShiftExpression AdditiveExpression
     | UnsignedRightShiftExpression ShiftExpression AdditiveExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 -- Additive operators
 
@@ -272,7 +272,7 @@ data AdditiveExpression =
     MultAdditiveExpression MultiplicativeExpression
     | PlusAdditiveExpression AdditiveExpression MultiplicativeExpression
     | MinusAdditiveExpression AdditiveExpression MultiplicativeExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 -- Multiplicative operators
 
@@ -281,7 +281,7 @@ data MultiplicativeExpression =
     | MulMultiplicativeExpression MultiplicativeExpression UnaryExpression
     | DivMultiplicativeExpression MultiplicativeExpression UnaryExpression
     | ModulusMultiplicativeExpression MultiplicativeExpression UnaryExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 -- Unary operators
 
@@ -296,7 +296,7 @@ data UnaryExpression =
     | MinusUnaryExpression UnaryExpression
     | BitwiseNotUnaryExpression UnaryExpression
     | LogicalNotUnaryExpression UnaryExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 -- Postfix expressions
 
@@ -304,7 +304,7 @@ data PostfixExpression =
     LHSPostfixExpression LeftHandSideExpression
     | IncrementPlusPostfixExpression LeftHandSideExpression
     | IncrementMinusPostfixExpression LeftHandSideExpression
-    deriving (Show)
+    deriving (Show, Eq)
 
 
 

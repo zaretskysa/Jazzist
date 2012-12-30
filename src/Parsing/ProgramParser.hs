@@ -3,7 +3,8 @@ module Parsing.ProgramParser
     module Parsing.Ast,
     module Parsing.TokenParser,
 
-    program
+    program,
+    primaryExpression
 ) where
 
 import Parsing.Ast
