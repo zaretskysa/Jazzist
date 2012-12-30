@@ -7,9 +7,9 @@ import Lexing.Token
 
 parseWholeInput :: Parser a -> Parser a
 parseWholeInput parser = do
-    token <- parser
+    result <- parser
     eof
-    return token
+    return result
 
 parseWholeTestInput :: Parser a -> String -> Maybe a
 parseWholeTestInput parser input = case parse (parseWholeInput parser) "testInput" input of
