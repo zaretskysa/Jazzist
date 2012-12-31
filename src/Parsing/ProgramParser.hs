@@ -4,12 +4,14 @@ module Parsing.ProgramParser
     module Parsing.TokenParser,
 
     program,
+
     primaryExpression,
     leftHandSideExpression,
     memberExpression,
     functionExpression,
     expression,
-    assignmentExpression
+    assignmentExpression,
+    postfixExpression
 ) where
 
 import Parsing.Ast
