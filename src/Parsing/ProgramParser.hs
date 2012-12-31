@@ -13,7 +13,8 @@ module Parsing.ProgramParser
     assignmentExpression,
     postfixExpression,
     unaryExpression,
-    multiplicativeExpression
+    multiplicativeExpression,
+    additiveExpression
 ) where
 
 import Parsing.Ast
