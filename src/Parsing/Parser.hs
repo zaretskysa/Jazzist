@@ -16,7 +16,8 @@ module Parsing.Parser
     additiveExpressionFromString,
     shiftExpressionFromString,
     relationalExpressionFromString,
-    equalityExpressionFromString
+    equalityExpressionFromString,
+    bitwiseOrExpressionFromString
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError, parse, eof)
@@ -84,3 +85,5 @@ relationalExpressionFromString input = parseFromString input PP.relationalExpres
 equalityExpressionFromString :: String -> Either ParseError EqualityExpression
 equalityExpressionFromString input = parseFromString input PP.equalityExpression
 
+bitwiseOrExpressionFromString :: String -> Either ParseError BitwiseOrExpression
+bitwiseOrExpressionFromString input = parseFromString input PP.bitwiseOrExpression

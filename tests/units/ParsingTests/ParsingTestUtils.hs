@@ -10,7 +10,8 @@ module ParsingTests.ParsingTestUtils
     makeMultiplicativeExpression,
     makeAdditiveExpression,
     makeShiftExpression,
-    makeRelationalExpression
+    makeRelationalExpression,
+    makeEqualityExpression
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError)
@@ -57,3 +58,6 @@ makeShiftExpression input = makeAstStructure input shiftExpressionFromString
 
 makeRelationalExpression :: String -> RelationalExpression
 makeRelationalExpression input = makeAstStructure input relationalExpressionFromString
+
+makeEqualityExpression :: String -> EqualityExpression
+makeEqualityExpression input = makeAstStructure input equalityExpressionFromString
