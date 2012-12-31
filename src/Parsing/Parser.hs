@@ -10,7 +10,8 @@ module Parsing.Parser
     functionExpressionFromString,
     expressionFromString,
     assignmentExpressionFromString,
-    postfixExpressionFromString
+    postfixExpressionFromString,
+    unaryExpressionFromString
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError, parse, eof)
@@ -59,5 +60,8 @@ primaryExpressionFromString input = parseFromString input PP.primaryExpression
 
 postfixExpressionFromString :: String -> Either ParseError PostfixExpression
 postfixExpressionFromString input = parseFromString input PP.postfixExpression
+
+unaryExpressionFromString :: String -> Either ParseError UnaryExpression
+unaryExpressionFromString input = parseFromString input PP.unaryExpression
 
 

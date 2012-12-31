@@ -11,7 +11,8 @@ module Parsing.ProgramParser
     functionExpression,
     expression,
     assignmentExpression,
-    postfixExpression
+    postfixExpression,
+    unaryExpression
 ) where
 
 import Parsing.Ast
@@ -740,7 +741,7 @@ deleteUnaryExpression :: TokenParser UnaryExpression
 deleteUnaryExpression = do
     deleteKeyword
     unary <- unaryExpression
-    return $ VoidUnaryExpression unary
+    return $ DeleteUnaryExpression unary
 
 voidUnaryExpression :: TokenParser UnaryExpression
 voidUnaryExpression = do

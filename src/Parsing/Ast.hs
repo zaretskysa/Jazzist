@@ -289,6 +289,7 @@ data UnaryExpression =
     | DeleteUnaryExpression UnaryExpression
     | VoidUnaryExpression UnaryExpression
     | TypeOfUnaryExpression UnaryExpression
+    --TODO: rename IncrementPlus to Increment (Decrement)
     | IncrementPlusUnaryExpression UnaryExpression
     | IncrementMinusUnaryExpression UnaryExpression
     | PlusUnaryExpression UnaryExpression
