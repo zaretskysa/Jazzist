@@ -13,7 +13,9 @@ module Parsing.Parser
     postfixExpressionFromString,
     unaryExpressionFromString,
     multiplicativeExpressionFromString,
-    additiveExpressionFromString
+    additiveExpressionFromString,
+    shiftExpressionFromString,
+    relationalExpressionFromString
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError, parse, eof)
@@ -71,3 +73,10 @@ multiplicativeExpressionFromString input = parseFromString input PP.multiplicati
 
 additiveExpressionFromString :: String -> Either ParseError AdditiveExpression
 additiveExpressionFromString input = parseFromString input PP.additiveExpression
+
+shiftExpressionFromString :: String -> Either ParseError ShiftExpression
+shiftExpressionFromString input = parseFromString input PP.shiftExpression
+
+relationalExpressionFromString :: String -> Either ParseError RelationalExpression
+relationalExpressionFromString input = parseFromString input PP.relationalExpression
+

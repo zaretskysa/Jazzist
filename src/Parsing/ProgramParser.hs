@@ -14,7 +14,9 @@ module Parsing.ProgramParser
     postfixExpression,
     unaryExpression,
     multiplicativeExpression,
-    additiveExpression
+    additiveExpression,
+    shiftExpression,
+    relationalExpression
 ) where
 
 import Parsing.Ast

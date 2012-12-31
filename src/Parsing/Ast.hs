@@ -259,7 +259,7 @@ data RelationalExpression =
 -- Bitwise shift operators
 
 data ShiftExpression = 
-    AdditiveShiftExpression AdditiveExpression
+    AdditiveShiftExpression AdditiveExpression --TODO: rename to UnaryShiftExpression ?
     | LeftShiftExpression ShiftExpression AdditiveExpression
     | RightShiftExpression ShiftExpression AdditiveExpression
     | UnsignedRightShiftExpression ShiftExpression AdditiveExpression
