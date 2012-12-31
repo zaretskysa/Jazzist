@@ -9,7 +9,8 @@ module ParsingTests.ParsingTestUtils
     makeUnaryExpression,
     makeMultiplicativeExpression,
     makeAdditiveExpression,
-    makeShiftExpression
+    makeShiftExpression,
+    makeRelationalExpression
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError)
@@ -54,3 +55,5 @@ makeAdditiveExpression input = makeAstStructure input additiveExpressionFromStri
 makeShiftExpression :: String -> ShiftExpression
 makeShiftExpression input = makeAstStructure input shiftExpressionFromString
 
+makeRelationalExpression :: String -> RelationalExpression
+makeRelationalExpression input = makeAstStructure input relationalExpressionFromString

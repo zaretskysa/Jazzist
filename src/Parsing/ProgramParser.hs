@@ -16,7 +16,8 @@ module Parsing.ProgramParser
     multiplicativeExpression,
     additiveExpression,
     shiftExpression,
-    relationalExpression
+    relationalExpression,
+    equalityExpression
 ) where
 
 import Parsing.Ast
