@@ -5,7 +5,8 @@ module ParsingTests.ParsingTestUtils
     makeExpression,
     makeAssignmentExpression,
     makeLeftHandSideExpression,
-    makePostfixExpression
+    makePostfixExpression,
+    makeUnaryExpression
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError)
@@ -38,4 +39,6 @@ makeLeftHandSideExpression input = makeAstStructure input leftHandSideExpression
 makePostfixExpression :: String -> PostfixExpression
 makePostfixExpression input = makeAstStructure input postfixExpressionFromString
 
+makeUnaryExpression :: String -> UnaryExpression
+makeUnaryExpression input = makeAstStructure input unaryExpressionFromString
 

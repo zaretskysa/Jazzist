@@ -17,6 +17,7 @@ import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.PrimaryExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.LeftHandSideExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.PostfixExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.UnaryExpressionTests
+import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.MultiplicativeExpressionTests
 
 main :: IO ()
 main = htfMain htf_importedTests

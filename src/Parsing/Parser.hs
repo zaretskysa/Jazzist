@@ -11,7 +11,8 @@ module Parsing.Parser
     expressionFromString,
     assignmentExpressionFromString,
     postfixExpressionFromString,
-    unaryExpressionFromString
+    unaryExpressionFromString,
+    multiplicativeExpressionFromString
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError, parse, eof)
@@ -64,4 +65,5 @@ postfixExpressionFromString input = parseFromString input PP.postfixExpression
 unaryExpressionFromString :: String -> Either ParseError UnaryExpression
 unaryExpressionFromString input = parseFromString input PP.unaryExpression
 
-
+multiplicativeExpressionFromString :: String -> Either ParseError MultiplicativeExpression
+multiplicativeExpressionFromString input = parseFromString input PP.multiplicativeExpression
