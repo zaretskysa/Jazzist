@@ -12,7 +12,9 @@ module ParsingTests.ParsingTestUtils
     makeShiftExpression,
     makeRelationalExpression,
     makeEqualityExpression,
-    makeBitwiseOrExpression
+    makeBitwiseOrExpression,
+    makeLogicalOrExpression,
+    makeConditionalExpression
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError)
@@ -65,3 +67,9 @@ makeEqualityExpression input = makeAstStructure input equalityExpressionFromStri
 
 makeBitwiseOrExpression :: String -> BitwiseOrExpression
 makeBitwiseOrExpression input = makeAstStructure input bitwiseOrExpressionFromString
+
+makeLogicalOrExpression :: String -> LogicalOrExpression
+makeLogicalOrExpression input = makeAstStructure input logicalOrExpressionFromString
+
+makeConditionalExpression :: String -> ConditionalExpression
+makeConditionalExpression input = makeAstStructure input conditionalExpressionFromString

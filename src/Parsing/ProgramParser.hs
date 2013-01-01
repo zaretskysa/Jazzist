@@ -19,7 +19,8 @@ module Parsing.ProgramParser
     relationalExpression,
     equalityExpression,
     bitwiseOrExpression,
-    logicalOrExpression
+    logicalOrExpression,
+    conditionalExpression
 ) where
 
 import Parsing.Ast

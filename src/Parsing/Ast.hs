@@ -106,7 +106,7 @@ data AssignmentOperator =
     deriving (Show, Eq)
 
 data ConditionalExpression = 
-    LogicalOrConditionalExpression LogicalOrExpression
+    LogicalOrConditionalExpression LogicalOrExpression --TODO: rename to UnaryConditionalExpression
     | TeranaryOperatorConditionalExpression LogicalOrExpression AssignmentExpression AssignmentExpression
     deriving (Show, Eq)
 
