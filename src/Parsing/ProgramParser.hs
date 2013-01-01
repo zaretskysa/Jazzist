@@ -849,12 +849,9 @@ memberNewExpression = do
     member <- memberExpression
     return $ MemberNewExpression member
 
-memberExpression :: TokenParser MemberExpression
-memberExpression = memberExpression'
-
 -- left recursion in grammar... BURN IN HELL!!
-memberExpression' :: TokenParser MemberExpression
-memberExpression' = do
+memberExpression :: TokenParser MemberExpression
+memberExpression = do
     primary <- primaryMemberExpression <|> functionMemberExpression <|> newMemberExpression
     buildFunc <- restOfMemberExpression
     return $ buildFunc primary
