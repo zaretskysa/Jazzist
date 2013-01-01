@@ -23,6 +23,7 @@ import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.ShiftExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.RelationalExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.EqualityExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.BitwiseExpressionTests
+import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.LogicalExpressionTests
 
 main :: IO ()
 main = htfMain htf_importedTests

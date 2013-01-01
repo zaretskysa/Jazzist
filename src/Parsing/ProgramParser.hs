@@ -18,7 +18,8 @@ module Parsing.ProgramParser
     shiftExpression,
     relationalExpression,
     equalityExpression,
-    bitwiseOrExpression
+    bitwiseOrExpression,
+    logicalOrExpression
 ) where
 
 import Parsing.Ast
