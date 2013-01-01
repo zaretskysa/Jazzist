@@ -124,6 +124,31 @@ test_binaryBitwiseOrAssignExpr = successful "i |= j"
       (ConditionalAssignmentExpression
          (makeConditionalExpression "j") ) )
 
+-- Comman operator
+
+successfulExpression :: String -> Expression -> Assertion
+successfulExpression input expected = 
+    case expressionFromString input of
+        (Left _) -> assertFailure "Expected successful parsing, but error happened"
+        (Right actual) ->  assertEqual expected actual
+
+test_unaryExpression = successfulExpression "i" 
+    (Expression 
+      [ makeAssignmentExpression "i"
+      ] )
+
+test_commaOperator = successfulExpression "i, j" 
+    (Expression 
+      [ makeAssignmentExpression "i"
+      , makeAssignmentExpression "j"
+      ] )
+
+test_doubleCommaOperator = successfulExpression "i, j, k"
+    (Expression 
+      [ makeAssignmentExpression "i"
+      , makeAssignmentExpression "j"
+      , makeAssignmentExpression "k"
+      ] )
 
 --TODO: add failing tests
 
