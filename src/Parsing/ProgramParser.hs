@@ -20,7 +20,8 @@ module Parsing.ProgramParser
     equalityExpression,
     bitwiseOrExpression,
     logicalOrExpression,
-    conditionalExpression
+    conditionalExpression,
+    statement
 ) where
 
 import Parsing.Ast

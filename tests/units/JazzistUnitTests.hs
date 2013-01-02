@@ -27,5 +27,7 @@ import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.LogicalExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.ConditionalExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.AssignmentExpressionTests
 
+import {-@ HTF_TESTS @-} ParsingTests.StatementTests.BlockStatementTests
+
 main :: IO ()
 main = htfMain htf_importedTests
