@@ -32,6 +32,7 @@ import {-@ HTF_TESTS @-} ParsingTests.StatementTests.VariableStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.ExpressionStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.IfStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.IterationStatementTests
+import {-@ HTF_TESTS @-} ParsingTests.StatementTests.ContinueStatementTests
 
 main :: IO ()
 main = htfMain htf_importedTests
