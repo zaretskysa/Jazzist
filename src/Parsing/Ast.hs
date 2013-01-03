@@ -51,7 +51,7 @@ data IterationStatement =
     | ExprTripletForIterationStatement MaybeExpression MaybeExpression MaybeExpression Statement
     | VarAndDoubleExprForIterationStatement [VariableDeclaration] MaybeExpression MaybeExpression Statement --use non empty list
     | LHSExprInExprForIterationStatement LeftHandSideExpression Expression Statement
-    | VarInExprIteratioinStatement  VariableDeclaration Expression Statement
+    | VarInExprIteratioinStatement VariableDeclaration Expression Statement
     deriving (Show, Eq)
 
 data ReturnStatement =
