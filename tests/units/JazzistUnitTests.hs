@@ -30,6 +30,7 @@ import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.AssignmentExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.BlockStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.VariableStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.ExpressionStatementTests
+import {-@ HTF_TESTS @-} ParsingTests.StatementTests.IfStatementTests
 
 main :: IO ()
 main = htfMain htf_importedTests
