@@ -36,6 +36,7 @@ import {-@ HTF_TESTS @-} ParsingTests.StatementTests.ContinueStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.BreakStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.ReturnStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.WithStatementTests
+import {-@ HTF_TESTS @-} ParsingTests.StatementTests.SwitchStatementTests
 
 main :: IO ()
 main = htfMain htf_importedTests

@@ -60,7 +60,7 @@ data ReturnStatement =
     deriving (Show, Eq)
 
 data CaseBlock = 
-    CaseBlock [CaseClause] MaybeDefaultClause [CaseClause] 
+    CaseBlock [CaseClause] MaybeDefaultClause [CaseClause] --TODO: merge Case Clauses ?
     deriving (Show, Eq)
 
 data CaseClause = 
