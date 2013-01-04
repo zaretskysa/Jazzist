@@ -237,4 +237,7 @@ betweenCurlyBrackets p = between leftCurlyBracket rightCurlyBracket p
 betweenRoundBrackets :: TokenParser a -> TokenParser a
 betweenRoundBrackets p = between leftRoundBracket rightRoundBracket p
 
+betweenSquareBrackets :: TokenParser a -> TokenParser a
+betweenSquareBrackets p = between leftSquareBracket rightSquareBracket p
+
 

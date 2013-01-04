@@ -935,9 +935,7 @@ nonEmptyRestOfCallExpression base =
 
 nonEmptyRestOfPropertyAccessByBracketsCallExpression :: CallExpression -> TokenParser CallExpression
 nonEmptyRestOfPropertyAccessByBracketsCallExpression base = do
-    leftSquareBracket
-    expr <- expression
-    rightSquareBracket
+    expr <- betweenSquareBrackets expression
     buildRestOfCallExpression $ PropertyAccessByBracketsCallExpression base expr
 
 nonEmptyRestOfPropertyAccessByDotCallExpression :: CallExpression -> TokenParser CallExpression
