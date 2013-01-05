@@ -14,7 +14,8 @@ module ParsingTests.ParsingTestUtils
     makeEqualityExpression,
     makeBitwiseOrExpression,
     makeLogicalOrExpression,
-    makeConditionalExpression
+    makeConditionalExpression,
+    makeProgram
 ) where
 
 import Text.ParserCombinators.Parsec (ParseError)
@@ -73,3 +74,6 @@ makeLogicalOrExpression input = makeAstStructure input logicalOrExpressionFromSt
 
 makeConditionalExpression :: String -> ConditionalExpression
 makeConditionalExpression input = makeAstStructure input conditionalExpressionFromString
+
+makeProgram :: String -> Program
+makeProgram input = makeAstStructure input programFromString

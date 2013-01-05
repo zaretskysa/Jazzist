@@ -3,8 +3,9 @@ module Parsing.TokenParser
     module Text.ParserCombinators.Parsec.Prim,
     module Text.ParserCombinators.Parsec.Combinator,
     module Lexing.Token,
+
     TokenParser,
-    maybeParse,
+
     identifierToken,
     punctuatorToken,
     keywordToken,
@@ -12,7 +13,8 @@ module Parsing.TokenParser
     booleanLiteralToken,
     numericLiteralToken,
     stringLiteralToken,
-    identifierName
+    identifierName,
+    lineTerminatorToken
 ) where
 
 import Text.ParserCombinators.Parsec.Combinator
@@ -21,23 +23,22 @@ import Text.ParserCombinators.Parsec.Pos
 
 import Lexing.Token
 
+
 type TokenParser a = GenParser Token () a
 
--- TODO: remove, use optionMaybe instead
-maybeParse :: TokenParser a -> TokenParser (Maybe a)
-maybeParse p = justParse p <|> return Nothing
-
-justParse :: TokenParser a -> TokenParser (Maybe a)
-justParse p = do
-    value <- try $ p
-    return $ Just value
-
-acceptAnyToken :: TokenParser Token
-acceptAnyToken = token showTok posFromTok testTok
+acceptAnyRawToken :: TokenParser Token
+acceptAnyRawToken = token showTok posFromTok testTok
     where
         showTok t = show t
         posFromTok _ = initialPos "js tokens source"
         testTok t = Just t
+
+skipLeadingLineTerminators :: TokenParser a -> TokenParser a
+skipLeadingLineTerminators p = (skipMany lineTerminatorToken) >> p
+
+-- skip leading line terminators
+acceptAnyToken :: TokenParser Token
+acceptAnyToken = skipLeadingLineTerminators acceptAnyRawToken
 
 identifierToken :: TokenParser String
 identifierToken = try $ do
@@ -121,3 +122,10 @@ stringLiteralToken = try $ do
     case tok of
         StringLiteralToken str -> return str
         _ -> fail "StringLiteralToken"
+
+lineTerminatorToken :: TokenParser ()
+lineTerminatorToken = try $ do
+    tok <- acceptAnyRawToken 
+    case tok of
+        LineTerminatorToken -> return ()
+        _ -> fail "LineTerminatorToken"

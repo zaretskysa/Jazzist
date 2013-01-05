@@ -20,5 +20,10 @@ test_justContinue = successful "continue ;"
 test_continueWithLabel = successful "continue start ;"
     (ContinueStmt $ Just $ "start")
 
+test_justContinueWithLineTerminator = successful "continue \n ;"
+    (ContinueStmt Nothing)
 
---TODO: no lie terminator tests
+test_lineTerminatorWithinLabelledContinue1 = successful "continue start \n ;"
+    (ContinueStmt $ Just $ "start")
+
+test_lineTerminatorWithinLabelledContinue2 = failed "continue \n start ;"

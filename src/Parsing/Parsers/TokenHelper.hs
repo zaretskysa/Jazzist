@@ -2,6 +2,7 @@ module Parsing.Parsers.TokenHelper where
 
 import Parsing.TokenParser
 
+
 comma :: TokenParser Punctuator
 comma = punctuatorToken CommaPunctuator 
 
@@ -240,4 +241,7 @@ betweenRoundBrackets p = between leftRoundBracket rightRoundBracket p
 betweenSquareBrackets :: TokenParser a -> TokenParser a
 betweenSquareBrackets p = between leftSquareBracket rightSquareBracket p
 
+--------------------------------------------------
 
+noLineTerminatorHere :: TokenParser ()
+noLineTerminatorHere = notFollowedBy lineTerminatorToken

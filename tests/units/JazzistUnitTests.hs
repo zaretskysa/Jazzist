@@ -41,5 +41,7 @@ import {-@ HTF_TESTS @-} ParsingTests.StatementTests.LabelledStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.ThrowStatementTests
 import {-@ HTF_TESTS @-} ParsingTests.StatementTests.TryStatementTests
 
+import {-@ HTF_TESTS @-} ParsingTests.LineTerminatorTests
+
 main :: IO ()
 main = htfMain htf_importedTests

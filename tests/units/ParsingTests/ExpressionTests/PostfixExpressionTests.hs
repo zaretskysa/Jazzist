@@ -31,10 +31,12 @@ failed input =
 test_lhsPostfixExpr = successful "i"
     (LHSPostfixExpression $ makeLeftHandSideExpression "i")
 
--- TODO: Add no line terminator test
 test_incrementPlusPostfixExpr = successful "i++"
     (IncrementPlusPostfixExpression $ makeLeftHandSideExpression "i")
 
--- TODO: Add no line terminator test
 test_incrementMinusPostfixExpr = successful "i--"
     (IncrementMinusPostfixExpression $ makeLeftHandSideExpression "i")
+
+test_incrementPlusPostfixExprWithLineTerminator = failed "i\n++"
+
+test_incrementMinusPostfixExprWithLineTerminator = failed "i\n--"

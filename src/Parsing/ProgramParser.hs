@@ -32,6 +32,7 @@ import Parsing.Parsers.TokenHelper
 program :: TokenParser Program
 program = do
     srcElements <- many sourceElement
+    skipMany lineTerminatorToken
     return $ Program srcElements
 
 sourceElement :: TokenParser SourceElement
@@ -120,7 +121,7 @@ finally = do
 throwStatement :: TokenParser Statement
 throwStatement = do
     throwKeyword
-    --TODO: no line terminator here
+    noLineTerminatorHere
     expr <- expression
     semicolon
     return $ ThrowStmt expr
@@ -143,7 +144,7 @@ caseBlock :: TokenParser CaseBlock
 caseBlock = do
     leftCurlyBracket
     beginClauses <- many caseClause
-    defaultPart <- maybeParse defaultClause
+    defaultPart <- optionMaybe defaultClause
     endClauses <- many caseClause
     rightCurlyBracket
     return $ CaseBlock beginClauses defaultPart endClauses
@@ -172,21 +173,21 @@ withStatement = do
 returnStatement :: TokenParser Statement
 returnStatement = do
     returnKeyword
-    expr <- maybeParse expression --TODO: no line termimator here
+    expr <- optionMaybe (noLineTerminatorHere >> expression)
     semicolon
     return $ ReturnStmt expr
 
 breakStatement :: TokenParser Statement
 breakStatement = do
     breakKeyword
-    ident <- maybeParse identifierToken --TODO: no line termimator here
+    ident <- optionMaybe (noLineTerminatorHere >> identifierToken)
     semicolon
     return $ BreakStmt ident
 
 continueStatement :: TokenParser Statement
 continueStatement = do
     continueKeyword
-    ident <- maybeParse identifierToken --TODO: no line termimator here
+    ident <- optionMaybe (noLineTerminatorHere >> identifierToken)
     semicolon
     return $ ContinueStmt ident
 
@@ -229,7 +230,7 @@ exprTripletForIterationStatement = do
     return $ IterationStmt $ ExprTripletForIterationStatement expr1 expr2 expr3 stmt
 
 maybeExpression :: TokenParser MaybeExpression
-maybeExpression = maybeParse expression
+maybeExpression = optionMaybe expression
 
 varAndDoubleExprForIterationStatement :: TokenParser Statement
 varAndDoubleExprForIterationStatement = do
@@ -276,7 +277,7 @@ ifStatement = do
     ifKeyword
     expr <- betweenRoundBrackets expression
     stmt1 <- statement
-    stmt2 <- maybeParse (elseKeyword >> statement)
+    stmt2 <- optionMaybe (elseKeyword >> statement)
     return $ IfStmt expr stmt1 stmt2
 
 expressionStatement :: TokenParser Statement
@@ -314,7 +315,7 @@ variableDeclaration = do
     return $ VariableDeclaration ident initial
 
 maybeInitializer :: TokenParser MaybeInitializer
-maybeInitializer = maybeParse initializer
+maybeInitializer = optionMaybe initializer
 
 initializer :: TokenParser Initializer
 initializer = do
@@ -814,14 +815,14 @@ lhsPostfixExpression = do
 incrementPlusPostfixExpression :: TokenParser PostfixExpression
 incrementPlusPostfixExpression = do 
     lhs <- leftHandSideExpression
-    --TODO: no line terminator here
+    noLineTerminatorHere
     incrementPlus
     return $ IncrementPlusPostfixExpression lhs
 
 incrementMinusPostfixExpression :: TokenParser PostfixExpression
 incrementMinusPostfixExpression = do 
     lhs <- leftHandSideExpression
-    --TODO: no line terminator here
+    noLineTerminatorHere
     incrementMinus
     return $ IncrementMinusPostfixExpression lhs
 
@@ -891,7 +892,7 @@ functionMemberExpression = do
 functionExpression :: TokenParser FunctionExpression
 functionExpression = do
     functionKeyword
-    name <- maybeParse identifierToken
+    name <- optionMaybe identifierToken
     params <- betweenRoundBrackets $ sepBy identifierToken comma
     body <- betweenCurlyBrackets functionBody
     return $ FunctionExpression name params body
@@ -1005,7 +1006,7 @@ arrayLiteral = do
 
 arrayLiteralElements :: TokenParser [MaybeAssignmentExpression]
 arrayLiteralElements = do
-    assignments <- sepBy (maybeParse assignmentExpression) comma
+    assignments <- sepBy (optionMaybe assignmentExpression) comma
     if null assignments
         then return []
         else case last assignments of

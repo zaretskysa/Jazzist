@@ -20,5 +20,10 @@ test_justBreak = successful "break ;"
 test_breakWithLabel = successful "break start ;"
     (BreakStmt $ Just $ "start")
 
+test_justBreakWithLineTerminator = successful "break \n ;"
+    (BreakStmt Nothing)
 
---TODO: no lie terminator tests
+test_lineTerminatorWithinLabelledBreak1 = failed "break \n start ;"
+
+test_lineTerminatorWithinLabelledBreak2 = successful "break start \n ;"
+    (BreakStmt $ Just $ "start")

@@ -19,4 +19,7 @@ test_throw = successful "throw 666 ;"
 
 test_emptyThrow = failed "throw ;"
 
---TODO: no line terminator tests
+test_throwWithLineTerminator1 = successful "throw 666 \n ;"
+    (ThrowStmt $ makeExpression "666")
+
+test_throwWithLineTerminator2 = failed "throw \n 666 ;"

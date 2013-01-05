@@ -20,5 +20,10 @@ test_justReturn = successful "return ;"
 test_returnWithLabel = successful "return xxx ;"
     (ReturnStmt $ Just $ makeExpression "xxx")
 
+test_justReturnWithLineTerminator = successful "return \n ;"
+    (ReturnStmt Nothing)
 
---TODO: no lie terminator tests
+test_lineTerminatorWithinLabelledReturn1 = successful "return xxx \n ;"
+    (ReturnStmt $ Just $ makeExpression "xxx")
+
+test_lineTerminatorWithinLabelledReturn2 = failed "return \n xxx ;"
