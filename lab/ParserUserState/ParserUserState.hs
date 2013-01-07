@@ -13,8 +13,12 @@ data Token
     | PlusToken
     deriving (Show, Eq)
 
-data Program = Program [Expression]
+data Program = Program [Statement]
     deriving (Show, Eq)
+
+data Statement = 
+    ExpressionStatement Expression
+    deriving (Show, Eq) 
 
 data Expression
     = UnaryExpression Number
@@ -62,10 +66,6 @@ semicolonToken = try $ do
         SemicolonToken -> return ()
         _ -> fail "expecting semicolon"
 
---
-autoSemicolonToken :: TokenParser ()
-autoSemicolonToken = option () semicolonToken >> return ()
-
 plusToken :: TokenParser ()
 plusToken = try $ do
     t <- rawToken 
@@ -73,27 +73,39 @@ plusToken = try $ do
         PlusToken -> return ()
         _ -> fail "expecting plus"
 
+autoSemicolon :: TokenParser ()
+autoSemicolon = do 
+    st <- getState
+    case st of
+        (ParserState True) -> (option () semicolonToken)
+        (ParserState False) -> (semicolonToken)
 
 -- Ast
 
 program :: TokenParser Program
 program = do
-    es <- many expression
+    ss <- many statement
     eof
-    return $ Program es
+    return $ Program ss
+
+statement :: TokenParser Statement
+statement = semicolonInserter $ do
+    e <- expression
+    autoSemicolon
+    return $ ExpressionStatement e
 
 expression :: TokenParser Expression
-expression = try unaryExpression <|> plusExpression
+expression = try plusExpression <|> unaryExpression
 
 unaryExpression :: TokenParser Expression
-unaryExpression = 
-    numberToken >> autoSemicolonToken >> 
-    (return $ UnaryExpression Number1)
+unaryExpression = do
+    numberToken
+    return $ UnaryExpression Number1
 
 plusExpression :: TokenParser Expression
-plusExpression = 
-    numberToken >> plusToken >> numberToken >> autoSemicolonToken >> 
-    (return $ PlusExpression Number1 Number2)
+plusExpression = do
+    numberToken >> plusToken >> numberToken
+    return $ PlusExpression Number1 Number2
 
 
 -----------------------
@@ -101,6 +113,12 @@ plusExpression =
 parseFromTokens :: [Token] -> Either ParseError Program
 parseFromTokens input = runParser program (ParserState False) "tokens" input
 
+semicolonInserter :: TokenParser a -> TokenParser a
+semicolonInserter p = try p <|> do
+    updateState setLineTerminatorState
+    res <- p
+    updateState clearLineTerminatorState
+    return res
 
 -- test inputs
 -- We are expecting semicolon at the end of expression
@@ -117,3 +135,4 @@ input3 = [NumberToken Number1]
 -- "1 1 + 2;" - must be parsed as "1; 1 + 2;"
 input4 = [NumberToken Number1, NumberToken Number1, PlusToken, NumberToken Number1, SemicolonToken]
 
+input5 = [NumberToken Number1, PlusToken, NumberToken Number1]
