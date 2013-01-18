@@ -70,7 +70,7 @@ statement =
     <|> debuggerStatement
 
 debuggerStatement :: TokenParser Statement
-debuggerStatement = debuggerKeyword >> semicolon >> return DebuggerStmt
+debuggerStatement = debuggerKeyword >> autoSemicolon >> return DebuggerStmt
 
 tryStatement :: TokenParser Statement
 tryStatement = do
@@ -123,7 +123,7 @@ throwStatement = do
     throwKeyword
     noLineTerminatorHere
     expr <- expression
-    semicolon
+    autoSemicolon
     return $ ThrowStmt expr
 
 labelledStatement :: TokenParser Statement
@@ -174,21 +174,21 @@ returnStatement :: TokenParser Statement
 returnStatement = do
     returnKeyword
     expr <- optionMaybe (noLineTerminatorHere >> expression)
-    semicolon
+    autoSemicolon
     return $ ReturnStmt expr
 
 breakStatement :: TokenParser Statement
 breakStatement = do
     breakKeyword
     ident <- optionMaybe (noLineTerminatorHere >> identifierToken)
-    semicolon
+    autoSemicolon
     return $ BreakStmt ident
 
 continueStatement :: TokenParser Statement
 continueStatement = do
     continueKeyword
     ident <- optionMaybe (noLineTerminatorHere >> identifierToken)
-    semicolon
+    autoSemicolon
     return $ ContinueStmt ident
 
 iterationStatement :: TokenParser Statement
@@ -206,7 +206,7 @@ doWhileIterationStatement = do
     stmt <- statement
     whileKeyword
     expr <- betweenRoundBrackets expression
-    semicolon
+    autoSemicolon
     return $ IterationStmt $ DoWhileIterationStatement stmt expr
 
 whileIterationStatement :: TokenParser Statement
@@ -285,7 +285,7 @@ expressionStatement = do
     try $ notFollowedBy leftCurlyBracket
     try $ notFollowedBy functionKeyword
     expr <- expression
-    semicolon
+    autoSemicolon
     return $ ExpressionStmt expr
 
 blockStatement :: TokenParser Statement
@@ -305,7 +305,7 @@ variableStatement :: TokenParser Statement
 variableStatement = do
     varKeyword
     varDeclList <- sepBy1 variableDeclaration comma
-    semicolon
+    autoSemicolon
     return $ VariableStmt varDeclList
 
 variableDeclaration :: TokenParser VariableDeclaration

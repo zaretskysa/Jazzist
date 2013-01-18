@@ -12,9 +12,6 @@ colon = punctuatorToken ColonPunctuator
 dot :: TokenParser Punctuator
 dot = punctuatorToken DotPunctuator 
 
-semicolon :: TokenParser Punctuator
-semicolon = punctuatorToken SemicolonPunctuator 
-
 leftCurlyBracket :: TokenParser Punctuator
 leftCurlyBracket = punctuatorToken LeftCurlyBracketPunctuator
 

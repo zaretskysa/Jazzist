@@ -5,7 +5,7 @@ module Parsing.TokenParser
     module Lexing.Token,
 
     TokenParser,
-
+    
     identifierToken,
     punctuatorToken,
     keywordToken,
@@ -14,8 +14,17 @@ module Parsing.TokenParser
     numericLiteralToken,
     stringLiteralToken,
     identifierName,
-    lineTerminatorToken
+    lineTerminatorToken,
+
+    ParserState(..),
+    initialState,
+
+    semicolon,
+    autoSemicolon,
+
 ) where
+
+import Control.Monad
 
 import Text.ParserCombinators.Parsec.Combinator
 import Text.ParserCombinators.Parsec.Prim
@@ -24,7 +33,23 @@ import Text.ParserCombinators.Parsec.Pos
 import Lexing.Token
 
 
-type TokenParser a = GenParser Token () a
+type TokenParser a = GenParser Token ParserState a
+
+data ParserState = ParserState 
+    { previousTokenIsLineTerminator :: Bool }
+    deriving (Show)
+
+initialState :: ParserState
+initialState = ParserState 
+    { previousTokenIsLineTerminator = False }
+
+setLineTerminatorState :: ParserState -> ParserState
+setLineTerminatorState _ = ParserState True
+
+clearLineTerminatorState :: ParserState -> ParserState
+clearLineTerminatorState _ = ParserState False
+
+----------------------
 
 acceptAnyRawToken :: TokenParser Token
 acceptAnyRawToken = token showTok posFromTok testTok
@@ -44,7 +69,9 @@ identifierToken :: TokenParser String
 identifierToken = try $ do
     t <- acceptAnyToken 
     case t of
-        IdentifierToken ident -> return ident
+        IdentifierToken ident -> do 
+            updateState clearLineTerminatorState
+            return ident
         _ -> fail "IdentifierToken"
 
 identifierName :: TokenParser String
@@ -70,62 +97,93 @@ identifierNameFromBoleanLiteral = do
     _ <- booleanLiteralToken
     return "boolIdentifierName"
 
-punctuatorToken :: Punctuator -> TokenParser Punctuator
-punctuatorToken p = try $ do
+anyPunctuatorToken :: TokenParser Punctuator
+anyPunctuatorToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        PunctuatorToken x -> if x == p 
-            then return p 
-            else fail $ "Punctuator " ++ show p
-        _ -> fail "PunctuatoToken"
+        PunctuatorToken p -> do
+            updateState clearLineTerminatorState
+            return p
+        _ -> fail "KeywordToken"
+
+punctuatorToken :: Punctuator -> TokenParser Punctuator
+punctuatorToken p = try $ do
+    x <- anyPunctuatorToken 
+    if x == p 
+        then return p 
+        else fail $ "Punctuator " ++ show p
 
 anyKeywordToken :: TokenParser Keyword
 anyKeywordToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        KeywordToken key -> return key
+        KeywordToken key -> do
+            updateState clearLineTerminatorState
+            return key
         _ -> fail "KeywordToken"
 
 keywordToken :: Keyword -> TokenParser Keyword
 keywordToken k = try $ do
-    tok <- acceptAnyToken 
-    case tok of
-        KeywordToken x -> if x == k 
-            then return k
-            else fail $ "Keyword " ++ show k
-        _ -> fail "KeywordToken"
+    x <- anyKeywordToken 
+    if x == k 
+        then return k
+        else fail $ "Keyword " ++ show k
 
 nullLiteralToken :: TokenParser ()
 nullLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        NullLiteralToken -> return ()
+        NullLiteralToken -> do
+            updateState clearLineTerminatorState
+            return ()
         _ -> fail "NullLiteralToken"
 
 booleanLiteralToken :: TokenParser Bool
 booleanLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        BooleanLiteralToken bool -> return bool
+        BooleanLiteralToken bool -> do
+            updateState clearLineTerminatorState
+            return bool
         _ -> fail "BooleanLiteralToken"
 
 numericLiteralToken :: TokenParser Double
 numericLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        NumericLiteralToken num -> return num
+        NumericLiteralToken num -> do
+            updateState clearLineTerminatorState
+            return num
         _ -> fail "NumericLiteralToken"
 
 stringLiteralToken :: TokenParser String
 stringLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        StringLiteralToken str -> return str
+        StringLiteralToken str -> do
+            updateState clearLineTerminatorState
+            return str
         _ -> fail "StringLiteralToken"
 
 lineTerminatorToken :: TokenParser ()
 lineTerminatorToken = try $ do
     tok <- acceptAnyRawToken 
     case tok of
-        LineTerminatorToken -> return ()
+        LineTerminatorToken -> do
+            updateState setLineTerminatorState
+            return ()
         _ -> fail "LineTerminatorToken"
+
+semicolon :: TokenParser Punctuator
+semicolon = punctuatorToken SemicolonPunctuator
+
+autoSemicolon :: TokenParser Punctuator
+autoSemicolon = skipLeadingLineTerminators $ do
+    prevTokIsLT <- liftM previousTokenIsLineTerminator getState
+    input <- getInput
+    let emptyInput = null input
+    let nextTokIsRightBrace = (not emptyInput) && (head input == PunctuatorToken RightCurlyBracketPunctuator)
+    let enableAutoSemi = prevTokIsLT || emptyInput || nextTokIsRightBrace
+    if enableAutoSemi
+        then option SemicolonPunctuator semicolon
+        else semicolon

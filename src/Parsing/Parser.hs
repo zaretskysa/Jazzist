@@ -23,17 +23,18 @@ module Parsing.Parser
     statementFromString
 ) where
 
-import Text.ParserCombinators.Parsec (ParseError, parse, eof)
+import Text.ParserCombinators.Parsec (ParseError, runParser, eof)
 
 import Parsing.Ast
 import Lexing.Token
 import Lexing.Lexer (tokenize)
-import Parsing.TokenParser (TokenParser)
+import Parsing.TokenParser (TokenParser, initialState)
 import qualified Parsing.ProgramParser as PP
 
 
 parseFromTokens :: [Token] -> TokenParser a -> Either ParseError a
-parseFromTokens tokens parser = parse (parseWholeInput parser) "tokens input" tokens
+parseFromTokens tokens parser = 
+    runParser (parseWholeInput parser) initialState "" tokens
 
 parseWholeInput :: TokenParser a -> TokenParser a
 parseWholeInput parser = do

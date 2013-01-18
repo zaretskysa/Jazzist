@@ -1,7 +1,9 @@
 module ParserUserState where
 
+import Debug.Trace
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Pos
+import Control.Monad
 
 
 data Number = Number1 | Number2
@@ -74,7 +76,7 @@ plusToken = try $ do
         _ -> fail "expecting plus"
 
 autoSemicolon :: TokenParser ()
-autoSemicolon = do 
+autoSemicolon = do
     st <- getState
     case st of
         (ParserState True) -> (option () semicolonToken)
@@ -115,11 +117,15 @@ parseFromTokens input = runParser program (ParserState False) "tokens" input
 
 semicolonInserter :: TokenParser a -> TokenParser a
 semicolonInserter p = try p <|> do
-    updateState setLineTerminatorState
-    res <- p
-    updateState clearLineTerminatorState
-    return res
+    trace "setting state" (updateState setLineTerminatorState)
+    res <- optionMaybe (p >> p)
+    trace "reseting state" (updateState clearLineTerminatorState)
+    case res of
+        Nothing -> fail "not parsed"
+        (Just x) -> return x
 
+
+        
 -- test inputs
 -- We are expecting semicolon at the end of expression
 
