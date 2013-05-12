@@ -1,1 +1,15 @@
 JavaScript parser implemented in Haskell
+
+To build the project you need to install packages:
+1. HTF
+2. HUnit
+3. parsec
+4. pretty-show
+You can install packages using your distro package control system or using cabal:
+cabal update && cabal install HTF HUnit parsec pretty-show
+
+To build project use command
+cabal configure && cabal build
+
+To build project with tests and run tests use command
+cabal configure --enable-tests && cabal build && cabal test
