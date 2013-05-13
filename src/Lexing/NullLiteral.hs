@@ -1,6 +1,6 @@
 module Lexing.NullLiteral
 (
-    module Lexing.Token,
+    module Lexing.LocatedToken,
 
     nullLiteral,
     isNullLiteral
@@ -8,10 +8,12 @@ module Lexing.NullLiteral
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Token
+import Lexing.LocatedToken
 
-nullLiteral :: Parser Token
-nullLiteral = string "null" >> return NullLiteralToken
+nullLiteral :: Parser LocatedToken
+nullLiteral = do
+    string "null"
+    return $ makeLocatedToken NullLiteralToken
 
 isNullLiteral :: String -> Bool
 isNullLiteral s = s == "null"

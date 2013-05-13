@@ -1,19 +1,19 @@
 module Lexing.NumericLiteral
 (
-	module Lexing.Token,
+	module Lexing.LocatedToken,
 
 	numericLiteral
 ) where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Token
+import Lexing.LocatedToken
 import Lexing.Utils
 
-numericLiteral :: Parser Token
+numericLiteral :: Parser LocatedToken
 numericLiteral = do
 	num <- try hexIntegerLiteral <|> decimalLiteral
-	return $ NumericLiteralToken num
+	return $ makeLocatedToken $ NumericLiteralToken num
 
 decimalLiteral :: Parser Double
 decimalLiteral = do

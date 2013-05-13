@@ -1,6 +1,6 @@
 module Lexing.LineTerminator
 (
-    module Lexing.Token,
+    module Lexing.LocatedToken,
 
     lineTerminator,
     lineTerminatorChar,
@@ -9,7 +9,7 @@ module Lexing.LineTerminator
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Token
+import Lexing.LocatedToken
 
 lineTerminatorSequence :: Parser Char
 lineTerminatorSequence = do
@@ -28,8 +28,10 @@ carriageReturnWithoutLineFeed = do
 	notFollowedBy lineFeed
 	return cr
 
-lineTerminator :: Parser Token
-lineTerminator = lineTerminatorChar >> return LineTerminatorToken
+lineTerminator :: Parser LocatedToken
+lineTerminator = do
+    lineTerminatorChar
+    return $ makeLocatedToken LineTerminatorToken
 
 lineTerminatorChar :: Parser Char
 lineTerminatorChar = lineFeed <|> carriageReturn <|> lineSeparator <|> paragraphSeparator

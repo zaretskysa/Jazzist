@@ -1,18 +1,18 @@
 module Lexing.Punctuator 
 (
-    module Lexing.Token,
+    module Lexing.LocatedToken,
     
     punctuator
 ) where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Token
+import Lexing.LocatedToken
 
-punctuator :: Parser Token
+punctuator :: Parser LocatedToken
 punctuator = do
     p <- punctuator'
-    return $ PunctuatorToken p
+    return $ makeLocatedToken $ PunctuatorToken p
 
 punctuator' :: Parser Punctuator
 punctuator' = do

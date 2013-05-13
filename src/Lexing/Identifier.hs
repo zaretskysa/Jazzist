@@ -1,6 +1,6 @@
 module Lexing.Identifier
 (
-	module Lexing.Token,
+	module Lexing.LocatedToken,
 
 	identifier
 ) where
@@ -8,18 +8,18 @@ module Lexing.Identifier
 import Data.Char
 import Text.ParserCombinators.Parsec
 
-import Lexing.Token
+import Lexing.LocatedToken
 import Lexing.Keyword
 import Lexing.NullLiteral
 import Lexing.BooleanLiteral
 import Lexing.EscapeSequence
 
-identifier :: Parser Token
+identifier :: Parser LocatedToken
 identifier = try $ do
 	name <- identifierName
 	if isReservedWord name
 		then fail "identifier can not be a reserved word"
-		else return $ IdentifierToken name
+		else return $ makeLocatedToken $ IdentifierToken name
 
 isReservedWord :: String -> Bool
 isReservedWord s = isNullLiteral s || isBooleanLiteral s || isKeyword s

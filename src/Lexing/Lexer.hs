@@ -1,6 +1,6 @@
 module Lexing.Lexer
 (
-    module Lexing.Token,
+    module Lexing.LocatedToken,
 
     tokenize
 ) where
@@ -8,6 +8,7 @@ module Lexing.Lexer
 import Text.ParserCombinators.Parsec hiding (tokens, token)
 
 import Lexing.Token
+import Lexing.LocatedToken
 import Lexing.NullLiteral
 import Lexing.BooleanLiteral
 import Lexing.Keyword
@@ -19,17 +20,17 @@ import Lexing.Punctuator
 import Lexing.LineTerminator
 import Lexing.WhiteSpace
 
-tokenize :: String -> Either ParseError [Token]
+tokenize :: String -> Either ParseError [LocatedToken]
 tokenize input = parse tokens "JsTokenizer" input
 
-tokens :: Parser [Token]
+tokens :: Parser [LocatedToken]
 tokens = do 
     whiteSpaces
     toks <- sepBy token whiteSpaces
     whiteSpaces >> eof
     return toks
 
-token :: Parser Token
+token :: Parser LocatedToken
 token = 
     identifier
     <|> try nullLiteral

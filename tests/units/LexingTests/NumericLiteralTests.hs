@@ -12,7 +12,7 @@ import Lexing.Token
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ NumericLiteralToken result)
+    (Just $ makeLocatedToken $ NumericLiteralToken result)
     (parseWholeTestInput numericLiteral input)
 
 failed input = assertEqual

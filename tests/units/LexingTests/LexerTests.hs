@@ -9,12 +9,15 @@ import Test.Framework
 import Test.Framework.TestTypes
 
 import Lexing.Lexer
+import Lexing.LocatedToken
+
 
 successful :: String -> [Token] -> Assertion
 successful input expected = 
+    let expected' = map makeLocatedToken expected in
     case tokenize input of
         (Left _) -> assertFailure "Left value returned, but right expected"
-        (Right tokens) ->  assertEqual expected tokens
+        (Right tokens) ->  assertEqual expected' tokens
 
 failed :: String -> Assertion
 failed input = 

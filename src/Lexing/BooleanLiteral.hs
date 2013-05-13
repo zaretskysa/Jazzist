@@ -1,6 +1,6 @@
 module Lexing.BooleanLiteral
 (
-    module Lexing.Token,
+    module Lexing.LocatedToken,
 
     booleanLiteral,
     isBooleanLiteral    
@@ -8,18 +8,18 @@ module Lexing.BooleanLiteral
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Token
+import Lexing.LocatedToken
 
-booleanLiteral :: Parser Token
+booleanLiteral :: Parser LocatedToken
 booleanLiteral = do
 	value <- string "true" <|> string "false"
 	return $ stringToBoolean value
 
-stringToBoolean :: String -> Token
+stringToBoolean :: String -> LocatedToken
 stringToBoolean str = 
     if str == "true"
-        then BooleanLiteralToken True
-        else BooleanLiteralToken False
+        then makeLocatedToken $ BooleanLiteralToken True
+        else makeLocatedToken $ BooleanLiteralToken False
 
 isBooleanLiteral :: String -> Bool
 isBooleanLiteral s = s `elem` ["true", "false"]

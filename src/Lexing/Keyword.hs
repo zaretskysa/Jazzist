@@ -1,6 +1,6 @@
 module Lexing.Keyword
 (
-	module Lexing.Token,
+	module Lexing.LocatedToken,
 
 	keyword,
 	isKeyword
@@ -8,12 +8,12 @@ module Lexing.Keyword
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Token
+import Lexing.LocatedToken
 
-keyword :: Parser Token
+keyword :: Parser LocatedToken
 keyword = do 
 	value <- keyword'
-	return $ KeywordToken value
+	return $ makeLocatedToken $ KeywordToken value
 
 keyword' :: Parser Keyword
 keyword' = do

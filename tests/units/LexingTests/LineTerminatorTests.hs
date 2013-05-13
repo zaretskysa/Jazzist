@@ -12,7 +12,7 @@ import Lexing.Token
 import TestUtils
 
 successful input = assertEqual
-    (Just LineTerminatorToken)
+    (Just $ makeLocatedToken LineTerminatorToken)
     (parseWholeTestInput lineTerminator input)
 
 failed input = assertEqual

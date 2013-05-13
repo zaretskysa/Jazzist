@@ -8,11 +8,11 @@ module LexingTests.StringLiteralTests
 import Test.Framework
 
 import Lexing.StringLiteral (stringLiteral)
-import Lexing.Token
+import Lexing.LocatedToken
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ StringLiteralToken result)
+    (Just $ makeLocatedToken $ StringLiteralToken result)
     (parseWholeTestInput stringLiteral input)
 
 failed input = assertEqual

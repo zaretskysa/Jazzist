@@ -26,13 +26,13 @@ module Parsing.Parser
 import Text.ParserCombinators.Parsec (ParseError, runParser, eof)
 
 import Parsing.Ast
-import Lexing.Token
+import Lexing.LocatedToken
 import Lexing.Lexer (tokenize)
 import Parsing.TokenParser (TokenParser, initialState)
 import qualified Parsing.ProgramParser as PP
 
 
-parseFromTokens :: [Token] -> TokenParser a -> Either ParseError a
+parseFromTokens :: [LocatedToken] -> TokenParser a -> Either ParseError a
 parseFromTokens tokens parser = 
     runParser (parseWholeInput parser) initialState "" tokens
 

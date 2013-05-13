@@ -1,6 +1,6 @@
 module Lexing.StringLiteral
 (
-    module Lexing.Token,
+    module Lexing.LocatedToken,
 
     stringLiteral
 ) where
@@ -9,13 +9,13 @@ import Data.Char
 import Text.ParserCombinators.Parsec
 
 import Lexing.Utils
-import Lexing.Token
+import Lexing.LocatedToken
 import Lexing.LineTerminator
 
-stringLiteral :: Parser Token
+stringLiteral :: Parser LocatedToken
 stringLiteral = do
     value <- doubleQuotedString <|> singleQuotedString
-    return $ StringLiteralToken value
+    return $ makeLocatedToken $ StringLiteralToken value
 
 doubleQuotedString :: Parser String
 doubleQuotedString = do

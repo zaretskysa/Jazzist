@@ -12,7 +12,7 @@ import Lexing.Token
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ PunctuatorToken result)
+    (Just $ makeLocatedToken $ PunctuatorToken result)
     (parseWholeTestInput punctuator input)
 
 failed input = assertEqual

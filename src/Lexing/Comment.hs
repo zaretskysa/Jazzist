@@ -1,19 +1,19 @@
 module Lexing.Comment 
 (
-    module Lexing.Token,
+    module Lexing.LocatedToken,
     
     comment
 )where
 
 import Text.ParserCombinators.Parsec
 
-import Lexing.Token
+import Lexing.LocatedToken
 import Lexing.LineTerminator
 
-comment :: Parser Token
+comment :: Parser LocatedToken
 comment = do
     value <- try multiLineComment <|> singleLineComment
-    return $ CommentToken value
+    return $ makeLocatedToken $ CommentToken value
 
 multiLineComment :: Parser String
 multiLineComment = do

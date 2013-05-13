@@ -12,7 +12,7 @@ import Lexing.Token
 import TestUtils
 
 successsful input result = assertEqual
-    (Just $ CommentToken result)
+    (Just $ makeLocatedToken $ CommentToken result)
     (parseWholeTestInput comment input)
 
 failed input = assertEqual

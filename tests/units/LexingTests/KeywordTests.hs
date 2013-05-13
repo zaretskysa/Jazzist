@@ -12,7 +12,7 @@ import Lexing.Token
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ KeywordToken result)
+    (Just $ makeLocatedToken $ KeywordToken result)
     (parseWholeTestInput keyword input)
 
 failed input = assertEqual

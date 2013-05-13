@@ -2,7 +2,7 @@ module Parsing.TokenParser
 (
     module Text.ParserCombinators.Parsec.Prim,
     module Text.ParserCombinators.Parsec.Combinator,
-    module Lexing.Token,
+    module Lexing.LocatedToken,
 
     TokenParser,
     
@@ -30,10 +30,10 @@ import Text.ParserCombinators.Parsec.Combinator
 import Text.ParserCombinators.Parsec.Prim
 import Text.ParserCombinators.Parsec.Pos
 
-import Lexing.Token
+import Lexing.LocatedToken
 
 
-type TokenParser a = GenParser Token ParserState a
+type TokenParser a = GenParser LocatedToken ParserState a
 
 data ParserState = ParserState 
     { previousTokenIsLineTerminator :: Bool }
@@ -51,7 +51,7 @@ clearLineTerminatorState _ = ParserState False
 
 ----------------------
 
-acceptAnyRawToken :: TokenParser Token
+acceptAnyRawToken :: TokenParser LocatedToken
 acceptAnyRawToken = token showTok posFromTok testTok
     where
         showTok t = show t
@@ -62,14 +62,14 @@ skipLeadingLineTerminators :: TokenParser a -> TokenParser a
 skipLeadingLineTerminators p = (skipMany lineTerminatorToken) >> p
 
 -- skip leading line terminators
-acceptAnyToken :: TokenParser Token
+acceptAnyToken :: TokenParser LocatedToken
 acceptAnyToken = skipLeadingLineTerminators acceptAnyRawToken
 
 identifierToken :: TokenParser String
 identifierToken = try $ do
     t <- acceptAnyToken 
     case t of
-        IdentifierToken ident -> do 
+        LocatedToken (IdentifierToken ident) _ -> do 
             updateState clearLineTerminatorState
             return ident
         _ -> fail "IdentifierToken"
@@ -101,7 +101,7 @@ anyPunctuatorToken :: TokenParser Punctuator
 anyPunctuatorToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        PunctuatorToken p -> do
+        LocatedToken (PunctuatorToken p) _ -> do
             updateState clearLineTerminatorState
             return p
         _ -> fail "KeywordToken"
@@ -117,7 +117,7 @@ anyKeywordToken :: TokenParser Keyword
 anyKeywordToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        KeywordToken key -> do
+        LocatedToken (KeywordToken key) _ -> do
             updateState clearLineTerminatorState
             return key
         _ -> fail "KeywordToken"
@@ -133,7 +133,7 @@ nullLiteralToken :: TokenParser ()
 nullLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        NullLiteralToken -> do
+        LocatedToken NullLiteralToken _ -> do
             updateState clearLineTerminatorState
             return ()
         _ -> fail "NullLiteralToken"
@@ -142,7 +142,7 @@ booleanLiteralToken :: TokenParser Bool
 booleanLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        BooleanLiteralToken bool -> do
+        LocatedToken (BooleanLiteralToken bool) _ -> do
             updateState clearLineTerminatorState
             return bool
         _ -> fail "BooleanLiteralToken"
@@ -151,7 +151,7 @@ numericLiteralToken :: TokenParser Double
 numericLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        NumericLiteralToken num -> do
+        LocatedToken (NumericLiteralToken num) _ -> do
             updateState clearLineTerminatorState
             return num
         _ -> fail "NumericLiteralToken"
@@ -160,7 +160,7 @@ stringLiteralToken :: TokenParser String
 stringLiteralToken = try $ do
     tok <- acceptAnyToken 
     case tok of
-        StringLiteralToken str -> do
+        LocatedToken (StringLiteralToken str) _ -> do
             updateState clearLineTerminatorState
             return str
         _ -> fail "StringLiteralToken"
@@ -169,7 +169,7 @@ lineTerminatorToken :: TokenParser ()
 lineTerminatorToken = try $ do
     tok <- acceptAnyRawToken 
     case tok of
-        LineTerminatorToken -> do
+        LocatedToken LineTerminatorToken _ -> do
             updateState setLineTerminatorState
             return ()
         _ -> fail "LineTerminatorToken"
@@ -177,12 +177,16 @@ lineTerminatorToken = try $ do
 semicolon :: TokenParser Punctuator
 semicolon = punctuatorToken SemicolonPunctuator
 
+tokenIsRightCurlyBracket :: LocatedToken -> Bool
+tokenIsRightCurlyBracket (LocatedToken (PunctuatorToken RightCurlyBracketPunctuator) _) = True
+tokenIsRightCurlyBracket _ = False
+
 autoSemicolon :: TokenParser Punctuator
 autoSemicolon = skipLeadingLineTerminators $ do
     prevTokIsLT <- liftM previousTokenIsLineTerminator getState
     input <- getInput
     let emptyInput = null input
-    let nextTokIsRightBrace = (not emptyInput) && (head input == PunctuatorToken RightCurlyBracketPunctuator)
+    let nextTokIsRightBrace = (not emptyInput) && (tokenIsRightCurlyBracket $ head input)
     let enableAutoSemi = prevTokIsLT || emptyInput || nextTokIsRightBrace
     if enableAutoSemi
         then option SemicolonPunctuator semicolon

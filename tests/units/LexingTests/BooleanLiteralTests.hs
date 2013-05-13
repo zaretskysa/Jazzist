@@ -12,7 +12,7 @@ import Lexing.Token
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ BooleanLiteralToken result)
+    (Just $ makeLocatedToken $ BooleanLiteralToken result)
     (parseWholeTestInput booleanLiteral input)
 
 failed input = assertEqual
