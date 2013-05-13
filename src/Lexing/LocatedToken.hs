@@ -6,9 +6,9 @@ module Lexing.LocatedToken
 
     LocatedToken(..),
     SourceLocation(..),
-    SourceRow(..),
-    SourceCol(..),
-    SourceName(..)
+    SourceRow,
+    SourceCol,
+    SourceName
 ) where
 
 import Lexing.Token
