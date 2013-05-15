@@ -12,8 +12,9 @@ import Lexing.Utils
 
 numericLiteral :: Parser LocatedToken
 numericLiteral = do
+	pos <- getPosition
 	num <- try hexIntegerLiteral <|> decimalLiteral
-	return $ makeLocatedToken $ NumericLiteralToken num
+	return $ LocatedToken (NumericLiteralToken num) pos
 
 decimalLiteral :: Parser Double
 decimalLiteral = do

@@ -12,8 +12,9 @@ import Lexing.LocatedToken
 
 keyword :: Parser LocatedToken
 keyword = do 
+	pos <- getPosition
 	value <- keyword'
-	return $ makeLocatedToken $ KeywordToken value
+	return $ LocatedToken (KeywordToken value) pos
 
 keyword' :: Parser Keyword
 keyword' = do

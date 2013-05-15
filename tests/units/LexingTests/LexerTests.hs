@@ -14,10 +14,9 @@ import Lexing.LocatedToken
 
 successful :: String -> [Token] -> Assertion
 successful input expected = 
-    let expected' = map makeLocatedToken expected in
     case tokenize input of
         (Left _) -> assertFailure "Left value returned, but right expected"
-        (Right tokens) ->  assertEqual expected' tokens
+        (Right tokens) ->  assertEqual expected (map tokenFromLocated tokens)
 
 failed :: String -> Assertion
 failed input = 

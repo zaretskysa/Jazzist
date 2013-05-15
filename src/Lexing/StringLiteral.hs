@@ -14,8 +14,9 @@ import Lexing.LineTerminator
 
 stringLiteral :: Parser LocatedToken
 stringLiteral = do
+    pos <- getPosition
     value <- doubleQuotedString <|> singleQuotedString
-    return $ makeLocatedToken $ StringLiteralToken value
+    return $ LocatedToken (StringLiteralToken value) pos
 
 doubleQuotedString :: Parser String
 doubleQuotedString = do

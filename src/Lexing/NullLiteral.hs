@@ -12,8 +12,9 @@ import Lexing.LocatedToken
 
 nullLiteral :: Parser LocatedToken
 nullLiteral = do
+    pos <- getPosition
     string "null"
-    return $ makeLocatedToken NullLiteralToken
+    return $ LocatedToken NullLiteralToken pos
 
 isNullLiteral :: String -> Bool
 isNullLiteral s = s == "null"

@@ -30,8 +30,9 @@ carriageReturnWithoutLineFeed = do
 
 lineTerminator :: Parser LocatedToken
 lineTerminator = do
+    pos <- getPosition
     lineTerminatorChar
-    return $ makeLocatedToken LineTerminatorToken
+    return $ LocatedToken LineTerminatorToken pos
 
 lineTerminatorChar :: Parser Char
 lineTerminatorChar = lineFeed <|> carriageReturn <|> lineSeparator <|> paragraphSeparator

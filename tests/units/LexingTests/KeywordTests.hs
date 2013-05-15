@@ -5,6 +5,7 @@ module LexingTests.KeywordTests
 	htf_thisModulesTests
 ) where
 
+import Control.Applicative ((<$>))
 import Test.Framework
 
 import Lexing.Keyword
@@ -12,8 +13,8 @@ import Lexing.Token
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ makeLocatedToken $ KeywordToken result)
-    (parseWholeTestInput keyword input)
+    (Just $ KeywordToken result)
+    (tokenFromLocated <$> parseWholeTestInput keyword input)
 
 failed input = assertEqual
     Nothing

@@ -12,14 +12,15 @@ import Lexing.LocatedToken
 
 booleanLiteral :: Parser LocatedToken
 booleanLiteral = do
-	value <- string "true" <|> string "false"
-	return $ stringToBoolean value
+    pos <- getPosition
+    value <- string "true" <|> string "false"
+    return $ LocatedToken (stringToBoolean value) pos
 
-stringToBoolean :: String -> LocatedToken
+stringToBoolean :: String -> Token
 stringToBoolean str = 
     if str == "true"
-        then makeLocatedToken $ BooleanLiteralToken True
-        else makeLocatedToken $ BooleanLiteralToken False
+        then BooleanLiteralToken True
+        else BooleanLiteralToken False
 
 isBooleanLiteral :: String -> Bool
 isBooleanLiteral s = s `elem` ["true", "false"]

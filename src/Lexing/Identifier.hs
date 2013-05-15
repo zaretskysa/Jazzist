@@ -14,12 +14,15 @@ import Lexing.NullLiteral
 import Lexing.BooleanLiteral
 import Lexing.EscapeSequence
 
+--TODO: make identifier token tests (like StringLiteralTests)
+
 identifier :: Parser LocatedToken
 identifier = try $ do
+	pos <- getPosition
 	name <- identifierName
 	if isReservedWord name
 		then fail "identifier can not be a reserved word"
-		else return $ makeLocatedToken $ IdentifierToken name
+		else return $ LocatedToken (IdentifierToken name) pos
 
 isReservedWord :: String -> Bool
 isReservedWord s = isNullLiteral s || isBooleanLiteral s || isKeyword s

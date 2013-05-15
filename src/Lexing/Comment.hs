@@ -12,8 +12,9 @@ import Lexing.LineTerminator
 
 comment :: Parser LocatedToken
 comment = do
+    pos <- getPosition
     value <- try multiLineComment <|> singleLineComment
-    return $ makeLocatedToken $ CommentToken value
+    return $ LocatedToken (CommentToken value) pos
 
 multiLineComment :: Parser String
 multiLineComment = do

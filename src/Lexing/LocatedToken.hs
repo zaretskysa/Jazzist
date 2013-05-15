@@ -2,33 +2,16 @@ module Lexing.LocatedToken
 (
     module Lexing.Token,
 
-    makeLocatedToken,
+    tokenFromLocated,
 
-    LocatedToken(..),
-    SourceLocation(..),
-    SourceRow,
-    SourceCol,
-    SourceName
+    LocatedToken(..)
 ) where
 
 import Lexing.Token
+import Text.ParserCombinators.Parsec.Pos
 
-
-data LocatedToken = LocatedToken Token SourceLocation
+data LocatedToken = LocatedToken Token SourcePos
     deriving (Eq, Show)
 
-type SourceRow = Int
-
-type SourceCol = Int
-
-type SourceName = String
-
-data SourceLocation = SourceLocation SourceRow SourceCol SourceName
-    deriving (Show, Eq)
-
-defaultSrcLoc :: SourceLocation
-defaultSrcLoc = SourceLocation 0 0 ""
-
--- TODO: remove
-makeLocatedToken :: Token -> LocatedToken
-makeLocatedToken token = LocatedToken token defaultSrcLoc
+tokenFromLocated :: LocatedToken -> Token
+tokenFromLocated (LocatedToken token _) = token

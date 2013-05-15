@@ -5,15 +5,16 @@ module LexingTests.NullLiteralTests
     htf_thisModulesTests
 ) where
 
+import Control.Applicative ((<$>))
 import Test.Framework
 
 import Lexing.NullLiteral
-import Lexing.Token
+import Lexing.LocatedToken
 import TestUtils
 
 successful input = assertEqual
-    (Just $ makeLocatedToken NullLiteralToken)
-    (parseWholeTestInput nullLiteral input)
+    (Just $ NullLiteralToken)
+    (tokenFromLocated <$> parseWholeTestInput nullLiteral input)
 
 failed input = assertEqual
     Nothing

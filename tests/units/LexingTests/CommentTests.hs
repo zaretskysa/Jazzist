@@ -5,6 +5,7 @@ module LexingTests.CommentTests
     htf_thisModulesTests
 ) where
 
+import Control.Applicative
 import Test.Framework
 
 import Lexing.Comment
@@ -12,8 +13,8 @@ import Lexing.Token
 import TestUtils
 
 successsful input result = assertEqual
-    (Just $ makeLocatedToken $ CommentToken result)
-    (parseWholeTestInput comment input)
+    (Just $ CommentToken result)
+    (tokenFromLocated <$> parseWholeTestInput comment input)
 
 failed input = assertEqual
     Nothing

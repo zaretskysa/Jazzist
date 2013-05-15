@@ -5,6 +5,7 @@ module LexingTests.StringLiteralTests
     htf_thisModulesTests
 ) where
 
+import Control.Applicative ((<$>))
 import Test.Framework
 
 import Lexing.StringLiteral (stringLiteral)
@@ -12,8 +13,8 @@ import Lexing.LocatedToken
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ makeLocatedToken $ StringLiteralToken result)
-    (parseWholeTestInput stringLiteral input)
+    (Just $ StringLiteralToken result)
+    (tokenFromLocated <$> parseWholeTestInput stringLiteral input)
 
 failed input = assertEqual
     Nothing

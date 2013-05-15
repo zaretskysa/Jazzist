@@ -5,6 +5,7 @@ module LexingTests.PunctuatorTests
 	htf_thisModulesTests
 ) where
 
+import Control.Applicative
 import Test.Framework
 
 import Lexing.Punctuator
@@ -12,8 +13,8 @@ import Lexing.Token
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ makeLocatedToken $ PunctuatorToken result)
-    (parseWholeTestInput punctuator input)
+    (Just $ PunctuatorToken result)
+    (tokenFromLocated <$> parseWholeTestInput punctuator input)
 
 failed input = assertEqual
     Nothing

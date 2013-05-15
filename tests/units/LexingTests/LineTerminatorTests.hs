@@ -5,6 +5,7 @@ module LexingTests.LineTerminatorTests
     htf_thisModulesTests
 ) where
 
+import Control.Applicative ((<$>))
 import Test.Framework
 
 import Lexing.LineTerminator
@@ -12,8 +13,8 @@ import Lexing.Token
 import TestUtils
 
 successful input = assertEqual
-    (Just $ makeLocatedToken LineTerminatorToken)
-    (parseWholeTestInput lineTerminator input)
+    (Just $ LineTerminatorToken)
+    (tokenFromLocated <$> parseWholeTestInput lineTerminator input)
 
 failed input = assertEqual
     Nothing

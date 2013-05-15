@@ -11,8 +11,9 @@ import Lexing.LocatedToken
 
 punctuator :: Parser LocatedToken
 punctuator = do
+    pos <- getPosition
     p <- punctuator'
-    return $ makeLocatedToken $ PunctuatorToken p
+    return $ LocatedToken (PunctuatorToken p) pos
 
 punctuator' :: Parser Punctuator
 punctuator' = do

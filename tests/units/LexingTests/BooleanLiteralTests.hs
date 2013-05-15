@@ -5,15 +5,16 @@ module LexingTests.BooleanLiteralTests
 	htf_thisModulesTests
 ) where
 
+import Control.Applicative ((<$>))
 import Test.Framework
 
 import Lexing.BooleanLiteral
-import Lexing.Token
+import Lexing.LocatedToken
 import TestUtils
 
 successful input result = assertEqual
-    (Just $ makeLocatedToken $ BooleanLiteralToken result)
-    (parseWholeTestInput booleanLiteral input)
+    (Just $ BooleanLiteralToken result)
+    (tokenFromLocated <$> parseWholeTestInput booleanLiteral input)
 
 failed input = assertEqual
     Nothing
