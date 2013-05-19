@@ -55,7 +55,7 @@ acceptAnyRawToken :: TokenParser LocatedToken
 acceptAnyRawToken = token showTok posFromTok testTok
     where
         showTok t = show t
-        posFromTok _ = initialPos "js tokens source"
+        posFromTok (LocatedToken _ pos) = pos
         testTok t = Just t
 
 skipLeadingLineTerminators :: TokenParser a -> TokenParser a

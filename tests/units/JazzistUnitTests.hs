@@ -12,6 +12,7 @@ import {-@ HTF_TESTS @-} LexingTests.PunctuatorTests
 import {-@ HTF_TESTS @-} LexingTests.StringLiteralTests
 import {-@ HTF_TESTS @-} LexingTests.WhiteSpaceTests
 import {-@ HTF_TESTS @-} LexingTests.LexerTests
+import {-@ HTF_TESTS @-} LexingTests.LocatedTokenTests
 
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.PrimaryExpressionTests
 import {-@ HTF_TESTS @-} ParsingTests.ExpressionTests.LeftHandSideExpressionTests
