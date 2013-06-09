@@ -40,10 +40,37 @@ evalUnaryExpression :: UnaryExpression -> Double
 evalUnaryExpression (PostfixUnaryExpression postfixExpr) = evalPostfixExpression postfixExpr
 
 evalMultiplicativeExpression :: MultiplicativeExpression -> Double
-evalMultiplicativeExpression (UnaryMultiplicativeExpression unaryExpr) = evalUnaryExpression unaryExpr
+evalMultiplicativeExpression (UnaryMultiplicativeExpression unaryExpr) =
+    evalUnaryExpression unaryExpr
+
+evalMultiplicativeExpression (MulMultiplicativeExpression multExpr unaryExpr) =
+    multVal * unaryVal
+    where
+        multVal = evalMultiplicativeExpression multExpr
+        unaryVal = evalUnaryExpression unaryExpr
+
+evalMultiplicativeExpression (DivMultiplicativeExpression multExpr unaryExpr) =
+    multVal / unaryVal
+    where
+        multVal = evalMultiplicativeExpression multExpr
+        unaryVal = evalUnaryExpression unaryExpr
 
 evalAdditiveExpression :: AdditiveExpression -> Double
-evalAdditiveExpression (MultAdditiveExpression multExpr) = evalMultiplicativeExpression multExpr
+evalAdditiveExpression (MultAdditiveExpression multExpr) =
+    evalMultiplicativeExpression multExpr
+
+evalAdditiveExpression (PlusAdditiveExpression addExpr multExpr) =
+    addVal + multVal
+    where
+        addVal = evalAdditiveExpression addExpr
+        multVal = evalMultiplicativeExpression multExpr
+
+evalAdditiveExpression (MinusAdditiveExpression addExpr multExpr) =
+    addVal - multVal
+    where
+        addVal = evalAdditiveExpression addExpr
+        multVal = evalMultiplicativeExpression multExpr
+
 
 evalShiftExpression :: ShiftExpression -> Double
 evalShiftExpression (AdditiveShiftExpression addExpr) = evalAdditiveExpression addExpr
