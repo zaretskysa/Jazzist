@@ -5,119 +5,109 @@ module Evaluating.ExpressionEvaluator
 
 import Parsing.Ast
 
-evalLiteral :: Literal -> Double
-evalLiteral (NumericLiteral value) = value
+import Evaluating.Eval
+
+evalLiteral :: Literal -> Eval Double
+evalLiteral (NumericLiteral value) = return value
 evalLiteral (BooleanLiteral _) = undefined
 evalLiteral (NullLiteral) = undefined
 evalLiteral (StringLiteral _) = undefined
 
-evalPrimaryExpression :: PrimaryExpression -> Double
+evalPrimaryExpression :: PrimaryExpression -> Eval Double
 evalPrimaryExpression (LiteralPrimaryExpression literal) = evalLiteral literal
-evalPrimaryExpression (ThisPrimaryExpression) = undefined
-evalPrimaryExpression (IdentifierPrimaryExpression _) = undefined
-evalPrimaryExpression (ArrayLiteralPrimaryExpression _) = undefined
-evalPrimaryExpression (ObjectLiteralPrimaryExpression _) = undefined
-evalPrimaryExpression (ExpressionPrimaryExpression _) = undefined
+evalPrimaryExpression _ = undefined
 
-evalMemberExpression :: MemberExpression -> Double
+evalMemberExpression :: MemberExpression -> Eval Double
 evalMemberExpression (PrimaryMemberExpression primExpr) = evalPrimaryExpression primExpr
-evalMemberExpression (FunctionMemberExpression _) = undefined
-evalMemberExpression (PropertyAccessByBracketsMemberExpression _ _) = undefined
-evalMemberExpression (PropertyAccessByDotMemberExpression _ _) = undefined
-evalMemberExpression (NewMemberExpression _ _) = undefined
+evalMemberExpression _ = undefined
 
-evalNewExpression :: NewExpression -> Double
+evalNewExpression :: NewExpression -> Eval Double
 evalNewExpression (MemberNewExpression memberExpr) = evalMemberExpression memberExpr
 evalNewExpression (NewNewExpression _) = undefined
 
-evalLeftHandSideExpression :: LeftHandSideExpression -> Double
+evalLeftHandSideExpression :: LeftHandSideExpression -> Eval Double
 evalLeftHandSideExpression (NewLHSExpression newExpr) = evalNewExpression newExpr
 evalLeftHandSideExpression (CallLHSExpression _) = undefined
 
-evalPostfixExpression :: PostfixExpression -> Double
+evalPostfixExpression :: PostfixExpression -> Eval Double
 evalPostfixExpression (LHSPostfixExpression lhsExpr) = evalLeftHandSideExpression lhsExpr
 evalPostfixExpression _ = undefined
 
-evalUnaryExpression :: UnaryExpression -> Double
+evalUnaryExpression :: UnaryExpression -> Eval Double
 evalUnaryExpression (PostfixUnaryExpression postfixExpr) = evalPostfixExpression postfixExpr
 evalUnaryExpression _ = undefined
 
-evalMultiplicativeExpression :: MultiplicativeExpression -> Double
+evalMultiplicativeExpression :: MultiplicativeExpression -> Eval Double
 evalMultiplicativeExpression (UnaryMultiplicativeExpression unaryExpr) =
     evalUnaryExpression unaryExpr
 
-evalMultiplicativeExpression (MulMultiplicativeExpression multExpr unaryExpr) =
-    multVal * unaryVal
-    where
-        multVal = evalMultiplicativeExpression multExpr
-        unaryVal = evalUnaryExpression unaryExpr
+evalMultiplicativeExpression (MulMultiplicativeExpression multExpr unaryExpr) = do
+    multVal <- evalMultiplicativeExpression multExpr
+    unaryVal <- evalUnaryExpression unaryExpr
+    return $ multVal * unaryVal
 
-evalMultiplicativeExpression (DivMultiplicativeExpression multExpr unaryExpr) =
-    multVal / unaryVal
-    where
-        multVal = evalMultiplicativeExpression multExpr
-        unaryVal = evalUnaryExpression unaryExpr
+evalMultiplicativeExpression (DivMultiplicativeExpression multExpr unaryExpr) = do
+    multVal <- evalMultiplicativeExpression multExpr
+    unaryVal <- evalUnaryExpression unaryExpr
+    return $ multVal / unaryVal
 
 evalMultiplicativeExpression _ = undefined
 
-evalAdditiveExpression :: AdditiveExpression -> Double
+evalAdditiveExpression :: AdditiveExpression -> Eval Double
 evalAdditiveExpression (MultAdditiveExpression multExpr) =
     evalMultiplicativeExpression multExpr
 
-evalAdditiveExpression (PlusAdditiveExpression addExpr multExpr) =
-    addVal + multVal
-    where
-        addVal = evalAdditiveExpression addExpr
-        multVal = evalMultiplicativeExpression multExpr
+evalAdditiveExpression (PlusAdditiveExpression addExpr multExpr) = do
+    addVal <- evalAdditiveExpression addExpr
+    multVal <- evalMultiplicativeExpression multExpr
+    return $ addVal + multVal
 
-evalAdditiveExpression (MinusAdditiveExpression addExpr multExpr) =
-    addVal - multVal
-    where
-        addVal = evalAdditiveExpression addExpr
-        multVal = evalMultiplicativeExpression multExpr
+evalAdditiveExpression (MinusAdditiveExpression addExpr multExpr) = do
+    addVal <- evalAdditiveExpression addExpr
+    multVal <- evalMultiplicativeExpression multExpr
+    return $ addVal - multVal
 
-
-evalShiftExpression :: ShiftExpression -> Double
+evalShiftExpression :: ShiftExpression -> Eval Double
 evalShiftExpression (AdditiveShiftExpression addExpr) = evalAdditiveExpression addExpr
 evalShiftExpression _ = undefined
 
-evalRelationalExpression :: RelationalExpression -> Double
+evalRelationalExpression :: RelationalExpression -> Eval Double
 evalRelationalExpression (ShiftRelationalExpression shiftExpr) = evalShiftExpression shiftExpr
 evalRelationalExpression _ = undefined
 
-evalEqualityExpression :: EqualityExpression -> Double
+evalEqualityExpression :: EqualityExpression -> Eval Double
 evalEqualityExpression (RelationalEqualityExpression relExpr) = evalRelationalExpression relExpr
 evalEqualityExpression _ = undefined
 
-evalBitwiseAndExpression :: BitwiseAndExpression -> Double
+evalBitwiseAndExpression :: BitwiseAndExpression -> Eval Double
 evalBitwiseAndExpression (UnaryBitwiseAndExpression eqExpr) = evalEqualityExpression eqExpr
 evalBitwiseAndExpression _ = undefined
 
-evalBitwiseXorExpression :: BitwiseXorExpression -> Double
+evalBitwiseXorExpression :: BitwiseXorExpression -> Eval Double
 evalBitwiseXorExpression (UnaryBitwiseXorExpression bitAndExpr) = evalBitwiseAndExpression bitAndExpr
 evalBitwiseXorExpression _ = undefined
 
-evalBitwiseOrExpression :: BitwiseOrExpression -> Double
+evalBitwiseOrExpression :: BitwiseOrExpression -> Eval Double
 evalBitwiseOrExpression (UnaryBitwiseOrExpression bitXorExpr) = evalBitwiseXorExpression bitXorExpr
 evalBitwiseOrExpression _ = undefined
 
-evalLogicalAndExpression :: LogicalAndExpression -> Double
+evalLogicalAndExpression :: LogicalAndExpression -> Eval Double
 evalLogicalAndExpression (UnaryLogicalAndExpression bitOrExpr) = evalBitwiseOrExpression bitOrExpr
 evalLogicalAndExpression _ = undefined
 
-evalLogicalOrExpression :: LogicalOrExpression -> Double
+evalLogicalOrExpression :: LogicalOrExpression -> Eval Double
 evalLogicalOrExpression (UnaryLogicalOrExpression logicAndExpr) = evalLogicalAndExpression logicAndExpr
 evalLogicalOrExpression _ = undefined
 
-evalConditionalExpression :: ConditionalExpression -> Double
+evalConditionalExpression :: ConditionalExpression -> Eval Double
 evalConditionalExpression (LogicalOrConditionalExpression logicOrExpr) = evalLogicalOrExpression logicOrExpr
 evalConditionalExpression _ = undefined
 
-evalAssignmentExpression :: AssignmentExpression -> Double
+evalAssignmentExpression :: AssignmentExpression -> Eval Double
 evalAssignmentExpression (ConditionalAssignmentExpression condExpr) = evalConditionalExpression condExpr
 evalAssignmentExpression _ = undefined
 
-evalExpression :: Expression -> Double
+evalExpression :: Expression -> Eval Double
 evalExpression (Expression [assignExpr]) = evalAssignmentExpression assignExpr
 evalExpression _ = undefined
 
