@@ -28,7 +28,6 @@ import Control.Monad
 
 import Text.ParserCombinators.Parsec.Combinator
 import Text.ParserCombinators.Parsec.Prim
-import Text.ParserCombinators.Parsec.Pos
 
 import Lexing.LocatedToken
 
