@@ -5,6 +5,7 @@ import Text.Show.Pretty
 
 import Lexing.Lexer
 import Parsing.Parser
+import Evaluating.Evaluator
 
 main :: IO ()
 main = do
@@ -14,3 +15,4 @@ main = do
         else do
                 putStrLn $ ppShow $ tokenize $ head args
                 putStrLn $ ppShow $ programFromString $ head args
+                putStrLn $ ppShow $ evalString $ head args
