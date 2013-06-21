@@ -1,7 +1,10 @@
 module Evaluating.Value
 (
-    Value(..)
+    Value(..),
+    Primitive(..)
 ) where
+
+import {-# SOURCE #-} Evaluating.Object
 
 data Value =
     UndefinedValue
@@ -9,5 +12,13 @@ data Value =
     | BooleanValue Bool
     | StringValue String
     | NumberValue Double
-    | ObjectValue
+    | ObjectValue Object
+    deriving (Show)
+
+data Primitive = 
+    UndefinedPrimitive
+    | NullPrimitive
+    | BooleanPrimitive Bool
+    | StringPrimitive String
+    | NumberPrimitive Double
     deriving (Show)

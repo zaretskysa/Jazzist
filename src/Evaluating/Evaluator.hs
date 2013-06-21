@@ -18,7 +18,7 @@ evalString :: String -> Double
 evalString input = 
     case programFromString input of
         Left _ -> 666
-        Right program -> runEval $ evalProgram program
+        Right program -> fst $ runEval $ evalProgram program
 
 evalProgram :: Program -> Eval Double
 evalProgram (Program [sourceElement]) = evalSourceElement sourceElement
