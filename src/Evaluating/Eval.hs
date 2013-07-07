@@ -1,10 +1,14 @@
 module Evaluating.Eval
 (
+    module Control.Monad.Identity,
+    module Control.Monad.State,
+
     Eval,
 
     runEval,
 
-    activeContext
+    activeContext,
+    activeLexEnv
 ) where
 
 import Control.Monad.Identity
@@ -21,4 +25,11 @@ activeContext :: Eval ExecutionContext
 activeContext = do
     env <- get
     return $ Env.activeContext env
+
+activeLexEnv :: Eval (Maybe LexicalEnvironment)
+activeLexEnv = undefined
+
+
+
+
 

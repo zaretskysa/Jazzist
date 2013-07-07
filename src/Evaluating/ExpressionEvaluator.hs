@@ -6,10 +6,15 @@ module Evaluating.ExpressionEvaluator
 import Parsing.Ast
 
 import Evaluating.Eval
-import Evaluating.Reference
+import Evaluating.Reference as Ref
 import Evaluating.InternalValue
-import Evaluating.LexicalEnvironment
-import Evaluating.ExecutionContext
+import qualified Evaluating.LexicalEnvironment as LexEnv 
+import qualified Evaluating.ExecutionContext as Cx
+import Evaluating.InternalValueM
+import qualified Evaluating.LexicalEnvM as LexEnvM
+
+import Evaluating.EnvironmentM
+import Evaluating.ObjectM
 
 evalLiteral :: Literal -> Eval InternalValue
 evalLiteral (NumericLiteral value) = return $ DoubleValue value
@@ -21,8 +26,8 @@ evalPrimaryExpression :: PrimaryExpression -> Eval InternalValue
 evalPrimaryExpression (LiteralPrimaryExpression literal) = evalLiteral literal
 
 evalPrimaryExpression (IdentifierPrimaryExpression identifier) = do
-    cx <- activeContext
-    return $ RefValue $ getIdentifierReference (lexicalEnvironment cx) identifier
+    ref <- LexEnvM.getIdentifierReference identifier
+    return $ RefValue ref
 
 evalPrimaryExpression _ = undefined
 
@@ -116,8 +121,13 @@ evalAssignmentExpression :: AssignmentExpression -> Eval InternalValue
 evalAssignmentExpression (ConditionalAssignmentExpression condExpr) =
     evalConditionalExpression condExpr
 
---evalAssignmentExpression (AssignmentOperatorExpression lhsExpr op assignExpr) = do
---    evalConditionalExpression condExpr
+evalAssignmentExpression (AssignmentOperatorExpression lhsExpr op assignExpr) = do
+    lref <- evalLeftHandSideExpression lhsExpr
+    rref <- evalAssignmentExpression assignExpr
+    --rval <- getValue rref
+    --newRef <- putValue lref rval
+    return $ DoubleValue 7
+
 
 evalAssignmentExpression _ = undefined
 

@@ -6,9 +6,9 @@ module Evaluating.NamedDataProperty
 import Evaluating.Value
 
 data NamedDataProperty = NamedDataProperty 
-    { ndpName :: String
-    , ndpValue :: Value
-    , ndpWritable :: Bool
-    , ndpEnumerable :: Bool
-    , ndpConfigurable :: Bool
+    { name :: String
+    , value :: Value
+    , writable :: Bool
+    , enumerable :: Bool
+    , configurable :: Bool
     } deriving (Show)

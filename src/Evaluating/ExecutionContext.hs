@@ -1,5 +1,7 @@
 module Evaluating.ExecutionContext
 (
+    module Evaluating.LexicalEnvironment,
+
     ExecutionContext,
     
     makeExecutionContext,

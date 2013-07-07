@@ -3,25 +3,59 @@ module Evaluating.Environment
 (
     Environment,
 
+    objectsHeap,
+
     newEnvironment,
-    activeContext
+    activeContext,
+
+    putObject,
+    getObject,
+    modifyObject,
 ) where
 
 import Data.Map
 import qualified Evaluating.Stack as Stack
 
 import Evaluating.ExecutionContext
+import qualified Evaluating.ObjectsHeap as Heap
+import Evaluating.Object
 
 type ContextsStack = Stack.Stack ExecutionContext
 
 data Environment = Environment
     {
-        contexts :: ContextsStack
+        contexts :: ContextsStack,
+        objectsHeap :: Heap.ObjectsHeap,
+        lastObjectId :: ObjectId  -- TODO: Maybe Object
     }
     deriving (Show)
 
 newEnvironment :: Environment
-newEnvironment = Environment {contexts = Stack.empty}
+newEnvironment = Environment {
+    contexts = Stack.empty,
+    lastObjectId = 0
+    }
 
 activeContext :: Environment -> ExecutionContext
 activeContext env = Stack.top $ contexts env
+
+putObject :: Environment -> Object -> (Environment, ObjectId)
+putObject env obj =
+    let newObjectId = (lastObjectId env) + 1
+        newHeap = Heap.insert newObjectId obj (objectsHeap env)
+        newEnv = env {lastObjectId = newObjectId, objectsHeap = newHeap}
+    in (newEnv, newObjectId)
+
+getObject :: Environment -> ObjectId -> MaybeObject
+getObject env objId = Heap.lookup objId (objectsHeap env)
+
+modifyObject :: Environment -> ObjectId -> Object -> Environment
+modifyObject env objId obj =
+    let heap = objectsHeap env
+        newHeap = Heap.modifyObject heap objId obj
+    in env {objectsHeap = newHeap}
+
+
+
+
+

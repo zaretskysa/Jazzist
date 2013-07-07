@@ -6,7 +6,7 @@ module Evaluating.Reference
     refName,
     refBaseValue,
     isStrictRef,
-    refHasPrimitiveBase,
+    hasPrimitiveBase,
     isPropertyRef,
     isUnresolvableRef,
     getRefValue,
@@ -15,6 +15,7 @@ module Evaluating.Reference
 
 import Data.Maybe
 
+import Evaluating.Value
 import Evaluating.Object
 import Evaluating.EnvironmentRecord
 
@@ -39,9 +40,9 @@ refBaseValue (Reference _ value) = value
 isStrictRef :: Reference -> Bool
 isStrictRef _ = False
 
-refHasPrimitiveBase :: Reference -> Bool
-refHasPrimitiveBase (Reference _ value) = undefined
-refHasPrimitiveBase _ = False
+hasPrimitiveBase :: Reference -> Bool
+hasPrimitiveBase (Reference _ value) = undefined
+hasPrimitiveBase _ = False
 
 isPropertyRef :: Reference -> Bool
 isPropertyRef (Reference _ _) = undefined
@@ -55,4 +56,13 @@ getRefValue = refBaseValue
 
 putRefValue :: Reference -> ()
 putRefValue _ = ()
- 
+
+baseToValue :: RefBaseValue -> Value
+baseToValue UndefinedRefVal = UndefinedValue
+baseToValue (ObjectRefVal obj) = ObjectValue obj
+baseToValue (BoolRefVal bool) = BooleanValue bool
+baseToValue (StringRefVal str) = StringValue str
+baseToValue (NumberRefVal num) = NumberValue num
+baseToValue _ = error "Error conversion to js value"
+
+

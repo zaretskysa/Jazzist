@@ -6,8 +6,8 @@ module Evaluating.NamedAccessorProperty
 import {-# SOURCE #-} Evaluating.Object
 
 data NamedAccessorProperty = NamedAccessorProperty
-    { napGet :: Maybe Object
-    , napSet :: Maybe Object
-    , napEnumerable :: Bool
-    , napConfigurable :: Bool
+    { get :: Maybe ObjectId
+    , set :: Maybe ObjectId
+    , enumerable :: Bool
+    , configurable :: Bool
     } deriving (Show)

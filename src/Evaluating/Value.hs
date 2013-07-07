@@ -1,10 +1,13 @@
 module Evaluating.Value
 (
     Value(..),
-    Primitive(..)
+    MaybeValue,
+    Primitive(..),
 ) where
 
 import {-# SOURCE #-} Evaluating.Object
+
+type MaybeValue = Maybe Value
 
 data Value =
     UndefinedValue
@@ -13,6 +16,7 @@ data Value =
     | StringValue String
     | NumberValue Double
     | ObjectValue Object
+    | ObjectIdValue ObjectId
     deriving (Show)
 
 data Primitive = 
