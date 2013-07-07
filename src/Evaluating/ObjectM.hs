@@ -1,43 +1,47 @@
 module Evaluating.ObjectM
 () where
 
+import qualified Evaluating.ObjectAlgo as ObjAlgo
 import Evaluating.Eval
 import Evaluating.Value
 import qualified Evaluating.EnvironmentM as EnvM
-import qualified Evaluating.Object as Obj
+import qualified Evaluating.ObjectAlgo as ObjAlgo
 import Evaluating.Object (Object, ObjectId, MaybeObjectId)
 import Evaluating.PropertyDescriptor (MaybePropertyDescriptor)
 
 getOwnProperty :: ObjectId -> String -> Eval MaybePropertyDescriptor
 getOwnProperty objId propName = do
     Just obj <- EnvM.getObject objId
-    return $ Obj.getOwnProperty obj propName
+    return $ ObjAlgo.getOwnProperty obj propName
 
 getProperty :: ObjectId -> String -> Eval MaybePropertyDescriptor
 getProperty objId propName = do
     heap <- EnvM.objectsHeap
     Just obj <- EnvM.getObject objId
-    return $ Obj.getProperty obj propName heap
+    return $ ObjAlgo.getProperty obj propName heap
 
 get :: ObjectId -> String -> Eval MaybeValue
 get objId propName = do
     heap <- EnvM.objectsHeap
-    return $ Obj.getForId objId propName heap
+    Just obj <- EnvM.getObject objId
+    return $ ObjAlgo.get obj propName heap
 
 canPut :: ObjectId -> String -> Eval Bool
 canPut objId propName = do
     heap <- EnvM.objectsHeap
-    return $ Obj.canPutForId objId propName heap
+    Just obj <- EnvM.getObject objId
+    return $ ObjAlgo.canPut obj propName heap
 
 hasProperty :: ObjectId -> String -> Eval Bool
 hasProperty objId propName = do
     heap <- EnvM.objectsHeap
-    return $ Obj.hasPropertyForId objId propName heap
+    Just obj <- EnvM.getObject objId
+    return $ ObjAlgo.hasProperty obj propName heap
 
 deleteProperty :: ObjectId -> String -> Bool -> Eval Bool
 deleteProperty objId propName throwFlag = do
     Just obj <- EnvM.getObject objId
-    case Obj.deleteProperty obj propName of
+    case ObjAlgo.deleteProperty obj propName of
         (_newObj, False) -> if throwFlag 
             then error "js exception" 
             else return False
