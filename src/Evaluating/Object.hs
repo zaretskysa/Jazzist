@@ -9,10 +9,15 @@ module Evaluating.Object
 
     newObject,
     prototype,
+    extensible,
+    notExtensible,
 
     property,
     deleteProperty,
     putProperty,
+
+    convertPropertyToAccessor,
+    convertPropertyToData,
 ) where
 
 import qualified Data.Map as Map
@@ -27,7 +32,7 @@ import Evaluating.Property
 import Evaluating.ObjectsHeap
 
 type ObjectId = Integer
-
+    
 type MaybeObjectId = Maybe ObjectId
 
 type MaybeObject = Maybe Object
@@ -53,5 +58,14 @@ deleteProperty obj prop =
 
 newObject :: Object
 newObject = undefined
+
+notExtensible :: Object -> Bool
+notExtensible = not . extensible
+
+convertPropertyToAccessor :: Object -> String -> Object
+convertPropertyToAccessor = undefined
+
+convertPropertyToData :: Object -> String -> Object
+convertPropertyToData = undefined
 
 

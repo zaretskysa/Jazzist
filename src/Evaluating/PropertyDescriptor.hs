@@ -3,8 +3,6 @@ module Evaluating.PropertyDescriptor
     PropertyDescriptor(..),
     MaybePropertyDescriptor,
 
-    fromProperty,
-
     isAccessor,
     isData,
     isGeneric,
@@ -23,17 +21,27 @@ module Evaluating.PropertyDescriptor
     isNotConfigurable,
     hasEnumerable,
     isEnumerable,
+    bothNotConfigurable,
+    isGenericOrData,
+    onlyOneIsData,
+    onlyOneIsEnumerable,
+    bothAreData,
+    bothAreAccessors,
+    isWritable,
+    isNotWritable,
+    hasValue,
+    haveDifferentValues,
+    haveDifferentSetters,
+    hasGetter,
+    haveDifferentGetters,
 ) where
 
 import Data.Maybe
 
+import Common.BoolUtils
 import Evaluating.Value
 import {-# SOURCE #-} Evaluating.Object
-import {-# SOURCE #-} Evaluating.Property
-import qualified Evaluating.NamedDataProperty as NProp
-import Evaluating.NamedDataProperty (NamedDataProperty)
-import qualified Evaluating.NamedAccessorProperty as AProp
-import Evaluating.NamedAccessorProperty (NamedAccessorProperty)
+
 
 type MaybePropertyDescriptor = Maybe PropertyDescriptor
 
@@ -69,15 +77,12 @@ isGeneric desc
     | not $ isAccessor desc, not $ isData desc = True
     | otherwise = False
 
+isGenericOrData :: PropertyDescriptor -> Bool
+isGenericOrData desc = (isGeneric desc) || (isData desc)
+
 isGenericMb :: MaybePropertyDescriptor -> Bool
 isGenericMb Nothing = False
 isGenericMb (Just desc) = isGeneric desc
-
-fromPropertyDescriptor :: PropertyDescriptor -> Object
-fromPropertyDescriptor desc = undefined
-
-toPropertyDescriptor :: Object -> PropertyDescriptor
-toPropertyDescriptor obj = undefined
 
 new :: PropertyDescriptor
 new = PropertyDescriptor {
@@ -87,26 +92,6 @@ new = PropertyDescriptor {
     writable = Nothing,
     enumerable = Nothing,
     configurable = Nothing
-    }
-
-fromProperty :: Property -> PropertyDescriptor
-fromProperty (DataProperty prop) = fromDataProperty prop
-fromProperty (AccessorProperty prop) = fromAccessorProperty prop
-
-fromDataProperty :: NamedDataProperty -> PropertyDescriptor
-fromDataProperty dataProp = PropertyDescriptor 
-    { value = Just $ NProp.value dataProp
-    , writable = Just $ NProp.writable dataProp
-    , enumerable = Just $ NProp.enumerable dataProp
-    , configurable = Just $ NProp.configurable dataProp
-    }
-
-fromAccessorProperty :: NamedAccessorProperty -> PropertyDescriptor
-fromAccessorProperty accessorProp = PropertyDescriptor 
-    { get = AProp.get accessorProp
-    , set = AProp.set accessorProp
-    , enumerable = Just $ AProp.enumerable accessorProp
-    , configurable = Just $ AProp.configurable accessorProp
     }
 
 hasSetter :: PropertyDescriptor -> Bool
@@ -135,3 +120,40 @@ hasEnumerable = isJust . enumerable
 
 isEnumerable :: PropertyDescriptor -> Bool
 isEnumerable = undefined
+
+bothNotConfigurable :: PropertyDescriptor -> PropertyDescriptor -> Bool
+bothNotConfigurable first second =
+    isNotConfigurable first && isNotConfigurable second
+
+onlyOneIsData :: PropertyDescriptor -> PropertyDescriptor -> Bool
+onlyOneIsData first second = xor (isData first) (isData second)
+
+onlyOneIsEnumerable :: PropertyDescriptor -> PropertyDescriptor -> Bool
+onlyOneIsEnumerable first second = xor (isEnumerable first) (isEnumerable second)
+
+bothAreData :: PropertyDescriptor -> PropertyDescriptor -> Bool
+bothAreData first second = (isData first) && (isData second)
+
+bothAreAccessors :: PropertyDescriptor -> PropertyDescriptor -> Bool
+bothAreAccessors first second = (isAccessor first) && (isAccessor second)
+
+isWritable :: PropertyDescriptor -> Bool
+isWritable desc = maybe False id $ writable desc
+
+isNotWritable :: PropertyDescriptor -> Bool
+isNotWritable = not . isWritable
+
+hasValue :: PropertyDescriptor -> Bool
+hasValue = isJust . writable
+
+haveDifferentValues :: PropertyDescriptor -> PropertyDescriptor -> Bool
+haveDifferentValues first second = undefined
+
+haveDifferentSetters :: PropertyDescriptor -> PropertyDescriptor -> Bool
+haveDifferentSetters = undefined
+
+hasGetter :: PropertyDescriptor -> Bool
+hasGetter = undefined
+
+haveDifferentGetters :: PropertyDescriptor -> PropertyDescriptor -> Bool
+haveDifferentGetters first second = undefined

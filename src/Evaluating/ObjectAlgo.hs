@@ -1,5 +1,8 @@
 module Evaluating.ObjectAlgo
 (
+    Hint(..),
+    UpdateResult(..),
+
     getOwnProperty,
     getProperty,
     get,
@@ -11,23 +14,27 @@ module Evaluating.ObjectAlgo
 import qualified Data.Map as Map
 import Data.Maybe
 
+import Common.BoolUtils
 import Evaluating.Value
 import Evaluating.NamedDataProperty (NamedDataProperty)
 import Evaluating.NamedAccessorProperty (NamedAccessorProperty)
 import Evaluating.PropertyDescriptor (PropertyDescriptor, MaybePropertyDescriptor)
 import qualified Evaluating.PropertyDescriptor as PDesc
-import Evaluating.Property
+import Evaluating.Property (Property)
+import qualified Evaluating.Property as Prop
 import Evaluating.ObjectsHeap
 import qualified Evaluating.Object as Obj
 
 
 data Hint = StringHint | NumberHint | NoHint deriving (Show)
 
+data UpdateResult = Updated Object | Rejected deriving (Show)
+
 getOwnProperty :: Object -> String -> Maybe PropertyDescriptor
 getOwnProperty obj propName = 
     case Obj.property obj propName of
         Nothing -> Nothing
-        Just prop -> Just $ PDesc.fromProperty prop
+        Just prop -> Just $ Prop.toDescriptor prop
 
 hasOwnProperty :: Object -> String -> Bool
 hasOwnProperty obj prop = isJust $ getOwnProperty obj prop
@@ -117,39 +124,62 @@ deleteProperty obj prop =
             True -> (Obj.deleteProperty obj prop, True)
             False -> (obj, False)
 
--- TODO: use special type UpdateResult = Successful Object | Rejected
-defineOwnProperty :: Object -> String -> PropertyDescriptor -> (Object, Bool)
+defineOwnProperty :: Object -> String -> PropertyDescriptor -> UpdateResult
 defineOwnProperty obj propName desc 
-    | PDesc.allFieldsAreAbsent desc = (obj, True)
+    | PDesc.allFieldsAreAbsent desc = Updated obj
     | otherwise = case getOwnProperty obj propName of
         Nothing
-            | not $ Obj.extensible obj -> (obj, False)
+            | Obj.notExtensible obj -> Rejected
             | Obj.extensible obj ->
-                if (PDesc.isGeneric desc) || (PDesc.isData desc) 
-                    then let prop = dataPropertyFromDescriptor desc
-                             newObj = Obj.putProperty obj prop
-                         in (newObj, True)
-                    else let prop = accessorPropertyFromDescriptor desc
-                             newObj = Obj.putProperty obj prop
-                         in (newObj, True)
+                if PDesc.isGenericOrData desc
+                    then Updated $ putDataPropertyToObj obj desc
+                    else Updated $ putAccessorPropertyToObj obj desc
         Just current
-            | PDesc.isSame desc current -> (obj, True)
-            | PDesc.isNotConfigurable current, PDesc.isNotConfigurable desc -> (obj, False)
+            | PDesc.isSame desc current -> Updated obj
+            | PDesc.bothNotConfigurable current desc -> Rejected
             | PDesc.isNotConfigurable current, PDesc.hasEnumerable desc,
-                xor (PDesc.isEnumerable desc) (PDesc.isEnumerable current) -> (obj, False)
-            | PDesc.isGeneric desc -> undefined
-            | xor (PDesc.isData current) (PDesc.isData desc) ->
+                PDesc.onlyOneIsEnumerable desc current -> Rejected
+            | PDesc.isGeneric desc -> Updated $ putPropertyToObj obj desc
+            | PDesc.onlyOneIsData current desc ->
                 case PDesc.isConfigurable current of
-                    False -> (obj, False)
-                    True
-                        | PDesc.isData current -> error "not implemented yet: see definedOwnProperty item 9.b"
-                        | otherwise -> error "not implemented yet: see definedOwnProperty item 9.c"
-            | (PDesc.isData current) && (PDesc.isData desc) ->
+                    False -> Rejected
+                    True -> if PDesc.isData current 
+                        then let converted = Obj.convertPropertyToAccessor obj propName
+                             in Updated $ putPropertyToObj converted desc
+                        else let converted = Obj.convertPropertyToData obj propName
+                             in Updated $ putPropertyToObj converted desc
+            | PDesc.bothAreData current desc ->
                 case PDesc.isConfigurable current of
-                    False -> error "not implemented yet: see definedOwnProperty item 10.a"
-                    True -> error "not implemented yet: see definedOwnProperty item 10.b"
-            | (PDesc.isAccessor current) && (PDesc.isAccessor desc) ->
-                error "not implemented yet: see item 11.a of algorithm"
+                    False 
+                        | PDesc.isNotWritable current, PDesc.isWritable desc -> Rejected
+                        | PDesc.isNotWritable current, PDesc.hasValue desc, 
+                            PDesc.haveDifferentValues desc current -> Rejected
+                        | otherwise -> Updated $ putPropertyToObj obj desc
+                    True -> Updated $ putPropertyToObj obj desc
+            | PDesc.bothAreAccessors current desc ->
+                case PDesc.isConfigurable current of
+                    False
+                        | PDesc.hasSetter desc, PDesc.haveDifferentSetters desc current -> Rejected
+                        | PDesc.hasGetter desc, PDesc.haveDifferentGetters desc current -> Rejected
+                        | otherwise -> Updated $ putPropertyToObj obj desc
+                    True -> Updated $ putPropertyToObj obj desc
+            | otherwise -> Updated $ putPropertyToObj obj desc
+
+putPropertyToObj :: Object -> PropertyDescriptor -> Object
+putPropertyToObj obj desc =
+    let prop = Prop.fromDescriptor desc
+    in Obj.putProperty obj prop
+
+putDataPropertyToObj :: Object -> PropertyDescriptor -> Object
+putDataPropertyToObj obj desc = 
+    let prop = Prop.dataPropertyFromDescriptor desc
+    in Obj.putProperty obj prop
+
+putAccessorPropertyToObj :: Object -> PropertyDescriptor -> Object
+putAccessorPropertyToObj obj desc =
+    let prop = Prop.accessorPropertyFromDescriptor desc
+    in Obj.putProperty obj prop
+
 
 defaultValue :: Object -> Hint -> ObjectsHeap -> Value
 defaultValue obj hint heap = 
@@ -164,8 +194,3 @@ call = undefined
 callForId :: ObjectId -> Value
 callForId = undefined
 
--- put this to utils module
-xor :: Bool -> Bool -> Bool
-xor True True = False
-xor False False = False
-xor _ _ = True
