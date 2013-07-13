@@ -2,7 +2,6 @@ module Evaluating.Property
 (
     Property(..),
     MaybeProperty(..),
-    Properties,
 
     dataPropertyFromDescriptor,
     accessorPropertyFromDescriptor,
@@ -25,8 +24,6 @@ import qualified Evaluating.NamedAccessorProperty as AProp
 import Evaluating.PropertyDescriptor (PropertyDescriptor)
 import qualified Evaluating.PropertyDescriptor as PDesc
 
--- move to separate module
-type Properties = Map.Map String Property
 
 type MaybeProperty = Maybe Property
 

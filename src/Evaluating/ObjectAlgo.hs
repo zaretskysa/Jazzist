@@ -132,54 +132,43 @@ defineOwnProperty obj propName desc
             | Obj.notExtensible obj -> Rejected
             | Obj.extensible obj ->
                 if PDesc.isGenericOrData desc
-                    then Updated $ putDataPropertyToObj obj desc
-                    else Updated $ putAccessorPropertyToObj obj desc
+                    then Updated $ Obj.putDataProperty obj propName desc
+                    else Updated $ Obj.putAccessorProperty obj propName desc
         Just current
             | PDesc.isSame desc current -> Updated obj
             | PDesc.bothNotConfigurable current desc -> Rejected
             | PDesc.isNotConfigurable current, PDesc.hasEnumerable desc,
                 PDesc.onlyOneIsEnumerable desc current -> Rejected
-            | PDesc.isGeneric desc -> Updated $ putPropertyToObj obj desc
+            | PDesc.isGeneric desc -> Updated $ putPropertyToObj obj propName desc
             | PDesc.onlyOneIsData current desc ->
                 case PDesc.isConfigurable current of
                     False -> Rejected
                     True -> if PDesc.isData current 
-                        then let converted = Obj.convertPropertyToAccessor obj propName
-                             in Updated $ putPropertyToObj converted desc
-                        else let converted = Obj.convertPropertyToData obj propName
-                             in Updated $ putPropertyToObj converted desc
+                        then let convertedObj = Obj.convertPropertyToAccessor obj propName
+                             in Updated $ putPropertyToObj convertedObj propName desc
+                        else let convertedObj = Obj.convertPropertyToData obj propName
+                             in Updated $ putPropertyToObj convertedObj propName desc
             | PDesc.bothAreData current desc ->
                 case PDesc.isConfigurable current of
                     False 
                         | PDesc.isNotWritable current, PDesc.isWritable desc -> Rejected
                         | PDesc.isNotWritable current, PDesc.hasValue desc, 
                             PDesc.haveDifferentValues desc current -> Rejected
-                        | otherwise -> Updated $ putPropertyToObj obj desc
-                    True -> Updated $ putPropertyToObj obj desc
+                        | otherwise -> Updated $ putPropertyToObj obj propName desc
+                    True -> Updated $ putPropertyToObj obj propName desc
             | PDesc.bothAreAccessors current desc ->
                 case PDesc.isConfigurable current of
                     False
                         | PDesc.hasSetter desc, PDesc.haveDifferentSetters desc current -> Rejected
                         | PDesc.hasGetter desc, PDesc.haveDifferentGetters desc current -> Rejected
-                        | otherwise -> Updated $ putPropertyToObj obj desc
-                    True -> Updated $ putPropertyToObj obj desc
-            | otherwise -> Updated $ putPropertyToObj obj desc
+                        | otherwise -> Updated $ putPropertyToObj obj propName desc
+                    True -> Updated $ putPropertyToObj obj propName desc
+            | otherwise -> Updated $ putPropertyToObj obj propName desc
 
-putPropertyToObj :: Object -> PropertyDescriptor -> Object
-putPropertyToObj obj desc =
+putPropertyToObj :: Object -> String -> PropertyDescriptor -> Object
+putPropertyToObj obj name desc =
     let prop = Prop.fromDescriptor desc
-    in Obj.putProperty obj prop
-
-putDataPropertyToObj :: Object -> PropertyDescriptor -> Object
-putDataPropertyToObj obj desc = 
-    let prop = Prop.dataPropertyFromDescriptor desc
-    in Obj.putProperty obj prop
-
-putAccessorPropertyToObj :: Object -> PropertyDescriptor -> Object
-putAccessorPropertyToObj obj desc =
-    let prop = Prop.accessorPropertyFromDescriptor desc
-    in Obj.putProperty obj prop
-
+    in Obj.putProperty obj name prop
 
 defaultValue :: Object -> Hint -> ObjectsHeap -> Value
 defaultValue obj hint heap = 
