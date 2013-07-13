@@ -1,6 +1,6 @@
 module Evaluating.Object
 (
-    Object(..),
+    Object,
     MaybeObject,
     ObjectId,
     MaybeObjectId,
@@ -23,15 +23,8 @@ module Evaluating.Object
     putAccessorProperty,
 ) where
 
-import Data.Maybe
-
-import Evaluating.Value
-import Evaluating.NamedDataProperty (NamedDataProperty)
-import Evaluating.NamedAccessorProperty (NamedAccessorProperty)
-import Evaluating.PropertyDescriptor (PropertyDescriptor, MaybePropertyDescriptor)
-import qualified Evaluating.PropertyDescriptor as PDesc
+import Evaluating.PropertyDescriptor (PropertyDescriptor)
 import Evaluating.Property
-import Evaluating.ObjectsHeap
 import Evaluating.Properties (Properties)
 import qualified Evaluating.Properties as Props
 import qualified Evaluating.Property as Prop
@@ -75,10 +68,14 @@ notExtensible :: Object -> Bool
 notExtensible = not . extensible
 
 convertPropertyToAccessor :: Object -> String -> Object
-convertPropertyToAccessor = undefined
+convertPropertyToAccessor obj propName = 
+    let newProps = Props.convertToAccessor (properties obj) propName
+    in obj {properties = newProps}
 
 convertPropertyToData :: Object -> String -> Object
-convertPropertyToData = undefined
+convertPropertyToData obj propName = 
+    let newProps = Props.convertToData (properties obj) propName
+    in obj {properties = newProps}
 
 putDataProperty :: Object -> String -> PropertyDescriptor -> Object
 putDataProperty obj name desc = 

@@ -8,12 +8,16 @@ module Evaluating.Properties
     get,
     delete,
     lookup,
+
+    convertToData,
+    convertToAccessor,
 ) where
 
 import Prelude hiding (lookup)
 import qualified Data.Map as Map
 
-import Evaluating.Property
+import Evaluating.Property (Property)
+import qualified Evaluating.Property as Prop
 
 type Properties = Map.Map String Property
 
@@ -33,3 +37,19 @@ delete props name = Map.delete name props
 
 lookup :: Properties -> String -> Maybe Property
 lookup props name = Map.lookup name props
+
+type PropConvertor = Property -> Property
+
+convertProperty :: Properties -> String -> PropConvertor -> Properties
+convertProperty props name convertor =
+    case lookup props name of
+        Just prop -> put props name (convertor prop)
+        Nothing -> error $ "Property does not exist: " ++ name
+
+convertToData :: Properties -> String -> Properties
+convertToData props name =
+    convertProperty props name Prop.convertToData
+
+convertToAccessor :: Properties -> String -> Properties
+convertToAccessor props name =
+    convertProperty props name Prop.convertToAccessor
