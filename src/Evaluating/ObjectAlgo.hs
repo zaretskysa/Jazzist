@@ -11,7 +11,9 @@ module Evaluating.ObjectAlgo
     deleteProperty
 ) where
 
+--TODO: remove this import
 import qualified Data.Map as Map
+
 import Data.Maybe
 
 import Common.BoolUtils
@@ -22,8 +24,11 @@ import Evaluating.PropertyDescriptor (PropertyDescriptor, MaybePropertyDescripto
 import qualified Evaluating.PropertyDescriptor as PDesc
 import Evaluating.Property (Property)
 import qualified Evaluating.Property as Prop
-import Evaluating.ObjectsHeap
+import Evaluating.ObjectsHeap (ObjectsHeap)
+import qualified Evaluating.ObjectsHeap as Heap
+import Evaluating.Object (Object, ObjectId)
 import qualified Evaluating.Object as Obj
+import qualified Evaluating.TypeTesting as Testing
 
 
 data Hint = StringHint | NumberHint | NoHint deriving (Show)
@@ -100,7 +105,7 @@ put obj prop value heap =
                         True -> case PDesc.set desc of
                             Nothing -> error "Property descriptor setter is undefined"
                             Just setterId -> 
-                                let newValue = callForId setterId -- FIX ME
+                                let newValue = callId setterId -- FIX ME
                                 in (obj, True)
                         False -> 
                             let newDesc =  PDesc.new {PDesc.value = Just value, PDesc.writable = Just True, PDesc.enumerable = Just True, PDesc.configurable = Just True}
@@ -138,7 +143,7 @@ defineOwnProperty obj propName desc
             | PDesc.isSame desc current -> Updated obj
             | PDesc.bothNotConfigurable current desc -> Rejected
             | PDesc.isNotConfigurable current, PDesc.hasEnumerable desc,
-                PDesc.onlyOneIsEnumerable desc current -> Rejected
+              PDesc.onlyOneIsEnumerable desc current -> Rejected
             | PDesc.isGeneric desc -> Updated $ putPropertyToObj obj propName desc
             | PDesc.onlyOneIsData current desc ->
                 case PDesc.isConfigurable current of
@@ -153,7 +158,7 @@ defineOwnProperty obj propName desc
                     False 
                         | PDesc.isNotWritable current, PDesc.isWritable desc -> Rejected
                         | PDesc.isNotWritable current, PDesc.hasValue desc, 
-                            PDesc.haveDifferentValues desc current -> Rejected
+                          PDesc.haveDifferentValues desc current -> Rejected
                         | otherwise -> Updated $ putPropertyToObj obj propName desc
                     True -> Updated $ putPropertyToObj obj propName desc
             | PDesc.bothAreAccessors current desc ->
@@ -170,16 +175,27 @@ putPropertyToObj obj name desc =
     let prop = Prop.fromDescriptor desc
     in Obj.putProperty obj name prop
 
-defaultValue :: Object -> Hint -> ObjectsHeap -> Value
-defaultValue obj hint heap = 
-    case get obj "toString" heap of
-        Nothing -> error "Object has no toString property"
-        Just toStringProp -> undefined
+defaultValue :: Object -> Hint -> ObjectsHeap -> MaybeValue
+defaultValue obj StringHint heap
+    | value@(Just _) <- primitiveValue obj "toString" heap = value
+    | value@(Just _) <- primitiveValue obj "valueOf" heap = value
+    | otherwise = Nothing
+defaultValue obj NumberHint heap
+    | value@(Just _) <- primitiveValue obj "valueOf" heap = value
+    | value@(Just _) <- primitiveValue obj "toString" heap = value
+    | otherwise = Nothing
+
+primitiveValue :: Object -> String -> ObjectsHeap -> MaybeValue
+primitiveValue obj propName heap
+    | Just (ObjectIdValue value1) <- get obj propName heap, 
+      Obj.isCallableId value1 heap, result <- callId value1, 
+      Testing.isPrimitive result = Just $ result
+    | otherwise = Nothing
 
 
 call :: Object -> Value
 call = undefined
 
-callForId :: ObjectId -> Value
-callForId = undefined
+callId :: ObjectId -> Value
+callId = undefined
 

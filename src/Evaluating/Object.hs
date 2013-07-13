@@ -11,6 +11,8 @@ module Evaluating.Object
     prototype,
     extensible,
     notExtensible,
+    isCallable,
+    isCallableId,
 
     property,
     deleteProperty,
@@ -29,9 +31,11 @@ import Evaluating.Properties (Properties)
 import qualified Evaluating.Properties as Props
 import qualified Evaluating.Property as Prop
 
+import Evaluating.ObjectsHeap (ObjectsHeap)
+import qualified Evaluating.ObjectsHeap as Heap
 
 type ObjectId = Integer
-    
+
 type MaybeObjectId = Maybe ObjectId
 
 type MaybeObject = Maybe Object
@@ -86,3 +90,9 @@ putAccessorProperty :: Object -> String -> PropertyDescriptor -> Object
 putAccessorProperty obj name desc =
     let prop = Prop.accessorPropertyFromDescriptor desc
     in putProperty obj name prop
+
+isCallable :: Object -> Bool
+isCallable = undefined
+
+isCallableId :: ObjectId -> ObjectsHeap -> Bool
+isCallableId = undefined

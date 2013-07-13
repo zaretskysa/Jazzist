@@ -42,12 +42,12 @@ activeContext env = Stack.top $ contexts env
 putObject :: Environment -> Object -> (Environment, ObjectId)
 putObject env obj =
     let newObjectId = (lastObjectId env) + 1
-        newHeap = Heap.insert newObjectId obj (objectsHeap env)
+        newHeap = Heap.put (objectsHeap env) newObjectId obj
         newEnv = env {lastObjectId = newObjectId, objectsHeap = newHeap}
     in (newEnv, newObjectId)
 
 getObject :: Environment -> ObjectId -> MaybeObject
-getObject env objId = Heap.lookup objId (objectsHeap env)
+getObject env objId = Heap.lookup (objectsHeap env) objId
 
 modifyObject :: Environment -> ObjectId -> Object -> Environment
 modifyObject env objId obj =

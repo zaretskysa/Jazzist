@@ -15,8 +15,8 @@ data Value =
     | BooleanValue Bool
     | StringValue String
     | NumberValue Double
-    | ObjectValue Object
-    | ObjectIdValue ObjectId
+    | ObjectValue Object -- TODO: remove this
+    | ObjectIdValue ObjectId -- TODO: rename to ObjectValue
     deriving (Show)
 
 data Primitive = 

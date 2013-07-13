@@ -9,6 +9,7 @@ executable Jazzist
     main-is: Jazzist.hs
     hs-source-dirs: src
     build-depends: base, parsec, pretty-show, mtl, containers
+    extensions: MultiWayIf, PatternGuards
     ghc-options: -Wall -fno-warn-unused-do-bind -O0
 
 test-suite jazzist-unit-tests
