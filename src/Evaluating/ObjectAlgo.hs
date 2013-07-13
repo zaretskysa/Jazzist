@@ -184,6 +184,8 @@ defaultValue obj NumberHint heap
     | value@(Just _) <- primitiveValue obj "valueOf" heap = value
     | value@(Just _) <- primitiveValue obj "toString" heap = value
     | otherwise = Nothing
+defaultValue obj NoHint heap = defaultValue obj NumberHint heap
+
 
 primitiveValue :: Object -> String -> ObjectsHeap -> MaybeValue
 primitiveValue obj propName heap
