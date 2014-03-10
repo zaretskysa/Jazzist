@@ -1,5 +1,8 @@
 module Evaluating.EnvRecord
-() where
+(
+    EnvRecord(..),
+    hasBinding
+) where
 
 data EnvRecord = EnvRecord deriving (Show)
 
@@ -15,13 +18,13 @@ setMutableBinding = undefined
 getBindingValue :: ()
 getBindingValue = undefined
 
-deleteBinding :: String
+deleteBinding :: String -> ()
 deleteBinding identifier = undefined
 
 implicitThisValue :: ()
 implicitThisValue = undefined
 
 
-data DeclEnvRecord = data DeclEnvRecord deriving (Show)
+data DeclEnvRecord = DeclEnvRecord deriving (Show)
 
 

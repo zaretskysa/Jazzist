@@ -17,7 +17,7 @@ import Data.Maybe
 
 import Evaluating.Value
 import Evaluating.Object
-import Evaluating.EnvironmentRecord
+import Evaluating.EnvRecord
 
 data RefBaseValue = 
     UndefinedRefVal
@@ -25,7 +25,7 @@ data RefBaseValue =
     | BoolRefVal Bool
     | StringRefVal String
     | NumberRefVal Double
-    | EnvRecordRefVal EnvironmentRecord
+    | EnvRecordRefVal EnvRecord
     deriving (Show)
 
 data Reference = Reference String RefBaseValue

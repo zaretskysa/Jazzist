@@ -7,11 +7,11 @@ module Evaluating.LexicalEnvironment
 ) where
 
 import Evaluating.Reference
-import Evaluating.EnvironmentRecord
+import Evaluating.EnvRecord
 
 data LexicalEnvironment = LexicalEnvironment
     {
-        envRecord :: EnvironmentRecord
+        envRecord :: EnvRecord
     }
     deriving (Show)
 
