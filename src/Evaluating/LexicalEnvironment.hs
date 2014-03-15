@@ -9,6 +9,7 @@ module Evaluating.LexicalEnvironment
 import Evaluating.Reference
 import Evaluating.EnvRecord
 import Evaluating.DeclEnvRecord
+import Evaluating.ObjEnvRecord
 
 data LexicalEnvironment = LexicalEnvironment
     {
@@ -27,9 +28,4 @@ getIdentifierReference (Just lexEnv) name = undefined
 --    in case exists of
 --        True -> Reference name (EnvRecordRefVal envRec)
 --        False -> undefined
-
-
-
-
-
 

@@ -6,9 +6,12 @@ module Evaluating.ObjectAlgo
     getOwnProperty,
     getProperty,
     get,
+    put,
     canPut,
     hasProperty,
-    deleteProperty
+    hasPropertyForId,
+    deleteProperty,
+    defineOwnProperty
 ) where
 
 --TODO: remove this import
