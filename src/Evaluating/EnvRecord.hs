@@ -1,30 +1,15 @@
 module Evaluating.EnvRecord
 (
-    EnvRecord(..),
-    hasBinding
+    EnvRecord(..)
 ) where
 
-data EnvRecord = EnvRecord deriving (Show)
+import Evaluating.Value
 
-hasBinding :: EnvRecord -> String -> Bool
-hasBinding envRec identifier = undefined
-
-createMutableBinding :: String -> Bool -> ()
-createMutableBinding identifier delete = undefined
-
-setMutableBinding :: ()
-setMutableBinding = undefined
-
-getBindingValue :: ()
-getBindingValue = undefined
-
-deleteBinding :: String -> ()
-deleteBinding identifier = undefined
-
-implicitThisValue :: ()
-implicitThisValue = undefined
-
-
-data DeclEnvRecord = DeclEnvRecord deriving (Show)
-
+class EnvRecord record where
+    hasBinding :: record -> String -> Bool
+    createMutableBinding :: record -> String -> Bool -> record
+    setMutableBinding :: record -> String -> Value -> Bool -> record
+    getBindingValue :: record -> String -> Bool -> Value
+    deleteBinding :: record -> String -> Bool
+    implicitThisValue :: record -> Value
 

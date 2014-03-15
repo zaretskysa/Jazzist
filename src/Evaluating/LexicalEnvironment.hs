@@ -8,10 +8,11 @@ module Evaluating.LexicalEnvironment
 
 import Evaluating.Reference
 import Evaluating.EnvRecord
+import Evaluating.DeclEnvRecord
 
 data LexicalEnvironment = LexicalEnvironment
     {
-        envRecord :: EnvRecord
+        --envRecord :: EnvRecord
     }
     deriving (Show)
 
@@ -20,12 +21,12 @@ makeLexicalEnvironment = undefined
 
 getIdentifierReference :: Maybe LexicalEnvironment -> String -> Reference
 getIdentifierReference Nothing name = Reference name UndefinedRefVal
-getIdentifierReference (Just lexEnv) name = 
-    let envRec = envRecord lexEnv
-        exists = hasBinding envRec name
-    in case exists of
-        True -> Reference name (EnvRecordRefVal envRec)
-        False -> undefined
+getIdentifierReference (Just lexEnv) name = undefined
+--    let envRec = envRecord lexEnv
+--        exists = hasBinding envRec name
+--    in case exists of
+--        True -> Reference name (EnvRecordRefVal envRec)
+--        False -> undefined
 
 
 

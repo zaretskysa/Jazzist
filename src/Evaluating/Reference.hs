@@ -25,7 +25,7 @@ data RefBaseValue =
     | BoolRefVal Bool
     | StringRefVal String
     | NumberRefVal Double
-    | EnvRecordRefVal EnvRecord
+    -- | EnvRecordRefVal EnvRecord
     deriving (Show)
 
 data Reference = Reference String RefBaseValue
