@@ -1,7 +1,7 @@
 module Evaluating.Property
 (
     Property(..),
-    MaybeProperty(..),
+    MaybeProperty,
 
     dataPropertyFromDescriptor,
     accessorPropertyFromDescriptor,
@@ -10,8 +10,6 @@ module Evaluating.Property
     convertToData,
     toDescriptor,
 ) where
-
-import qualified Data.Map as Map
 
 import Evaluating.Value
 
@@ -22,7 +20,6 @@ import Evaluating.NamedAccessorProperty (NamedAccessorProperty(..))
 import qualified Evaluating.NamedAccessorProperty as AProp
 
 import Evaluating.PropertyDescriptor (PropertyDescriptor)
-import qualified Evaluating.PropertyDescriptor as PDesc
 
 
 type MaybeProperty = Maybe Property
@@ -33,7 +30,7 @@ data Property =
     deriving (Show)
 
 dataPropertyFromDescriptor :: PropertyDescriptor -> Property
-dataPropertyFromDescriptor desc = undefined
+dataPropertyFromDescriptor _desc = undefined
 
 accessorPropertyFromDescriptor :: PropertyDescriptor -> Property
 accessorPropertyFromDescriptor = undefined

@@ -3,6 +3,7 @@ module Evaluating.NamedDataProperty
     NamedDataProperty(..),
 
     toDescriptor,
+    fromDescriptor
 ) where
 
 import Evaluating.Value
@@ -22,6 +23,8 @@ toDescriptor prop = PDesc.PropertyDescriptor
     , PDesc.writable = Just $ writable prop
     , PDesc.enumerable = Just $ enumerable prop
     , PDesc.configurable = Just $ configurable prop
+    , PDesc.get = Nothing
+    , PDesc.set = Nothing
     }
 
 fromDescriptor :: PDesc.PropertyDescriptor -> NamedDataProperty

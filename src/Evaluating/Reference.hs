@@ -10,14 +10,12 @@ module Evaluating.Reference
     isPropertyRef,
     isUnresolvableRef,
     getRefValue,
-    putRefValue
+    putRefValue,
+    baseToValue,
 ) where
-
-import Data.Maybe
 
 import Evaluating.Value
 import Evaluating.Object
-import Evaluating.EnvRecord
 import Evaluating.DeclEnvRecord (DeclEnvRecord)
 
 
@@ -43,12 +41,10 @@ isStrictRef :: Reference -> Bool
 isStrictRef _ = False
 
 hasPrimitiveBase :: Reference -> Bool
-hasPrimitiveBase (Reference _ value) = undefined
-hasPrimitiveBase _ = False
+hasPrimitiveBase (Reference _ _value) = undefined
 
 isPropertyRef :: Reference -> Bool
 isPropertyRef (Reference _ _) = undefined
-isPropertyRef _ = undefined
 
 isUnresolvableRef :: Reference -> Bool
 isUnresolvableRef = not . isPropertyRef

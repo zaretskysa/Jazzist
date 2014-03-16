@@ -22,4 +22,6 @@ toDescriptor prop = PDesc.PropertyDescriptor
     , PDesc.set = set prop
     , PDesc.enumerable = Just $ enumerable prop
     , PDesc.configurable = Just $ configurable prop
+    , PDesc.value = Nothing
+    , PDesc.writable = Nothing
     }

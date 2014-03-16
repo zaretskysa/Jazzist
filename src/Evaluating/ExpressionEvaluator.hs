@@ -6,15 +6,9 @@ module Evaluating.ExpressionEvaluator
 import Parsing.Ast
 
 import Evaluating.Eval
-import Evaluating.Reference as Ref
 import Evaluating.InternalValue
-import qualified Evaluating.LexicalEnvironment as LexEnv 
-import qualified Evaluating.ExecutionContext as Cx
-import Evaluating.InternalValueM
 import qualified Evaluating.LexicalEnvM as LexEnvM
 
-import Evaluating.EnvironmentM
-import Evaluating.ObjectM
 
 evalLiteral :: Literal -> Eval InternalValue
 evalLiteral (NumericLiteral value) = return $ DoubleValue value
@@ -121,15 +115,12 @@ evalAssignmentExpression :: AssignmentExpression -> Eval InternalValue
 evalAssignmentExpression (ConditionalAssignmentExpression condExpr) =
     evalConditionalExpression condExpr
 
-evalAssignmentExpression (AssignmentOperatorExpression lhsExpr op assignExpr) = do
-    lref <- evalLeftHandSideExpression lhsExpr
-    rref <- evalAssignmentExpression assignExpr
+evalAssignmentExpression (AssignmentOperatorExpression lhsExpr _op assignExpr) = do
+    _lref <- evalLeftHandSideExpression lhsExpr
+    _rref <- evalAssignmentExpression assignExpr
     --rval <- getValue rref
     --newRef <- putValue lref rval
     return $ DoubleValue 7
-
-
-evalAssignmentExpression _ = undefined
 
 evalExpression :: Expression -> Eval Double
 evalExpression (Expression [assignExpr]) = do

@@ -7,6 +7,3 @@ import Evaluating.ObjectsHeap
 
 putObject :: ObjectId -> Object -> Eval ()
 putObject objId obj = undefined
-
-
-

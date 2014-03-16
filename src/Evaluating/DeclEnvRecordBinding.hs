@@ -53,8 +53,8 @@ immutable :: Binding -> Bool
 immutable = not . mutable
 
 newBinding :: MaybeValue -> Bool -> Bool -> Binding
-newBinding val mutable deletable =
-    Binding {value = val, mutable = mutable, deletable = deletable}
+newBinding val isMutable isDeletable =
+    Binding {value = val, mutable = isMutable, deletable = isDeletable}
 
 setValue :: Binding -> Value -> Binding
 setValue binding val =

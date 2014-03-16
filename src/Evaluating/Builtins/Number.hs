@@ -1,5 +1,7 @@
 module Evaluating.Builtins.Number
-() where
+(
+    number
+) where
 
 import Evaluating.Object
 

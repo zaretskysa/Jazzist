@@ -7,14 +7,8 @@ module Evaluating.PropertyDescriptor
     isData,
     isGeneric,
 
-    get,
     hasSetter,
-    set,
     new,
-    value,
-    writable,
-    configurable,
-    enumerable,
     allFieldsAreAbsent,
     isSame,
     isConfigurable,
@@ -59,18 +53,18 @@ isAccessor desc
     | isNothing $ get desc, isNothing $ set desc = False
     | otherwise = True
 
-isAccessorMb :: MaybePropertyDescriptor -> Bool
-isAccessorMb Nothing = False
-isAccessorMb (Just desc) = isAccessor desc
+--isAccessorMb :: MaybePropertyDescriptor -> Bool
+--isAccessorMb Nothing = False
+--isAccessorMb (Just desc) = isAccessor desc
 
 isData :: PropertyDescriptor -> Bool
 isData desc 
     | isNothing $ value desc, isNothing $ writable desc = False
     | otherwise = True
 
-isDataMb :: MaybePropertyDescriptor -> Bool
-isDataMb Nothing = False
-isDataMb (Just desc) = isData desc
+--isDataMb :: MaybePropertyDescriptor -> Bool
+--isDataMb Nothing = False
+--isDataMb (Just desc) = isData desc
 
 isGeneric :: PropertyDescriptor -> Bool
 isGeneric desc
@@ -80,9 +74,9 @@ isGeneric desc
 isGenericOrData :: PropertyDescriptor -> Bool
 isGenericOrData desc = (isGeneric desc) || (isData desc)
 
-isGenericMb :: MaybePropertyDescriptor -> Bool
-isGenericMb Nothing = False
-isGenericMb (Just desc) = isGeneric desc
+--isGenericMb :: MaybePropertyDescriptor -> Bool
+--isGenericMb Nothing = False
+--isGenericMb (Just desc) = isGeneric desc
 
 new :: PropertyDescriptor
 new = PropertyDescriptor {
@@ -147,7 +141,7 @@ hasValue :: PropertyDescriptor -> Bool
 hasValue = isJust . writable
 
 haveDifferentValues :: PropertyDescriptor -> PropertyDescriptor -> Bool
-haveDifferentValues first second = undefined
+haveDifferentValues _first _second = undefined
 
 haveDifferentSetters :: PropertyDescriptor -> PropertyDescriptor -> Bool
 haveDifferentSetters = undefined
@@ -156,4 +150,4 @@ hasGetter :: PropertyDescriptor -> Bool
 hasGetter = undefined
 
 haveDifferentGetters :: PropertyDescriptor -> PropertyDescriptor -> Bool
-haveDifferentGetters first second = undefined
+haveDifferentGetters _first _second = undefined

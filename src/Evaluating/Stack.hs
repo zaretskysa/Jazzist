@@ -29,5 +29,5 @@ null :: Stack a -> Bool
 null (Stack xs) = List.null xs
 
 top :: Stack a -> a
-top (Stack (x:xs)) = x
+top (Stack (x:_xs)) = x
 top (Stack []) = error "Trying to perform pop operation on empty stack"

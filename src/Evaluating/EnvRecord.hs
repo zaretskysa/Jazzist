@@ -12,4 +12,3 @@ class EnvRecord record where
     getBindingValue :: record -> String -> Bool -> Value
     deleteBinding :: record -> String -> Bool
     implicitThisValue :: record -> Value
-

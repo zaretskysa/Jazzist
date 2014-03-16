@@ -3,7 +3,7 @@ module Evaluating.ObjectsHeap
     module Evaluating.Object,
 
     ObjectsHeap,
-
+    new,
     get,
     put,
     has,
@@ -23,6 +23,9 @@ modifyObject heap objId newObj =
     case Map.member objId heap of
         True -> Map.insert objId newObj heap
         False -> error "There is no stored object with given id"
+
+new :: ObjectsHeap
+new = undefined
 
 get :: ObjectsHeap -> ObjectId -> Object
 get heap objId = case lookup heap objId of

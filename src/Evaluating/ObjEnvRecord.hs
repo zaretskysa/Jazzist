@@ -63,4 +63,3 @@ implicitThisValue record =
     case provideThis record of
         True -> ObjectValue $ object record
         False -> UndefinedValue
-

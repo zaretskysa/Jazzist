@@ -19,20 +19,19 @@ import qualified Evaluating.Environment as Env
 import Evaluating.ExecutionContext
 import Evaluating.Object
 import Evaluating.ObjectsHeap (ObjectsHeap)
-import qualified Evaluating.ObjectsHeap as Heap
 
 
 enterGlobalContext :: Eval ()
 enterGlobalContext = undefined
 
 enterContext :: ExecutionContext -> Eval ()
-enterContext ctx = undefined
+enterContext _ctx = undefined
 
 leaveContext :: Eval ()
 leaveContext = undefined
 
 pushContext :: ExecutionContext -> Eval ()
-pushContext cx = undefined
+pushContext _ctx = undefined
 
 popContext :: Eval ExecutionContext
 popContext = undefined

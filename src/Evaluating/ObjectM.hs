@@ -1,12 +1,18 @@
 module Evaluating.ObjectM
-() where
+(
+    getOwnProperty,
+    getProperty,
+    get,
+    canPut,
+    hasProperty,
+    deleteProperty,
+) where
 
 import qualified Evaluating.ObjectAlgo as ObjAlgo
-import Evaluating.Eval
+import Evaluating.Eval (Eval)
 import Evaluating.Value
 import qualified Evaluating.EnvironmentM as EnvM
-import qualified Evaluating.ObjectAlgo as ObjAlgo
-import Evaluating.Object (Object, ObjectId, MaybeObjectId)
+import Evaluating.Object (ObjectId)
 import Evaluating.PropertyDescriptor (MaybePropertyDescriptor)
 
 getOwnProperty :: ObjectId -> String -> Eval MaybePropertyDescriptor

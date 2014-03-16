@@ -13,8 +13,6 @@ import Parsing.Parser
 
 import Evaluating.Eval
 import Evaluating.ExpressionEvaluator
-import Evaluating.ExecutionContext as Ctx
-import qualified Evaluating.Environment as Env
 
 evalString :: String -> Double
 evalString input = 
@@ -24,7 +22,6 @@ evalString input =
 
 evalProgram :: Program -> Eval Double
 evalProgram (Program [sourceElement]) = do
-    --let ctx = Ctx.newContxt
     evalSourceElement sourceElement
 
 evalProgram _ = undefined

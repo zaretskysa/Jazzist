@@ -13,5 +13,3 @@ getValueM val = undefined
 
 putValueM :: InternalValue -> Value -> Eval InternalValue
 putValueM lref rval = undefined
-
-

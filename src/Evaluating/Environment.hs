@@ -2,6 +2,8 @@
 module Evaluating.Environment 
 (
     Environment,
+    globalEnv,
+    globalObj,
 
     objectsHeap,
 
@@ -13,12 +15,12 @@ module Evaluating.Environment
     modifyObject,
 ) where
 
-import Data.Map
 import qualified Evaluating.Stack as Stack
 
 import Evaluating.ExecutionContext
 import qualified Evaluating.ObjectsHeap as Heap
 import Evaluating.Object
+import Evaluating.Builtins.GlobalObject as GObj
 
 type ContextsStack = Stack.Stack ExecutionContext
 
@@ -35,7 +37,10 @@ data Environment = Environment
 newEnvironment :: Environment
 newEnvironment = Environment {
     contexts = Stack.empty,
-    lastObjectId = 0
+    lastObjectId = 0,
+    objectsHeap = Heap.new,
+    globalEnv = makeLexicalEnvironment,
+    globalObj = GObj.globalObject
     }
 
 activeContext :: Environment -> ExecutionContext

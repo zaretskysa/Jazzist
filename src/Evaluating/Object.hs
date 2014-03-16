@@ -32,7 +32,6 @@ import qualified Evaluating.Properties as Props
 import qualified Evaluating.Property as Prop
 
 import Evaluating.ObjectsHeap (ObjectsHeap)
-import qualified Evaluating.ObjectsHeap as Heap
 
 type ObjectId = Integer
 

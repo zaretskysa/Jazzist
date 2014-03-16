@@ -31,7 +31,7 @@ getIdentifierReference (Just lexEnv) name =
         False -> getIdentifierReference (outer lexEnv) name
 
 newDeclarativeEnvironment :: Maybe LexicalEnvironment -> LexicalEnvironment
-newDeclarativeEnvironment outerEnv = undefined
+newDeclarativeEnvironment _outerEnv = undefined
 
 newObjectEnvironment :: Maybe LexicalEnvironment -> Object -> LexicalEnvironment
-newObjectEnvironment outerEnv obj = undefined
+newObjectEnvironment _outerEnv _obj = undefined

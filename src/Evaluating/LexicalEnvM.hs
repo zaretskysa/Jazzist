@@ -14,7 +14,3 @@ getIdentifierReference :: String -> Eval Reference
 getIdentifierReference identifier = do
     lexEnv <- activeLexEnv
     return $ LexEnv.getIdentifierReference lexEnv identifier
-
-
-
-
