@@ -193,7 +193,8 @@ defaultValue obj NoHint heap = defaultValue obj NumberHint heap
 primitiveValue :: Object -> String -> ObjectsHeap -> MaybeValue
 primitiveValue obj propName heap
     | Just (ObjectIdValue value1) <- get obj propName heap, 
-      Obj.isCallableId value1 heap, result <- callId value1, 
+      Obj.isCallableId value1 heap, 
+      result <- callId value1, 
       Testing.isPrimitive result = Just $ result
     | otherwise = Nothing
 

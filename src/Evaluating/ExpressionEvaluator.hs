@@ -18,7 +18,7 @@ import Evaluating.ObjectM
 
 evalLiteral :: Literal -> Eval InternalValue
 evalLiteral (NumericLiteral value) = return $ DoubleValue value
-evalLiteral (BooleanLiteral _) = undefined
+evalLiteral (BooleanLiteral _) = return $ JsValue $ BooleanValue True
 evalLiteral (NullLiteral) = undefined
 evalLiteral (StringLiteral _) = undefined
 

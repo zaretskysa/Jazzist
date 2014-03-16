@@ -26,7 +26,9 @@ data Environment = Environment
     {
         contexts :: ContextsStack,
         objectsHeap :: Heap.ObjectsHeap,
-        lastObjectId :: ObjectId  -- TODO: Maybe Object
+        lastObjectId :: ObjectId,  -- TODO: Maybe Object
+        globalEnv :: LexicalEnvironment,
+        globalObj :: Object
     }
     deriving (Show)
 

@@ -4,21 +4,27 @@ module Evaluating.ExecutionContext
 
     ExecutionContext,
     
-    makeExecutionContext,
+    newContext,
     lexicalEnvironment,
     variableEnvironment
 ) where
 
 import Evaluating.LexicalEnvironment
+import Evaluating.Object (ObjectId)
 
 data ExecutionContext = ExecutionContext 
     {
-        lexicalEnvironment :: Maybe LexicalEnvironment,
-        variableEnvironment :: LexicalEnvironment
+        lexicalEnvironment :: LexicalEnvironment,
+        variableEnvironment :: LexicalEnvironment,
+        thisBinding :: Maybe ObjectId
     }
     deriving (Show)
 
-makeExecutionContext :: LexicalEnvironment -> LexicalEnvironment -> ExecutionContext
-makeExecutionContext lexicalEnv variableEnv = 
-    ExecutionContext {lexicalEnvironment = Just lexicalEnv, variableEnvironment = variableEnv}
+newContext :: LexicalEnvironment -> LexicalEnvironment -> Maybe ObjectId -> ExecutionContext
+newContext lexicalEnv variableEnv this = 
+    ExecutionContext {
+        lexicalEnvironment = lexicalEnv, 
+        variableEnvironment = variableEnv,
+        thisBinding = this
+    }
 

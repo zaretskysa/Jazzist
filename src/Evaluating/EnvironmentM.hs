@@ -4,7 +4,14 @@ module Evaluating.EnvironmentM
     getObject,
     modifyObject,
 
+    popContext,
+    pushContext,
+
     objectsHeap,
+
+    enterContext,
+    enterGlobalContext,
+    leaveContext
 ) where
 
 import Evaluating.Eval
@@ -13,6 +20,16 @@ import Evaluating.ExecutionContext
 import Evaluating.Object
 import Evaluating.ObjectsHeap (ObjectsHeap)
 import qualified Evaluating.ObjectsHeap as Heap
+
+
+enterGlobalContext :: Eval ()
+enterGlobalContext = undefined
+
+enterContext :: ExecutionContext -> Eval ()
+enterContext ctx = undefined
+
+leaveContext :: Eval ()
+leaveContext = undefined
 
 pushContext :: ExecutionContext -> Eval ()
 pushContext cx = undefined
@@ -41,10 +58,3 @@ modifyObject :: ObjectId -> Object -> Eval ()
 modifyObject objId obj = do
     env <- get
     put $ Env.modifyObject env objId obj
-
-
-
-
-
-
-

@@ -12,7 +12,7 @@ import qualified Evaluating.Reference as Ref
 import Evaluating.Value
 
 data InternalValue = 
-    RefValue Ref.Reference
+      RefValue Ref.Reference
     | JsValue Value
     | DoubleValue Double
     deriving (Show)

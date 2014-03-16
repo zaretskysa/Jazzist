@@ -3,17 +3,19 @@ module Evaluating.LexicalEnvironment
     LexicalEnvironment,
 
     makeLexicalEnvironment,
-    getIdentifierReference
+    getIdentifierReference,
+    newDeclarativeEnvironment,
+    newObjectEnvironment
 ) where
 
 import Evaluating.Reference
-import Evaluating.EnvRecord
-import Evaluating.DeclEnvRecord
-import Evaluating.ObjEnvRecord
+import qualified Evaluating.DeclEnvRecord as Decl
+import Evaluating.Object (Object)
 
 data LexicalEnvironment = LexicalEnvironment
     {
-        --envRecord :: EnvRecord
+        envRecord :: Decl.DeclEnvRecord,
+        outer :: Maybe LexicalEnvironment
     }
     deriving (Show)
 
@@ -22,10 +24,14 @@ makeLexicalEnvironment = undefined
 
 getIdentifierReference :: Maybe LexicalEnvironment -> String -> Reference
 getIdentifierReference Nothing name = Reference name UndefinedRefVal
-getIdentifierReference (Just lexEnv) name = undefined
---    let envRec = envRecord lexEnv
---        exists = hasBinding envRec name
---    in case exists of
---        True -> Reference name (EnvRecordRefVal envRec)
---        False -> undefined
+getIdentifierReference (Just lexEnv) name =
+    let envRec = envRecord lexEnv
+    in case Decl.hasBinding envRec name of
+        True -> Reference name (EnvRecordRefVal envRec)
+        False -> getIdentifierReference (outer lexEnv) name
 
+newDeclarativeEnvironment :: Maybe LexicalEnvironment -> LexicalEnvironment
+newDeclarativeEnvironment outerEnv = undefined
+
+newObjectEnvironment :: Maybe LexicalEnvironment -> Object -> LexicalEnvironment
+newObjectEnvironment outerEnv obj = undefined
