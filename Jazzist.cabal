@@ -8,8 +8,9 @@ cabal-version: >= 1.2
 executable Jazzist
     main-is: Jazzist.hs
     hs-source-dirs: src
-    build-depends: base, parsec, pretty-show, mtl, containers
-    extensions: PatternGuards MultiWayIf
+    build-depends: base, parsec, pretty-show, mtl, containers, placeholders,
+        template-haskell
+    extensions: PatternGuards MultiWayIf TemplateHaskell
     ghc-options: -Wall -fno-warn-unused-do-bind -O0
 
 test-suite jazzist-unit-tests

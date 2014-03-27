@@ -5,6 +5,7 @@ module Evaluating.ExpressionEvaluator
 
 import Parsing.Ast
 
+import Common.Debug
 import Evaluating.Eval
 import Evaluating.InternalValue
 import qualified Evaluating.LexicalEnvM as LexEnvM
@@ -13,8 +14,8 @@ import qualified Evaluating.LexicalEnvM as LexEnvM
 evalLiteral :: Literal -> Eval InternalValue
 evalLiteral (NumericLiteral value) = return $ DoubleValue value
 evalLiteral (BooleanLiteral _) = return $ JsValue $ BooleanValue True
-evalLiteral (NullLiteral) = undefined
-evalLiteral (StringLiteral _) = undefined
+evalLiteral (NullLiteral) = $stub
+evalLiteral (StringLiteral _) = $stub
 
 evalPrimaryExpression :: PrimaryExpression -> Eval InternalValue
 evalPrimaryExpression (LiteralPrimaryExpression literal) = evalLiteral literal
@@ -23,27 +24,27 @@ evalPrimaryExpression (IdentifierPrimaryExpression identifier) = do
     ref <- LexEnvM.getIdentifierReference identifier
     return $ RefValue ref
 
-evalPrimaryExpression _ = undefined
+evalPrimaryExpression _ = $stub
 
 evalMemberExpression :: MemberExpression -> Eval InternalValue
 evalMemberExpression (PrimaryMemberExpression primExpr) = evalPrimaryExpression primExpr
-evalMemberExpression _ = undefined
+evalMemberExpression _ = $stub
 
 evalNewExpression :: NewExpression -> Eval InternalValue
 evalNewExpression (MemberNewExpression memberExpr) = evalMemberExpression memberExpr
-evalNewExpression (NewNewExpression _) = undefined
+evalNewExpression (NewNewExpression _) = $stub
 
 evalLeftHandSideExpression :: LeftHandSideExpression -> Eval InternalValue
 evalLeftHandSideExpression (NewLHSExpression newExpr) = evalNewExpression newExpr
-evalLeftHandSideExpression (CallLHSExpression _) = undefined
+evalLeftHandSideExpression (CallLHSExpression _) = $stub
 
 evalPostfixExpression :: PostfixExpression -> Eval InternalValue
 evalPostfixExpression (LHSPostfixExpression lhsExpr) = evalLeftHandSideExpression lhsExpr
-evalPostfixExpression _ = undefined
+evalPostfixExpression _ = $stub
 
 evalUnaryExpression :: UnaryExpression -> Eval InternalValue
 evalUnaryExpression (PostfixUnaryExpression postfixExpr) = evalPostfixExpression postfixExpr
-evalUnaryExpression _ = undefined
+evalUnaryExpression _ = $stub
 
 evalMultiplicativeExpression :: MultiplicativeExpression -> Eval InternalValue
 evalMultiplicativeExpression (UnaryMultiplicativeExpression unaryExpr) =
@@ -59,7 +60,7 @@ evalMultiplicativeExpression (DivMultiplicativeExpression multExpr unaryExpr) = 
     DoubleValue unaryVal <- evalUnaryExpression unaryExpr
     return $ DoubleValue $ multVal / unaryVal
 
-evalMultiplicativeExpression _ = undefined
+evalMultiplicativeExpression _ = $stub
 
 evalAdditiveExpression :: AdditiveExpression -> Eval InternalValue
 evalAdditiveExpression (MultAdditiveExpression multExpr) =
@@ -77,39 +78,39 @@ evalAdditiveExpression (MinusAdditiveExpression addExpr multExpr) = do
 
 evalShiftExpression :: ShiftExpression -> Eval InternalValue
 evalShiftExpression (AdditiveShiftExpression addExpr) = evalAdditiveExpression addExpr
-evalShiftExpression _ = undefined
+evalShiftExpression _ = $stub
 
 evalRelationalExpression :: RelationalExpression -> Eval InternalValue
 evalRelationalExpression (ShiftRelationalExpression shiftExpr) = evalShiftExpression shiftExpr
-evalRelationalExpression _ = undefined
+evalRelationalExpression _ = $stub
 
 evalEqualityExpression :: EqualityExpression -> Eval InternalValue
 evalEqualityExpression (RelationalEqualityExpression relExpr) = evalRelationalExpression relExpr
-evalEqualityExpression _ = undefined
+evalEqualityExpression _ = $stub
 
 evalBitwiseAndExpression :: BitwiseAndExpression -> Eval InternalValue
 evalBitwiseAndExpression (UnaryBitwiseAndExpression eqExpr) = evalEqualityExpression eqExpr
-evalBitwiseAndExpression _ = undefined
+evalBitwiseAndExpression _ = $stub
 
 evalBitwiseXorExpression :: BitwiseXorExpression -> Eval InternalValue
 evalBitwiseXorExpression (UnaryBitwiseXorExpression bitAndExpr) = evalBitwiseAndExpression bitAndExpr
-evalBitwiseXorExpression _ = undefined
+evalBitwiseXorExpression _ = $stub
 
 evalBitwiseOrExpression :: BitwiseOrExpression -> Eval InternalValue
 evalBitwiseOrExpression (UnaryBitwiseOrExpression bitXorExpr) = evalBitwiseXorExpression bitXorExpr
-evalBitwiseOrExpression _ = undefined
+evalBitwiseOrExpression _ = $stub
 
 evalLogicalAndExpression :: LogicalAndExpression -> Eval InternalValue
 evalLogicalAndExpression (UnaryLogicalAndExpression bitOrExpr) = evalBitwiseOrExpression bitOrExpr
-evalLogicalAndExpression _ = undefined
+evalLogicalAndExpression _ = $stub
 
 evalLogicalOrExpression :: LogicalOrExpression -> Eval InternalValue
 evalLogicalOrExpression (UnaryLogicalOrExpression logicAndExpr) = evalLogicalAndExpression logicAndExpr
-evalLogicalOrExpression _ = undefined
+evalLogicalOrExpression _ = $stub
 
 evalConditionalExpression :: ConditionalExpression -> Eval InternalValue
 evalConditionalExpression (LogicalOrConditionalExpression logicOrExpr) = evalLogicalOrExpression logicOrExpr
-evalConditionalExpression _ = undefined
+evalConditionalExpression _ = $stub
 
 evalAssignmentExpression :: AssignmentExpression -> Eval InternalValue
 evalAssignmentExpression (ConditionalAssignmentExpression condExpr) =
@@ -127,4 +128,4 @@ evalExpression (Expression [assignExpr]) = do
     DoubleValue value <- evalAssignmentExpression assignExpr
     return value
 
-evalExpression _ = undefined
+evalExpression _ = $stub

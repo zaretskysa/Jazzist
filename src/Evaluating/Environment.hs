@@ -8,7 +8,9 @@ module Evaluating.Environment
     objectsHeap,
 
     newEnvironment,
-    activeContext,
+
+    pushContext,
+    popContext,
 
     putObject,
     getObject,
@@ -22,11 +24,11 @@ import qualified Evaluating.ObjectsHeap as Heap
 import Evaluating.Object
 import Evaluating.Builtins.GlobalObject as GObj
 
-type ContextsStack = Stack.Stack ExecutionContext
+type ContextStack = Stack.Stack ExecutionContext
 
 data Environment = Environment
     {
-        contexts :: ContextsStack,
+        contexts :: ContextStack,
         objectsHeap :: Heap.ObjectsHeap,
         lastObjectId :: ObjectId,  -- TODO: Maybe Object
         globalEnv :: LexicalEnvironment,
@@ -43,8 +45,16 @@ newEnvironment = Environment {
     globalObj = GObj.globalObject
     }
 
-activeContext :: Environment -> ExecutionContext
-activeContext env = Stack.top $ contexts env
+pushContext :: Environment -> ExecutionContext -> Environment
+pushContext env ctx = 
+    let newContexts = Stack.push (contexts env) ctx
+    in env {contexts = newContexts}
+
+popContext :: Environment -> (ExecutionContext, Environment)
+popContext env =
+    let (ctx, newContexts) = Stack.pop (contexts env)
+        newEnv = env {contexts = newContexts}
+    in (ctx, newEnv)
 
 putObject :: Environment -> Object -> (Environment, ObjectId)
 putObject env obj =

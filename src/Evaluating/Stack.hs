@@ -18,8 +18,8 @@ data Stack a = Stack [a] deriving (Show)
 empty :: Stack a
 empty = Stack []
 
-push :: a -> Stack a -> Stack a
-push x (Stack xs) = Stack (x:xs)
+push :: Stack a -> a -> Stack a
+push (Stack xs) x = Stack (x:xs)
 
 pop :: Stack a -> (a, Stack a)
 pop (Stack (x:xs)) = (x, Stack xs)

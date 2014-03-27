@@ -7,7 +7,6 @@ module Evaluating.Eval
 
     runEval,
 
-    activeContext,
     activeLexEnv
 ) where
 
@@ -21,15 +20,5 @@ type Eval a = StateT Env.Environment Identity a
 runEval :: Eval a -> (a, Env.Environment)
 runEval eval = runIdentity (runStateT eval Env.newEnvironment)
 
-activeContext :: Eval ExecutionContext
-activeContext = do
-    env <- get
-    return $ Env.activeContext env
-
 activeLexEnv :: Eval (Maybe LexicalEnvironment)
 activeLexEnv = undefined
-
-
-
-
-

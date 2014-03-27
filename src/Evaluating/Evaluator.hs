@@ -7,12 +7,16 @@ module Evaluating.Evaluator
     evalString
 ) where
 
+import Common.Debug
+import Debug.Trace
+
 import Parsing.Ast
 import Evaluating.Value
 import Parsing.Parser
 
 import Evaluating.Eval
 import Evaluating.ExpressionEvaluator
+import qualified Evaluating.EnvironmentM as Env
 
 evalString :: String -> Double
 evalString input = 
@@ -22,14 +26,16 @@ evalString input =
 
 evalProgram :: Program -> Eval Double
 evalProgram (Program [sourceElement]) = do
+    Env.enterGlobalContext
     evalSourceElement sourceElement
 
-evalProgram _ = undefined
+evalProgram _ = $stub
 
 evalSourceElement :: SourceElement -> Eval Double
 evalSourceElement (StatementSourceElement statement) = evalStatement statement
-evalSourceElement _ = undefined
+evalSourceElement _ = $stub
 
 evalStatement :: Statement -> Eval Double
 evalStatement (ExpressionStmt expr) = evalExpression expr
-evalStatement _ = undefined
+evalStatement (VariableStmt [varDecl]) = $stub
+evalStatement st = traceShow st $stub

@@ -4,9 +4,6 @@ module Evaluating.EnvironmentM
     getObject,
     modifyObject,
 
-    popContext,
-    pushContext,
-
     objectsHeap,
 
     enterContext,
@@ -14,27 +11,32 @@ module Evaluating.EnvironmentM
     leaveContext
 ) where
 
+import Common.Debug
 import Evaluating.Eval
 import qualified Evaluating.Environment as Env
-import Evaluating.ExecutionContext
+import qualified Evaluating.ExecutionContext as Ctx
+import Evaluating.ExecutionContext (ExecutionContext)
+import qualified Evaluating.LexicalEnvironment as LexEnv
 import Evaluating.Object
 import Evaluating.ObjectsHeap (ObjectsHeap)
 
 
 enterGlobalContext :: Eval ()
-enterGlobalContext = undefined
+enterGlobalContext = 
+    let lexEnv = LexEnv.makeLexicalEnvironment
+        varEnv = LexEnv.makeLexicalEnvironment
+        globalObj = Just 1
+        ctx = Ctx.new lexEnv varEnv globalObj
+    in enterContext ctx
 
 enterContext :: ExecutionContext -> Eval ()
-enterContext _ctx = undefined
+enterContext ctx = do
+    env <- get
+    let newEnv = Env.pushContext env ctx
+    put newEnv
 
 leaveContext :: Eval ()
-leaveContext = undefined
-
-pushContext :: ExecutionContext -> Eval ()
-pushContext _ctx = undefined
-
-popContext :: Eval ExecutionContext
-popContext = undefined
+leaveContext = $stub
 
 putObject :: Object -> Eval ObjectId
 putObject obj = do
